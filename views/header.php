@@ -2,7 +2,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <base href="http://localhost/chormigon/" />
+    <base href="http://localhost/singular/" />
+    <!--<base href="http://www.singularseguros.cl/admin/" />-->
 
     <title>Singular Seguros</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
@@ -21,7 +22,7 @@
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
-    <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="dist/css/skins/skin-red.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -48,6 +49,10 @@
     <script src="dist/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="dist/plugins/datatables/dataTables.bootstrap.min.js"></script>
 
+    <!-- Moment -->
+    <script src="dist/js/moment.js"></script>
+    <script src="dist/js/moment-with-locales.js"></script>
+
     <!-- date-range-picker -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>-->
     <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
@@ -55,5 +60,7 @@
 
     <!-- Get version 1.1.0 of Fabric.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.1.0/fabric.all.min.js" ></script>
+
+    <script src="dist/js/app1.js"></script>
 
 </head>

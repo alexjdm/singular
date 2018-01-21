@@ -1,8 +1,38 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: alexj
+ * Date: 30-03-2016
+ * Time: 0:30
+ */
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+require_once 'helpers/SessionHelper.php';
+
+//Inicio de variables de sesión
+if (!isset($_SESSION)) {
+    @session_start();
+}
+
+//Validación de sesión.
+if(empty($_SESSION['id']))
+{
+    // Go to login
+    header('Location: index.php?controller=Account&action=login');
+    exit();
+}
+
+$usuario = getCurrentUser();
+$isSuperAdmin = isSuperAdmin();
+$corredora = getCurrentInsuranceBroker();
+//echo $usuario;
+//echo $corredora;
+
+?>
+
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html>
     <?php require_once('header.php'); ?>
 
@@ -10,7 +40,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="modal fade" id="modalConfirmacion"></div>
     <div class="modal fade" id="modalSubmodal"></div>
 
-    <body class="hold-transition skin-blue sidebar-mini">
+    <body class="hold-transition skin-red sidebar-mini">
         <div class="wrapper">
             <?php require_once('main-header.php'); ?>
 
@@ -23,7 +53,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             <?php require_once('footer.php'); ?>
 
-            <?php //require_once('control-sidebar.php'); ?>
+            <?php require_once('control-sidebar.php'); ?>
 
         </div>
 

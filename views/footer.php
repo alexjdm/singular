@@ -13,6 +13,6 @@
         Developed by <a href="http://www.iongroup.cl/">Ion Group</a>
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2017 <a href="https://www.uach.cl/">U. Austral de Chile</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; <?php echo date("Y"); ?> <a href="https://www.singularseguros.cl/">Singular Seguros</a>.</strong> All rights reserved.
 </footer>
 
