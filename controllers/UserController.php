@@ -5,6 +5,7 @@ require_once 'helpers/CommonHelper.php';
 include_once("models/DAO/Usuario_DAO.php");
 include_once("models/DAO/Cargo_DAO.php");
 include_once("models/DAO/Corredora_DAO.php");
+include_once("helpers/SessionHelper.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class UserController {
@@ -269,7 +270,19 @@ class UserController {
 
     public function newUser() {
         $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
+
+        $isSuperAdmin = isSuperAdmin();
+        if($isSuperAdmin)
+        {
+            $corredoras = $this->modelCo->getInsuranceBrokersList();
+        }
+        else
+        {
+            $currentUser = getCurrentUser();
+            $idCorredora = $currentUser['idCorredora'];
+            $corredoras = $this->modelCo->getInsuranceBroker($idCorredora);
+        }
+
 
         require_once('views/user/newUser.php');
     }

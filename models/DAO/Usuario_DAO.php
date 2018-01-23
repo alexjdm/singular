@@ -224,7 +224,15 @@ class Usuario_DAO {
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
         //$password = $this->randomPassword();
-        $password = substr($identificador, 0, 4);
+        if(strlen($identificador) >= 4)
+        {
+            $password = substr($identificador, 0, 4);
+        }
+        else
+        {
+            $password = substr($identificador, 0, strlen($identificador));
+        }
+
         date_default_timezone_set('America/Santiago');
         $fechaIngreso = date("Y-m-d H:i:s");
 

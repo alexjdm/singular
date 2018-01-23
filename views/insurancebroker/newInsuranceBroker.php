@@ -81,6 +81,17 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="seller">Vendedor</label>
+                        <div class="col-sm-10">
+                            <select id="seller" class="form-control">
+                                <?php foreach ($vendedores as $vendedor): ?>
+                                    <option value="<?php echo $vendedor['ID_USUARIO']; ?>"><?php echo utf8_encode($vendedor['NOMBRE'] . " " . $vendedor['APELLIDO']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
                     <div id="messageNewInsuranceBroker" style="margin: 20px;"></div>
 
                 </div>

@@ -26,9 +26,9 @@ if (!isset($_SESSION)) {
             <form id="newUserForm" class="form-horizontal">
                 <div class="box-body">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="rut">Rut *</label>
+                        <label class="col-sm-3 control-label" for="identificador">RUT *</label>
                         <div class="col-sm-9">
-                            <input class="form-control" id="rut" type="text" placeholder="Rut">
+                            <input class="form-control" id="identificador" type="text" placeholder="identificador">
                         </div>
                     </div>
                     <div class="form-group">
@@ -91,14 +91,14 @@ if (!isset($_SESSION)) {
     $('#newUserBtn').click(function(){
         var e = 'ajax.php?controller=User&action=createNewUser'; console.debug(e);
 
+        var identificador = $("#identificador").val(); console.debug(identificador);
         var nombre = $("#nombre").val(); console.debug(nombre);
-        var rut = $("#rut").val(); console.debug(rut);
         var apellido = $("#apellido").val(); console.debug(apellido);
         var correo = $("#correo").val(); console.debug(correo);
         var idCargo = $("#idCargo").val(); console.debug(idCargo);
         var idCorredora = $("#idCorredora").val(); console.debug(idCorredora);
 
-        if(nombre == '' && rut == '')
+        if(nombre === '' && identificador === '')
         {
             $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -107,7 +107,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { nombre: nombre, rut:rut, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
+                data: { identificador:identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newUserBtn').html("Cargando...");

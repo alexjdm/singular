@@ -37,6 +37,7 @@ class InsuranceBrokerController {
 
     public function newInsuranceBroker() {
         $cargos = $this->modelC->getJobTitlesList();
+        $vendedores = $this->modelU->getSellersList();
 
         require_once('views/insurancebroker/newInsuranceBroker.php');
     }
