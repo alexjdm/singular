@@ -7,11 +7,11 @@ include_once ("helpers/SessionHelper.php");
 class InsuranceBroker
 {
 
-    public function save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin)
+    public function save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor)
     {
         $model = new Corredora_DAO();
         $corredora = getCurrentInsuranceBroker();
-        return $model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $corredora['id']);
+        return $model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor, $corredora['id']);
     }
 
 }

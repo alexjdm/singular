@@ -108,7 +108,7 @@ class Corredora_DAO {
         return $corredoras;
     }
 
-    public function newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idCorredoraCreadora){
+    public function newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor, $idCorredoraCreadora){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
@@ -121,8 +121,8 @@ class Corredora_DAO {
 
         if ($resultado == null) {
 
-            $sql = $pdo->prepare("INSERT INTO `corredora`(`NOMBRE`, `RUT`, `DIRECCION`, `CIUDAD`, `TELEFONO`, `GIRO`, `RAZON_SOCIAL`, `TASA`, `PRIMA_MIN`, `HABILITADO`) VALUES (:NOMBRE,:RUT,:DIRECCION,:CIUDAD,:TELEFONO,:GIRO,:RAZON_SOCIAL,:TASA,:PRIMA_MIN,1)");
-            $sql->execute(array('NOMBRE' => $nombre, 'RUT' => $rut, 'DIRECCION' => $direccion, 'CIUDAD' => $ciudad, 'TELEFONO' => $telefono, 'GIRO' => $giro, 'RAZON_SOCIAL' => $razonSocial, 'TASA' => $tasa, 'PRIMA_MIN' => $primaMin));
+            $sql = $pdo->prepare("INSERT INTO `corredora`(`NOMBRE`, `RUT`, `DIRECCION`, `CIUDAD`, `TELEFONO`, `GIRO`, `RAZON_SOCIAL`, `TASA`, `PRIMA_MIN`, `ID_USUARIO_VENDEDOR`, `HABILITADO`) VALUES (:NOMBRE,:RUT,:DIRECCION,:CIUDAD,:TELEFONO,:GIRO,:RAZON_SOCIAL,:TASA,:PRIMA_MIN,:ID_USUARIO_VENDEDOR,1)");
+            $sql->execute(array('NOMBRE' => $nombre, 'RUT' => $rut, 'DIRECCION' => $direccion, 'CIUDAD' => $ciudad, 'TELEFONO' => $telefono, 'GIRO' => $giro, 'RAZON_SOCIAL' => $razonSocial, 'TASA' => $tasa, 'PRIMA_MIN' => $primaMin, 'ID_USUARIO_VENDEDOR' => $idVendedor));
             $id = $pdo->lastInsertId();
 
             if(!empty($id)) {

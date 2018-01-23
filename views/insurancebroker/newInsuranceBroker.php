@@ -82,9 +82,9 @@ if (!isset($_SESSION)) {
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="seller">Vendedor</label>
+                        <label class="col-sm-2 control-label" for="idVendedor">Vendedor</label>
                         <div class="col-sm-10">
-                            <select id="seller" class="form-control">
+                            <select id="idVendedor" class="form-control">
                                 <?php foreach ($vendedores as $vendedor): ?>
                                     <option value="<?php echo $vendedor['ID_USUARIO']; ?>"><?php echo utf8_encode($vendedor['NOMBRE'] . " " . $vendedor['APELLIDO']); ?></option>
                                 <?php endforeach; ?>
@@ -192,6 +192,7 @@ if (!isset($_SESSION)) {
         var razonSocial = $("#razonSocial").val();
         var tasa = $("#tasa").val();
         var primaMin = $("#primaMin").val();
+        var idVendedor = $("#idVendedor").val(); //console.debug(idVendedor);
 
         var identificador = $("#identificador").val(); //console.debug(nombre);
         var nombreUsuario = $("#nombreUsuario").val(); //console.debug(nombreUsuario);
@@ -208,7 +209,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { nombre: nombre, rut:rut, direccion: direccion, ciudad: ciudad, telefono: telefono, giro: giro, razonSocial: razonSocial, tasa: tasa, primaMin: primaMin },
+                data: { nombre: nombre, rut:rut, direccion: direccion, ciudad: ciudad, telefono: telefono, giro: giro, razonSocial: razonSocial, tasa: tasa, primaMin: primaMin, idVendedor: idVendedor  },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newInsuranceBrokerBtn').html("Cargando...");

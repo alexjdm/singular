@@ -24,7 +24,16 @@ class InsuranceBrokerController {
     public function index() {
         $currentUser = getCurrentUser();
         $idCorredora = $currentUser['idCorredora'];
-        $corredoras = $this->model->getClients($idCorredora);
+        $corredoras2 = $this->model->getClients($idCorredora);
+
+        $corredoras = array();
+        foreach ($corredoras2 as $corredora)
+        {
+            $vendedor = $this->modelU->getUser($corredora['ID_USUARIO_VENDEDOR']);
+            $corredora['VENDEDOR'] = $vendedor['NOMBRE']. " " . $vendedor['APELLIDO'];
+            array_push($corredoras, $corredora);
+        }
+
         require_once('views/insurancebroker/index.php');
     }
 
@@ -52,10 +61,11 @@ class InsuranceBrokerController {
         $razonSocial = isset($_GET['razonSocial']) ? $_GET['razonSocial'] : null;
         $tasa = isset($_GET['tasa']) ? $_GET['tasa'] : null;
         $primaMin = isset($_GET['primaMin']) ? $_GET['primaMin'] : null;
+        $idVendedor = isset($_GET['idVendedor']) ? $_GET['idVendedor'] : null;
 
         $insuranceBrokerBusiness = new InsuranceBroker();
 
-        return $insuranceBrokerBusiness ->save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin);
+        return $insuranceBrokerBusiness ->save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor);
 
         //return $this->model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin);
     }

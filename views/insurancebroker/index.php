@@ -44,6 +44,7 @@ $isSuperAdmin = isSuperAdmin();
                     <th>Razón Social</th>
                     <th>Tasa</th>
                     <th>Prima Mín.</th>
+                    <th>Vendedor</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -59,6 +60,7 @@ $isSuperAdmin = isSuperAdmin();
                     <th>Razón Social</th>
                     <th>Tasa</th>
                     <th>Prima Mín.</th>
+                    <th>Vendedor</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -76,6 +78,8 @@ $isSuperAdmin = isSuperAdmin();
                         <td><?php echo $corredora['RAZON_SOCIAL'] ?></td>
                         <td><?php echo $corredora['TASA'] ?></td>
                         <td><?php echo $corredora['PRIMA_MIN'] ?></td>
+                        <td><?php echo $corredora['VENDEDOR'] ?></td>
+
                         <td>
                             <button title="Usuarios" class="btn btn-xs btn-default viewUser">
                                 <i class="fa fa-user"></i>
