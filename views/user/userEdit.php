@@ -13,9 +13,9 @@
         <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
             <input id="idUsuario" value="<?php echo $usuario['ID_USUARIO'] ?>" type="hidden">
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="rut">Rut</label>
+                    <label class="col-sm-3 control-label" for="identificador">RUT</label>
                 <div class="col-sm-9">
-                    <input class="form-control" id="rut" type="text" value="<?php echo $usuario['IDENTIFICADOR'] ?>">
+                    <input class="form-control" id="identificador" type="text" value="<?php echo $usuario['IDENTIFICADOR'] ?>">
                 </div>
             </div>
             <div class="form-group">
@@ -42,6 +42,16 @@
                     <select id="idCargo" class="form-control">
                         <?php foreach ($cargos as $cargo): ?>
                             <option value="<?php echo $cargo['ID_CARGO']; ?>" <?php if($cargo['ID_CARGO'] == $usuario['ID_CARGO']) { echo "selected"; } ?>><?php echo utf8_encode($cargo['NOMBRE']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="idPerfil">Perfil</label>
+                <div class="col-sm-9">
+                    <select id="idPerfil" class="form-control">
+                        <?php foreach ($perfiles as $perfil): ?>
+                            <option value="<?php echo $perfil['ID_PERFIL']; ?>" <?php if($perfil['ID_PERFIL'] == $usuario['ID_PERFIL']) { echo "selected"; } ?>><?php echo utf8_encode($perfil['NOMBRE_PERFIL']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -90,16 +100,17 @@
         var e = 'ajax.php?controller=User&action=userEdit2db';
         var idUsuario = $("#idUsuario").val();
         var nombre = $("#nombre").val();
-        var rut = $("#rut").val();
+        var identificador = $("#identificador").val();
         var apellido = $("#apellido").val();
         var correo = $("#correo").val();
         var idCargo = $("#idCargo").val();
+        var idPerfil = $("#idPerfil").val();
         var idCorredora = $("#idCorredora").val();
 
         $.ajax({
             type: 'GET',
             url: e,
-            data: { idUsuario: idUsuario, rut: rut, nombre: nombre, apellido:apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
+            data: { idUsuario: idUsuario, identificador: identificador, nombre: nombre, apellido:apellido, correo: correo, idCargo: idCargo, idPerfil: idPerfil, idCorredora: idCorredora },
             dataType : "json",
             beforeSend: function () {
                 $('#saveUserEdit').html("Cargando...");
@@ -108,7 +119,7 @@
                 console.debug("success");
                 console.debug(data);
                 //var returnedData = JSON.parse(data); console.debug(returnedData);
-                if(data.status == "success"){
+                if(data.status === "success"){
                     console.debug("success");
                     $('#messageEditUser').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                     $('#saveUserEdit').html('<i class="fa fa-check" aria-hidden="true"></i> Listo');

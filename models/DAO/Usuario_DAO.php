@@ -133,7 +133,7 @@ class Usuario_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function editUser($idUsuario, $rut, $nombre, $apellido, $correo, $idCargo, $habilitado){
+    public function editUser($idUsuario, $rut, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -143,11 +143,12 @@ class Usuario_DAO {
         $apellido = isset($apellido) ? $apellido : $usuario['APELLIDO'];
         $correo = isset($correo) ? $correo : $usuario['CORREO_ELECTRONICO'];
         $idCargo = isset($idCargo) ? $idCargo : $usuario['ID_CARGO'];
-        $habilitado = isset($habilitado) ? $habilitado : $usuario['HABILITADO'];
+        $idPerfil = isset($idPerfil) ? $idPerfil : $usuario['ID_PERFIL'];
+        $idCorredora = isset($idCorredora) ? $idCorredora : $usuario['ID_CORREDORA'];
 
-        $sql = $pdo->prepare("UPDATE usuario set IDENTIFICADOR =:IDENTIFICADOR, NOMBRE =:NOMBRE, APELLIDO =:APELLIDO, CORREO_ELECTRONICO =:CORREO_ELECTRONICO, ID_CARGO =:ID_CARGO, HABILITADO =:HABILITADO WHERE ID_USUARIO=:ID_USUARIO");
+        $sql = $pdo->prepare("UPDATE usuario set IDENTIFICADOR =:IDENTIFICADOR, NOMBRE =:NOMBRE, APELLIDO =:APELLIDO, CORREO_ELECTRONICO =:CORREO_ELECTRONICO, ID_CARGO =:ID_CARGO, ID_PERFIL =:ID_PERFIL, ID_CORREDORA =:ID_CORREDORA WHERE ID_USUARIO=:ID_USUARIO");
 
-        if ($sql->execute(array('IDENTIFICADOR' => $rut, 'NOMBRE' => $nombre, 'APELLIDO' => $apellido, 'CORREO_ELECTRONICO' => $correo, 'ID_CARGO' => $idCargo, 'HABILITADO' => $habilitado, 'ID_USUARIO' => $idUsuario ))) {
+        if ($sql->execute(array('IDENTIFICADOR' => $rut, 'NOMBRE' => $nombre, 'APELLIDO' => $apellido, 'CORREO_ELECTRONICO' => $correo, 'ID_CARGO' => $idCargo, 'ID_PERFIL' => $idPerfil, 'ID_CORREDORA' => $idCorredora, 'ID_USUARIO' => $idUsuario ))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }

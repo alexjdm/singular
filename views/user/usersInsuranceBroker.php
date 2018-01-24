@@ -24,6 +24,7 @@ if (!isset($_SESSION)) {
                     <th>Apellido</th>
                     <th>Correo</th>
                     <th>Cargo</th>
+                    <th>Perfil</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -35,6 +36,7 @@ if (!isset($_SESSION)) {
                     <th>Apellido</th>
                     <th>Correo</th>
                     <th>Cargo</th>
+                    <th>Perfil</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -52,6 +54,16 @@ if (!isset($_SESSION)) {
                             foreach ($cargos as $cargo):
                                 if($cargo['ID_CARGO'] == $usuario['ID_CARGO']):
                                     echo utf8_encode($cargo['NOMBRE']);
+                                    break;
+                                endif;
+                            endforeach;
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            foreach ($perfiles as $perfil):
+                                if($perfil['ID_PERFIL'] == $usuario['ID_PERFIL']):
+                                    echo utf8_encode($perfil['NOMBRE_PERFIL']);
                                     break;
                                 endif;
                             endforeach;
@@ -124,7 +136,7 @@ if (!isset($_SESSION)) {
                         },
                         success: function(data) {
 
-                            if (data.status == 'error') {
+                            if (data.status === 'error') {
                                 $("#messageUser").fadeOut( "slow", function() {
                                     $('#messageUser').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                                 });

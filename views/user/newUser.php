@@ -60,6 +60,16 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label" for="idPerfil">Perfil</label>
+                        <div class="col-sm-9">
+                            <select id="idPerfil" class="form-control">
+                                <?php foreach ($perfiles as $perfil): ?>
+                                    <option value="<?php echo $perfil['ID_PERFIL']; ?>"><?php echo utf8_encode($perfil['NOMBRE_PERFIL']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label" for="idCorredora">Corredora</label>
                         <div class="col-sm-9">
                             <select id="idCorredora" class="form-control">
@@ -97,7 +107,7 @@ if (!isset($_SESSION)) {
         var correo = $("#correo").val(); console.debug(correo);
         var idCargo = $("#idCargo").val(); console.debug(idCargo);
         var idCorredora = $("#idCorredora").val(); console.debug(idCorredora);
-        var idPerfil = 2; //2: Usuario
+        var idPerfil = $("#idPerfil").val(); console.debug(idPerfil);
 
         if(nombre === '' && identificador === '')
         {

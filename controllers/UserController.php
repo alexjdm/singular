@@ -5,6 +5,7 @@ require_once 'helpers/CommonHelper.php';
 include_once("models/DAO/Usuario_DAO.php");
 include_once("models/DAO/Cargo_DAO.php");
 include_once("models/DAO/Corredora_DAO.php");
+include_once("models/DAO/Perfil_DAO.php");
 include_once("helpers/SessionHelper.php");
 require "lib/phpmailer/class.phpmailer.php";
 
@@ -13,12 +14,14 @@ class UserController {
     public $model;
     public $modelC;
     public $modelCo;
+    public $modelP;
 
     public function __construct()
     {
         $this->model = new Usuario_DAO();
         $this->modelC = new Cargo_DAO();
         $this->modelCo = new Corredora_DAO();
+        $this->modelP = new Perfil_DAO();
     }
 
     public function index() {
@@ -269,6 +272,7 @@ class UserController {
 
     public function newUser() {
         $cargos = $this->modelC->getJobTitlesList();
+        $perfiles = $this->modelP->getPerfilesList();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)
@@ -281,7 +285,6 @@ class UserController {
             $idCorredora = $currentUser['idCorredora'];
             $corredoras = $this->modelCo->getInsuranceBroker($idCorredora);
         }
-
 
         require_once('views/user/newUser.php');
     }
@@ -302,7 +305,19 @@ class UserController {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
         $usuario = $this->model->getUser($idUsuario);
         $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
+        $perfiles = $this->modelP->getPerfilesList();
+
+        $isSuperAdmin = isSuperAdmin();
+        if($isSuperAdmin)
+        {
+            $corredoras = $this->modelCo->getInsuranceBrokersList();
+        }
+        else
+        {
+            $currentUser = getCurrentUser();
+            $idCorredora = $currentUser['idCorredora'];
+            $corredoras = $this->modelCo->getInsuranceBroker($idCorredora);
+        }
 
         require_once('views/user/userEdit.php');
     }
@@ -314,9 +329,10 @@ class UserController {
         $apellido = isset($_GET['apellido']) ? $_GET['apellido'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
-        $habilitado = isset($_GET['habilitado']) ? $_GET['habilitado'] : null;
+        $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
+        $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
 
-        return $this->model->editUser($idUsuario, $rut, $nombre, $apellido, $correo, $idCargo, $habilitado);
+        return $this->model->editUser($idUsuario, $rut, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora);
     }
 
     public function deleteUser() {
@@ -332,6 +348,7 @@ class UserController {
 
         $usuarios = $this->model->getUsersByIdInsuranceBroker($idCorredora);
         $cargos = $this->modelC->getJobTitlesList();
+        $perfiles = $this->modelP->getPerfilesList();
 
         require_once('views/user/usersInsuranceBroker.php');
     }

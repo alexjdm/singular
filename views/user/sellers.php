@@ -37,6 +37,7 @@ if (!isset($_SESSION)) {
                     <th>Apellido</th>
                     <th>Correo</th>
                     <th>Cargo</th>
+                    <th>Perfil</th>
                     <th>Corredora</th>
                     <th></th>
                 </tr>
@@ -49,6 +50,7 @@ if (!isset($_SESSION)) {
                     <th>Apellido</th>
                     <th>Correo</th>
                     <th>Cargo</th>
+                    <th>Perfil</th>
                     <th>Corredora</th>
                     <th></th>
                 </tr>
@@ -67,6 +69,16 @@ if (!isset($_SESSION)) {
                             foreach ($cargos as $cargo):
                                 if($cargo['ID_CARGO'] == $vendedor['ID_CARGO']):
                                     echo utf8_encode($cargo['NOMBRE']);
+                                    break;
+                                endif;
+                            endforeach;
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            foreach ($perfiles as $perfil):
+                                if($perfil['ID_PERFIL'] == $usuario['ID_PERFIL']):
+                                    echo utf8_encode($perfil['NOMBRE_PERFIL']);
                                     break;
                                 endif;
                             endforeach;
@@ -145,19 +157,19 @@ if (!isset($_SESSION)) {
                         },
                         success: function(data) {
 
-                            if (data.status == 'error') {
-                                $( "#messageSeller" ).fadeOut( "slow", function() {
+                            if (data.status === 'error') {
+                                $("#messageSeller").fadeOut( "slow", function() {
                                     $('#messageSeller').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                                 });
                             } else {
-                                $( "#messageSeller" ).fadeOut( "slow", function() {
+                                $("#messageSeller").fadeOut( "slow", function() {
                                     $('#messageSeller').html('<div class="alert alert-success" role="alert">' + data.message + '</div>');
                                 });
                                 window.location.href = "index.php?controller=User&action=index";
                             }
                         },
                         error: function(data) {
-                            $( "#messageSeller" ).fadeOut( "slow", function() {
+                            $("#messageSeller").fadeOut( "slow", function() {
                                 $('#messageSeller').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                             });
                         }

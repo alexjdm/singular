@@ -97,8 +97,9 @@ if (!isset($_SESSION)) {
         var correo = $("#correo").val(); console.debug(correo);
         var idCargo = $("#idCargo").val(); console.debug(idCargo);
         var idCorredora = $("#idCorredora").val(); console.debug(idCorredora);
+        var idPerfil = $("#idPerfil").val(); console.debug(idPerfil);
 
-        if(nombre == '' && rut == '')
+        if(nombre === '' && rut === '')
         {
             $('#messageNewSeller').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -107,7 +108,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { nombre: nombre, rut:rut, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
+                data: { nombre: nombre, rut:rut, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora, idPerfil: idPerfil },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newSellerBtn').html("Cargando...");
