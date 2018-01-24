@@ -97,6 +97,15 @@ if (!isset($_SESSION)) {
                 </div>
             </form>
 
+            <div id="newInsuranceBrokerSuccess" class="box-body text-center" style="display: none;">
+                <h4>Tu cliente ha sido creado!</h4>
+                <p>Ahora presiona Continuar para crear el usuario administrador del cliente creado.</p>
+                <img src="dist/img/success-400.png" width="100px">
+                <br>
+                <br>
+                <a id="continuarCrearAdmin" href="#" class="btn btn-default text-center">Continuar</a>
+            </div>
+
             <form id="newUserForm" class="form-horizontal">
                 <div class="box-body">
                     <h5>Ahora debes agregar un contacto responsable que será administrador del sistema.</h5>
@@ -141,13 +150,15 @@ if (!isset($_SESSION)) {
                 </div>
             </form>
 
+            <input type="hidden" id="idCorredoraNueva" value="">
+
         </div>
         <div class="modal-footer">
             <button id="cleanDataInsuranceBrokerBtn" class="btn btn-default pull-left" type="submit">Limpiar</button>
 
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <button id="newInsuranceBrokerBtn" class="btn btn-primary" type="submit">Siguiente</button>
-            <button id="newUserBtn" class="btn btn-primary" type="submit">Agregar</button>
+            <button id="newInsuranceBrokerBtn" class="btn btn-primary" type="submit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cargando">Guardar</button>
+            <button id="newUserBtn" class="btn btn-primary" type="submit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cargando">Agregar</button>
         </div>
     </div>
 
@@ -158,28 +169,17 @@ if (!isset($_SESSION)) {
     $('#newUserForm').hide();
     $('#newUserBtn').hide();
 
-    $('#newInsuranceBrokerBtn').click(function(){
+    $('#continuarCrearAdmin').click(function(){
 
-        var rut = $("#rut").val(); //console.debug(rut);
-        var nombre = $("#nombre").val(); //console.debug(nombre);
+        $('#newUserForm').show();
+        $('#newUserBtn').show();
 
-        if(nombre == '' || rut == '')
-        {
-            $('#messageNewInsuranceBroker').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
-        }
-        else
-        {
-            $('#newInsuranceBrokerForm').hide();
-            $('#newInsuranceBrokerBtn').hide();
-
-            $('#newUserForm').show();
-            $('#newUserBtn').show();
-        }
+        $('#newInsuranceBrokerSuccess').hide();
 
         return false;
     });
 
-    $('#newUserBtn').click(function(){
+    $('#newInsuranceBrokerBtn').click(function(){
 
         var e = 'ajax.php?controller=InsuranceBroker&action=createNewInsuranceBroker'; //console.debug(e);
 
@@ -194,16 +194,9 @@ if (!isset($_SESSION)) {
         var primaMin = $("#primaMin").val();
         var idVendedor = $("#idVendedor").val(); //console.debug(idVendedor);
 
-        var identificador = $("#identificador").val(); //console.debug(nombre);
-        var nombreUsuario = $("#nombreUsuario").val(); //console.debug(nombreUsuario);
-        var apellido = $("#apellido").val(); //console.debug(nombre);
-        var correo = $("#correo").val(); //console.debug(rut);
-        var idCargo = $("#cargo").val(); //console.debug(direccion);
-        var idPerfil = 3; //3: Administrador
-
         if(nombre === '' || rut === '' || nombreUsuario === '' || apellido === '' || correo === '')
         {
-            $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
+            $('#messageNewInsuranceBroker').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
         else
         {
@@ -213,56 +206,75 @@ if (!isset($_SESSION)) {
                 data: { nombre: nombre, rut:rut, direccion: direccion, ciudad: ciudad, telefono: telefono, giro: giro, razonSocial: razonSocial, tasa: tasa, primaMin: primaMin, idVendedor: idVendedor  },
                 dataType : "json",
                 beforeSend: function () {
-                    $('#newInsuranceBrokerBtn').html("Cargando...");
+                    $('#newInsuranceBrokerBtn').button('loading');
                 },
                 success: function (data) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    if(data.status === "success"){
+                        $('#messageNewInsuranceBroker').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
+                        $('#newInsuranceBrokerBtn').hide();
+                        $('#newInsuranceBrokerForm').hide();
+                        $('#newInsuranceBrokerSuccess').show();
+                        $('#idCorredoraNueva').val(data.id);
+                    }
+                    else{
+                        $('#messageNewInsuranceBroker').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
+                        $('#newInsuranceBrokerBtn').button('reset');
+                    }
+
+                    return false;
+                },
+                error: function (data) {
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    $('#messageNewInsuranceBroker').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
+                    $('#newInsuranceBrokerBtn').button('reset');
+                    return false;
+                }
+            });
+        }
+
+        return false;
+    });
+
+    $('#newUserBtn').click(function(){
+
+        var identificador = $("#identificador").val(); //console.debug(nombre);
+        var nombreUsuario = $("#nombreUsuario").val(); //console.debug(nombreUsuario);
+        var apellido = $("#apellido").val(); //console.debug(nombre);
+        var correo = $("#correo").val(); //console.debug(rut);
+        var idCargo = $("#cargo").val(); //console.debug(direccion);
+        var idPerfil = 3; //3: Administrador
+        var idCorredora = $("#idCorredoraNueva").val();
+
+        if(identificador === '' || nombreUsuario === '' || apellido === '' || correo === '' || idCorredora === '')
+        {
+            $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
+        }
+        else
+        {
+            // Aca creamos al usuario administrador de la empresa Corredora
+            var e = 'ajax.php?controller=User&action=createNewUser'; //console.debug(e);
+            debugger;
+            $.ajax({
+                type: 'GET',
+                url: e,
+                data: { identificador: identificador, nombre: nombreUsuario, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora, idPerfil: idPerfil },
+                dataType : "json",
+                beforeSend: function () {
+                    $('#newUserBtn').button('loading');
+                },
+                success: function (data) {
+                    console.debug(data);
+                    $('#newUserBtn').button('reset');
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
                     if(data.status == "success"){
                         $('#messageNewUser').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
-                        $('#newInsuranceBrokerBtn').html('Siguiente');
-                        //window.location.reload(true);
-
-                        // Aca creamos al usuario administrador de la empresa Corredora
-                        e = 'ajax.php?controller=User&action=createNewUser'; //console.debug(e);
-
-                        var idCorredora = data.id;
-
-                        $.ajax({
-                            type: 'GET',
-                            url: e,
-                            data: { identificador: identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora, idPerfil: idPerfil },
-                            dataType : "json",
-                            beforeSend: function () {
-                                $('#newUserBtn').html("Cargando...");
-                            },
-                            success: function (data) {
-                                console.debug(data);
-                                //var returnedData = JSON.parse(data); console.debug(returnedData);
-                                if(data.status == "success"){
-                                    $('#messageNewUser').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
-                                    $('#newUserBtn').html('Agregar');
-                                    window.location.reload(true);
-                                }
-                                else{
-                                    $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-                                    $('#newUserBtn').html("Agregar");
-                                }
-                                return false;
-                            },
-                            error: function (data) {
-                                console.debug(data);
-                                //var returnedData = JSON.parse(data); console.debug(returnedData);
-                                $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-                                $('#newUserBtn').html("Agregar");
-                                return false;
-                            }
-                        });
-
+                        window.location.reload(true);
                     }
                     else{
                         $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-                        $('#newInsuranceBrokerBtn').html("Siguiente");
                     }
                     return false;
                 },
@@ -270,10 +282,11 @@ if (!isset($_SESSION)) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
                     $('#messageNewUser').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-                    $('#newInsuranceBrokerBtn').html("Siguiente");
+                    $('#newUserBtn').button('reset');
                     return false;
                 }
             });
+
         }
 
         return false;
