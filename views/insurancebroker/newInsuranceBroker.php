@@ -199,6 +199,7 @@ if (!isset($_SESSION)) {
         var apellido = $("#apellido").val(); //console.debug(nombre);
         var correo = $("#correo").val(); //console.debug(rut);
         var idCargo = $("#cargo").val(); //console.debug(direccion);
+        var idPerfil = 3; //3: Administrador
 
         if(nombre === '' || rut === '' || nombreUsuario === '' || apellido === '' || correo === '')
         {
@@ -230,7 +231,7 @@ if (!isset($_SESSION)) {
                         $.ajax({
                             type: 'GET',
                             url: e,
-                            data: { identificador: identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
+                            data: { identificador: identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora, idPerfil: idPerfil },
                             dataType : "json",
                             beforeSend: function () {
                                 $('#newUserBtn').html("Cargando...");

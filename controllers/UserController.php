@@ -253,8 +253,7 @@ class UserController {
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
-
-        $idPerfil = 2; // Perfil Usuario ??
+        $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
 
         return $this->model->newUser($nombre, $rut, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
     }
@@ -294,8 +293,7 @@ class UserController {
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
-
-        $idPerfil = 1;
+        $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
 
         return $this->model->newUser($identificador, $nombre, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
     }

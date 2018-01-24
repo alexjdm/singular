@@ -97,6 +97,7 @@ if (!isset($_SESSION)) {
         var correo = $("#correo").val(); console.debug(correo);
         var idCargo = $("#idCargo").val(); console.debug(idCargo);
         var idCorredora = $("#idCorredora").val(); console.debug(idCorredora);
+        var idPerfil = 2; //2: Usuario
 
         if(nombre === '' && identificador === '')
         {
@@ -107,7 +108,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { identificador:identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora },
+                data: { identificador:identificador, nombre: nombre, apellido: apellido, correo: correo, idCargo: idCargo, idCorredora: idCorredora, idPerfil: idPerfil },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newUserBtn').html("Cargando...");
