@@ -22,17 +22,9 @@ class InsuranceBrokerController {
     }
 
     public function index() {
-        $currentUser = getCurrentUser();
-        $idCorredora = $currentUser['idCorredora'];
-        $corredoras2 = $this->model->getClients($idCorredora);
 
-        $corredoras = array();
-        foreach ($corredoras2 as $corredora)
-        {
-            $vendedor = $this->modelU->getUser($corredora['ID_USUARIO_VENDEDOR']);
-            $corredora['VENDEDOR'] = $vendedor['NOMBRE']. " " . $vendedor['APELLIDO'];
-            array_push($corredoras, $corredora);
-        }
+        $insuranceBrokerBusiness = new InsuranceBroker();
+        $corredoras = $insuranceBrokerBusiness->getClientsForCurrentUser();
 
         require_once('views/insurancebroker/index.php');
     }

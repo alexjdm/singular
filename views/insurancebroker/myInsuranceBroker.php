@@ -109,7 +109,7 @@ $isSuperAdmin = isSuperAdmin();
                 'ajax.php?controller=InsuranceBroker&action=newInsuranceBroker',
                 'GET',
                 {  },
-                defaultMessage);
+                defaultMessage, 'static');
             return false;
         });
 

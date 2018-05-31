@@ -6,6 +6,7 @@ include_once("models/DAO/Siniestro_DAO.php");
 include_once("models/DAO/Seguro_DAO.php");
 include_once("models/DAO/Asegurado_DAO.php");
 include_once("models/DAO/Certificado_DAO.php");
+include_once("models/DAO/Poliza_DAO.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class SinisterController {
@@ -14,6 +15,7 @@ class SinisterController {
     public $modelS;
     public $modelA;
     public $modelC;
+    public $modelP;
 
     public function __construct()
     {
@@ -21,9 +23,14 @@ class SinisterController {
         $this->modelS = new Seguro_DAO();
         $this->modelA = new Asegurado_DAO();
         $this->modelC = new Certificado_DAO();
+        $this->modelP = new Poliza_DAO();
     }
 
     public function index() {
+
+        $polizas = $this->modelP->getPoliciesList();
+        $asegurados = $this->modelA->getInsuredList();
+        $certificados = $this->modelC->getCertificatesList();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)
@@ -37,26 +44,27 @@ class SinisterController {
             $siniestros = $this->model->getSinisters($idCorredora);
         }
 
-        $seguros = $this->modelS->getInsurancesList();
-        $asegurados = $this->modelA->getInsuredList();
-        $certificados = $this->modelC->getCertificatesList();
+        //$seguros = $this->modelS->getInsurancesList();
 
         require_once('views/sinister/index.php');
     }
 
     public function newSinister() {
+        $polizas = $this->modelP->getPoliciesList();
+        $asegurados = $this->modelA->getInsuredList();
+        $certificados = $this->modelC->getCertificatesList();
+
         require_once('views/sinister/newSinister.php');
     }
 
     public function createNewSinister() {
-        $idSeguro = isset($_GET['idSeguro']) ? $_GET['idSeguro'] : null;
+        $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $motivo = isset($_GET['motivo']) ? $_GET['motivo'] : null;
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
-        $cargo = isset($_GET['cargo']) ? $_GET['cargo'] : null;
         $telefono = isset($_GET['telefono']) ? $_GET['telefono'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
 
-        return $this->model->newSinister($idSeguro, $motivo, $nombre, $cargo, $telefono, $correo);
+        return $this->model->newSinister($idCertificado, $motivo, $nombre, $telefono, $correo);
     }
 
     public function sinisterEdit() {

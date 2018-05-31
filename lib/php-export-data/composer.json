@@ -1,0 +1,13 @@
+{
+    "name": "soulvagrant/php-export-data",
+    "description": "PHP class to export data in CSV, TSV, or Excel XML (aka SpreadsheeML) format to a file or directly to the browser",
+    "type": "class",
+    "authors": [
+        {
+            "name": "Christian Llontop",
+            "email": "cllontop@serprostudio.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}

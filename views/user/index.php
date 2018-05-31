@@ -38,7 +38,7 @@ if (!isset($_SESSION)) {
                     <th>Correo</th>
                     <th>Cargo</th>
                     <th>Perfil</th>
-                    <th>Corredora</th>
+                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -51,7 +51,7 @@ if (!isset($_SESSION)) {
                     <th>Correo</th>
                     <th>Cargo</th>
                     <th>Perfil</th>
-                    <th>Corredora</th>
+                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -118,7 +118,7 @@ if (!isset($_SESSION)) {
 <script>
     $(function() {
 
-        var table = $('#listaUsuarios').DataTable();
+        var table = $('#tablaUsuarios').DataTable();
 
         $("#newUser").click(function() {
             ajax_loadModal($('#modalPrincipal'),

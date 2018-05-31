@@ -11,7 +11,8 @@ include_once("models/DAO/MateriaAsegurada_DAO.php");
 include_once("models/DAO/Embalaje_DAO.php");
 include_once("models/DAO/Poliza_DAO.php");
 include_once("models/DAO/Usuario_DAO.php");
-
+include_once("models/DAO/Corredora_DAO.php");
+include_once ("helpers/SessionHelper.php");
 include_once("businesslogic/Notification.php");
 include_once("businesslogic/Certificate.php");
 
@@ -25,6 +26,7 @@ class CertificateController {
     public $modelMA;
     public $modelE;
     public $modelU;
+    public $modelC;
 
     public function __construct()
     {
@@ -36,6 +38,7 @@ class CertificateController {
         $this->modelMA = new MateriaAsegurada_DAO();
         $this->modelE = new Embalaje_DAO();
         $this->modelU = new Usuario_DAO();
+        $this->modelC = new Corredora_DAO();
     }
 
     public function index() {
@@ -87,7 +90,7 @@ class CertificateController {
                 //$randomNumber = rand();
 
                 $sourcePath = $_FILES['certificado']['tmp_name'];
-                $targetPath = "upload/" . $numeroPoliza . '_' . $numeroCertificado . '_' . $_FILES['certificado']['name'];
+                $targetPath = "upload/" . $numeroPoliza . '-' . $numeroCertificado . '-' . $_FILES['certificado']['name'];
 
                 $ubicacion = $targetPath;
                 $formato = pathinfo($targetPath, PATHINFO_EXTENSION);
@@ -245,6 +248,8 @@ class CertificateController {
         $polizas = $this->modelP->getPoliciesList();
         $materiasAseguradas = $this->modelMA->getInsuredMattersList();
         $embalajes = $this->modelE->getPackingsList();
+        $currentCorredora = getCurrentInsuranceBroker();
+        $corredora = $this->modelC->getInsuranceBroker($currentCorredora['id']);
 
         require_once('views/certificate/newCertificateRequest.php');
     }

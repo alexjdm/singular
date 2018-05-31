@@ -161,7 +161,12 @@ if (!isset($_SESSION)) {
 <script>
     $(function() {
 
-        var table = $('#tablaAsegurados').DataTable();
+        var table = $('#tablaAsegurados').DataTable({
+            scrollX: true,
+            "columnDefs": [
+                { "width": "7%", "targets": 8 }
+            ]
+        });
 
         $("#newInsured").click(function() {
             ajax_loadModal($('#modalPrincipal'),

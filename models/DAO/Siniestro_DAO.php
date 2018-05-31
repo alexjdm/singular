@@ -59,21 +59,21 @@ class Siniestro_DAO {
         return $siniestros;
     }
 
-    public function newSinister($idSeguro, $motivo, $nombre, $cargo, $telefono, $correo){
+    public function newSinister($idCertificado, $motivo, $nombre, $telefono, $correo){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM siniestro WHERE ID_SEGURO =:ID_SEGURO");
-        $sql->execute(array('ID_SEGURO' => $idSeguro));
+        $sql = $pdo->prepare("SELECT * FROM siniestro WHERE ID_CERTIFICADO =:ID_CERTIFICADO");
+        $sql->execute(array('ID_CERTIFICADO' => $idCertificado));
         $resultado = $sql->fetch();
 
         if ($resultado == null) {
 
-            $sql = $pdo->prepare("INSERT INTO `siniestro`(`ID_SEGURO`, `MOTIVO`, `NOMBRE`, `SINIESTRO`, `TELEFONO`, `CORREO`, `HABILITADO`) VALUES (:ID_SEGURO, :MOTIVO, :NOMBRE, :SINIESTRO, :TELEFONO, :CORREO, 1)");
-            $sql->execute(array('ID_SEGURO' => $idSeguro, 'MOTIVO' => $motivo, 'NOMBRE' => $nombre, 'SINIESTRO' => $cargo, 'TELEFONO' => $telefono, 'CORREO' => $correo));
+            $sql = $pdo->prepare("INSERT INTO `siniestro`(`ID_CERTIFICADO`, `MOTIVO`, `NOMBRE`, `TELEFONO`, `CORREO`, `HABILITADO`) VALUES (:ID_CERTIFICADO, :MOTIVO, :NOMBRE, :TELEFONO, :CORREO, 1)");
+            $sql->execute(array('ID_CERTIFICADO' => $idCertificado, 'MOTIVO' => $motivo, 'NOMBRE' => $nombre, 'TELEFONO' => $telefono, 'CORREO' => $correo));
             $id = $pdo->lastInsertId();
 
             if(!empty($id)) {
@@ -84,7 +84,6 @@ class Siniestro_DAO {
                 $status  = "error";
                 $message = "Error con la base de datos, por favor intente nuevamente.";
             }
-
         }
         else{
             $status  = "error";
@@ -111,14 +110,13 @@ class Siniestro_DAO {
         return $sql->fetchAll()[0];
     }
 
-    //TODO: Aun falta
-    public function editSinister($idSiniestro, $idSeguro, $motivo, $nombre, $cargo, $telefono, $correo){
+    public function editSinister($idSiniestro, $idCertificado, $motivo, $nombre, $telefono, $correo){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE siniestro set NOMBRE =:NOMBRE WHERE ID_SINIESTRO=:ID_SINIESTRO");
+        $sql = $pdo->prepare("UPDATE siniestro set ID_CERTIFICADO =:ID_CERTIFICADO, MOTIVO =:MOTIVO, NOMBRE =:NOMBRE, TELEFONO =:TELEFONO, CORREO =:CORREO WHERE ID_SINIESTRO=:ID_SINIESTRO");
 
-        if ($sql->execute(array('NOMBRE' => $nombre, 'ID_SINIESTRO' => $idSiniestro ))) {
+        if ($sql->execute(array('ID_CERTIFICADO' => $idCertificado, 'MOTIVO' => $motivo, 'NOMBRE' => $nombre, 'TELEFONO' => $telefono, 'CORREO' => $correo, 'ID_SINIESTRO' => $idSiniestro ))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }

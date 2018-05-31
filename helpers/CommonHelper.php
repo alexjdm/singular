@@ -93,6 +93,19 @@ function String2DB($string){
     return str_replace("'", "''", $string);
 }
 
+function FormatearRut($identificador)
+{
+    $identificador = str_replace(".", "", $identificador); // Se quitan puntos
+    $pos = strpos($identificador, '-');
+    $cuenta = strlen($identificador);
+    if($pos == false)
+    {
+        $identificador = substr($identificador, 0, $cuenta - 1) . "-" . substr($identificador, $cuenta - 1);
+    }
+
+    return $identificador;
+}
+
 function paginate_function($item_per_page, $current_page, $total_records, $total_pages)
 {
     $pagination = '';

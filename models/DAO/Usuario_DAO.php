@@ -16,7 +16,9 @@ class Usuario_DAO {
         $sql = $pdo->prepare("SELECT * FROM usuario WHERE CORREO_ELECTRONICO=:CORREO_ELECTRONICO AND CLAVE_USUARIO=:CLAVE_USUARIO AND HABILITADO=:HABILITADO");
         $sql->execute(array('CORREO_ELECTRONICO' => $correo, 'CLAVE_USUARIO' => $password, 'HABILITADO' => 1));
 
-        return $sql->fetchAll()[0];
+        $resultado = $sql->fetchAll();
+
+        return count($resultado) > 0 ? $resultado[0] : null;
     }
 
     public function validateEmail($correo)
@@ -27,7 +29,9 @@ class Usuario_DAO {
         $sql = $pdo->prepare("SELECT * FROM usuario WHERE CORREO_ELECTRONICO=:CORREO_ELECTRONICO AND HABILITADO=:HABILITADO");
         $sql->execute(array('CORREO_ELECTRONICO' => $correo, 'HABILITADO' => 1));
 
-        return $sql->fetchAll()[0];
+        $resultado = $sql->fetchAll();
+
+        return count($resultado) > 0 ? $resultado[0] : null;
     }
 
     public function getUsersList(){
@@ -67,11 +71,38 @@ class Usuario_DAO {
         return $usuarios;
     }
 
+    public function getUsersFromInsuredBroker($idCorredora){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT ID_USUARIO FROM usuario WHERE ID_CORREDORA = :ID_CORREDORA");
+        $sql->execute(array('ID_CORREDORA' => $idCorredora));
+
+        $idUsuarios = $sql->fetchAll();
+        $usuarios = array();
+        if($idUsuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($idUsuarios as $idUsuario) {
+                array_push($arrayIds, $idUsuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM usuario WHERE ID_USUARIO in ('$ids') AND HABILITADO=1");
+            $sql->execute(array());
+
+            $usuarios = $sql->fetchAll();
+        }
+
+        return $usuarios;
+    }
+
     public function getSellersList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM usuario WHERE ID_PERFIL = 1 AND HABILITADO=1");
+        $sql = $pdo->prepare("SELECT * FROM usuario WHERE (ID_PERFIL = 1 or ID_PERFIL = 3) AND HABILITADO=1 ORDER BY NOMBRE ASC");
         $sql->execute();
 
         return $sql->fetchAll();
@@ -81,7 +112,7 @@ class Usuario_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM usuario WHERE ID_PERFIL = 1 AND HABILITADO=1 AND ID_CORREDORA = :ID_CORREDORA");
+        $sql = $pdo->prepare("SELECT * FROM usuario WHERE (ID_PERFIL = 1 or ID_PERFIL = 3) AND HABILITADO=1 AND ID_CORREDORA = :ID_CORREDORA");
         $sql->execute(array('ID_CORREDORA' => $idCorredora));
 
         return $sql->fetchAll();

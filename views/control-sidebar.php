@@ -26,7 +26,7 @@
                         <i class="menu-icon fa fa-building-o bg-yellow"></i>
 
                         <div class="menu-info">
-                            <h4 class="control-sidebar-subheading">Corredora</h4>
+                            <h4 class="control-sidebar-subheading">Empresa</h4>
 
                             <p>Editar</p>
                         </div>

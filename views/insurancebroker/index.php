@@ -26,7 +26,8 @@ $isSuperAdmin = isSuperAdmin();
 
     <div class="box">
         <div class="box-header">
-            <h3 class="box-title">Lista de Clientes</h3>
+            <h3 class="box-title">Lista de Clientes</h3> &nbsp; &nbsp;
+            <button id="exportInsuranceBroker" class="btn btn-default"> <i class="fa fa-file-excel"></i> Exportar</button>
             <button id="newInsuranceBroker" class="btn btn-primary" style="float: right;">Agregar</button>
         </div>
 
@@ -117,8 +118,31 @@ $isSuperAdmin = isSuperAdmin();
                 'ajax.php?controller=InsuranceBroker&action=newInsuranceBroker',
                 'GET',
                 {  },
-                defaultMessage);
+                defaultMessage, 'static');
             return false;
+        });
+
+        $("#exportInsuranceBroker").click(function() {
+
+            $.ajax({
+                type: 'GET',
+                url: 'ajax.php?controller=Export&action=ExportUsers',
+                data: {  },
+                dataType : "json",
+                beforeSend: function() {
+                    console.log("before");
+                },
+                success: function(data) {
+                    console.log("success");
+                    console.log(data);
+                    //window.open('http://YOUR_URL','_blank' );
+                    document.location.href =(data.url);
+                },
+                error: function(data) {
+                    console.log("error");
+                }
+            });
+
         });
 
         $("#tablaCorredoras").on("click", ".viewUser", (function() {

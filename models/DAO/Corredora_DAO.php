@@ -12,7 +12,7 @@ class Corredora_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM corredora WHERE HABILITADO='1'");
+        $sql = $pdo->prepare("SELECT * FROM corredora WHERE HABILITADO='1' ORDER BY NOMBRE ASC");
         $sql->execute();
 
         return $sql->fetchAll();
@@ -29,7 +29,19 @@ class Corredora_DAO {
         $clientes = array();
         if($idClientes != null)
         {
-            foreach ($idClientes as $idCliente)
+            $ids = '';
+            $arrayIds = array();
+            foreach ($idClientes as $idCliente) {
+                array_push($arrayIds, $idCliente['ID_CLIENTE']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM corredora WHERE ID_CORREDORA in ('$ids') AND HABILITADO=1 ORDER BY NOMBRE ASC");
+            $sql->execute(array());
+
+            $clientes = $sql->fetchAll();
+
+            /*foreach ($idClientes as $idCliente)
             {
                 $sql = $pdo->prepare("SELECT * FROM corredora WHERE ID_CORREDORA = :ID_CORREDORA AND HABILITADO=1");
                 $sql->execute(array('ID_CORREDORA' => $idCliente['ID_CLIENTE']));
@@ -42,7 +54,7 @@ class Corredora_DAO {
                         array_push($clientes, $cliente1);
                     }
                 }
-            }
+            }*/
         }
 
         return $clientes;
@@ -115,7 +127,7 @@ class Corredora_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM corredora WHERE RUT =:RUT");
+        $sql = $pdo->prepare("SELECT * FROM corredora WHERE RUT =:RUT AND HABILITADO = 1");
         $sql->execute(array('RUT' => $rut));
         $resultado = $sql->fetch();
 

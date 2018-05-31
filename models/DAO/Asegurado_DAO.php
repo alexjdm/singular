@@ -12,7 +12,7 @@ class Asegurado_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM asegurado WHERE HABILITADO='1'");
+        $sql = $pdo->prepare("SELECT * FROM asegurado WHERE HABILITADO='1' ORDER BY NOMBRE ASC");
         $sql->execute();
 
         return $sql->fetchAll();
@@ -51,17 +51,10 @@ class Asegurado_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM asegurado WHERE HABILITADO = 1");
+        $sql = $pdo->prepare("SELECT * FROM asegurado WHERE ID_USUARIO_CREADOR IN ('$idsUsuariosCorredora') AND HABILITADO = 1");
         $sql->execute();
 
-        $asegurados = $sql->fetchAll();
-        $aseguradosCorredora = array();
-        foreach ($asegurados as $asegurado)
-        {
-            foreach ($idsUsuariosCorredora as $id)
-                if($asegurado['ID_USUARIO_CREADOR'] == $id['ID_USUARIO'])
-                    array_push($aseguradosCorredora, $asegurado);
-        }
+        $aseguradosCorredora = $sql->fetchAll();
 
         return $aseguradosCorredora;
     }

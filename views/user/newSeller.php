@@ -60,7 +60,7 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="idCorredora">Corredora</label>
+                        <label class="col-sm-3 control-label" for="idCorredora">Cliente</label>
                         <div class="col-sm-9">
                             <select id="idCorredora" class="form-control">
                                 <?php foreach ($corredoras as $corredora): ?>

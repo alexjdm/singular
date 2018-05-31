@@ -50,6 +50,7 @@ if (!isset($_SESSION)) {
                         <th><?php echo $n ?></th>
                         <td><?php echo $cargo['NOMBRE'] ?></td>
                         <td>
+                            <?php if($cargo['BASE'] == 0 && !isSuperAdmin()): ?>
                             <button data-original-title="Editar" class="btn btn-xs btn-default editJobTitle">
                                 <i class="fa fa-pencil"></i>
                             </button>
@@ -57,6 +58,7 @@ if (!isset($_SESSION)) {
                             <button data-original-title="Eliminar" class="btn btn-xs btn-default deleteJobTitle">
                                 <i class="fa fa-times"></i>
                             </button>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php $n++; ?>

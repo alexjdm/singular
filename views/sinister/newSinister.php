@@ -22,6 +22,11 @@ if (!isset($_SESSION)) {
             <h4 class="modal-title">Nuevo Siniestro</h4>
         </div>
         <div class="modal-body">
+
+            <div id="sinData" style="display: none;">
+                <h4 class="text-center">No hay polizas en el sistema</h4>
+            </div>
+
             <!-- form start -->
             <form id="newSinisterForm" class="form-horizontal">
                 <div class="box-body">
@@ -29,16 +34,50 @@ if (!isset($_SESSION)) {
                         <label class="col-sm-2 control-label" for="poliza">Poliza *</label>
                         <div class="col-sm-10">
                             <select id="poliza" class="form-control">
-                                <?php foreach ($seguros as $seguro): ?>
-                                    <option value="<?php echo $seguro['ID_SEGURO']; ?>"><?php echo utf8_encode($seguro['POLIZA']); ?></option>
+                                <?php foreach ($polizas as $poliza): ?>
+                                    <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")"); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="certificado">Certificado</label>
+                        <label class="col-sm-2 control-label" for="certificado">Certificado *</label>
                         <div class="col-sm-10">
-                            <input class="form-control" id="certificado" type="text" placeholder="Certificado" readonly>
+                            <select id="certificado" class="form-control">
+                                <?php foreach ($certificados as $certificado): ?>
+                                    <option data-idPoliza="<?php echo $certificado['ID_POLIZA']; ?>" value="<?php echo $certificado['ID_CERTIFICADO']; ?>"><p><?php echo "N° " . $certificado['NUMERO'] . " de " . $certificado['ORIGEN'] . " a " . $certificado['DESTINO'] . " el " . FormatearFechaSpa($certificado['FECHA_EMBARQUE']) ?></p></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="motivoSiniestro">Motivo *</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="motivoSiniestro" type="text" placeholder="Explique el motivo de la solicitud">
+                        </div>
+                    </div>
+
+                    <h5>Datos de contacto</h5>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="nombreContacto">Nombre *</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="nombreContacto" type="text" placeholder="Escriba su nombre y apellido">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="telefonoContacto">Teléfono *</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="telefonoContacto" type="text" placeholder="Escriba su teléfono donde contactarlo">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="correoContacto">Email *</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="correoContacto" type="text" placeholder="Escriba su correo electrónico">
                         </div>
                     </div>
 
@@ -60,12 +99,35 @@ if (!isset($_SESSION)) {
 
 <script type="application/javascript">
 
+    <?php if(count($polizas) == 0): ?>
+    $('#newSinisterForm').hide();
+    $('#newSinisterBtn').hide();
+    $('#cleanDataSinisterBtn').hide();
+    $('#sinData').show();
+    <?php endif; ?>
+
+    var certificados = $("#certificado").html();
+
+    $('#poliza').change(function () {
+
+        var idPoliza = $("#poliza :selected").val();
+        $("#certificado").html(certificados);
+        $('#certificado :not([data-idPoliza^="' + idPoliza + '"])').remove();
+
+    });
+    $('#poliza').trigger("change");
+
     $('#newSinisterBtn').click(function(){
         var e = 'ajax.php?controller=Sinister&action=createNewSinister'; console.debug(e);
 
-        var nombre = $("#nombre").val(); console.debug(nombre);
+        var idPoliza = $("#poliza").val(); //console.debug(poliza);
+        var idCertificado = $("#certificado").val(); //console.debug(idCertificado);
+        var motivoSiniestro = $("#motivoSiniestro").val();
+        var nombreContacto = $("#nombreContacto").val();
+        var telefonoContacto = $("#telefonoContacto").val();
+        var correoContacto = $("#correoContacto").val();
 
-        if(nombre == '')
+        if(idPoliza === '' || idCertificado === '' || nombreContacto === '' || telefonoContacto === '' || correoContacto === '')
         {
             $('#messageNewSinister').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -74,7 +136,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { nombre: nombre },
+                data: { idCertificado: idCertificado, motivo: motivoSiniestro, nombre: nombreContacto, telefono: telefonoContacto, correo: correoContacto },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newSinisterBtn').html("Cargando...");

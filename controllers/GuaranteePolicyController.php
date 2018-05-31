@@ -32,6 +32,8 @@ class GuaranteePolicyController {
         $corredoras = $this->modelC->getInsuranceBrokersList();
 
         $asegurados = $this->modelA->getInsuredList();
+
+        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
         $embalajes = $this->modelE->getPackingsList();
 
         require_once('views/guaranteepolicy/index.php');
@@ -51,19 +53,20 @@ class GuaranteePolicyController {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
-        $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
+        $idEmbalaje = isset($_GET['idEmbalaje']) ? $_GET['idEmbalaje'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
         $fechaInicio = isset($_GET['fechaInicio']) ? $_GET['fechaInicio'] : null;
+        $fechaInicio = date("Y-m-d", strtotime($fechaInicio));
         $plazo = isset($_GET['plazo']) ? $_GET['plazo'] : null;
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
 
-        return $this->model->newGuaranteePolicy($idAsegurado, $idTipoMercaderia, $idCorredora, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        return $this->model->newGuaranteePolicy($idAsegurado, $idTipoMercaderia, $idCorredora, $idEmbalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
     }
 
-    public function guranteePolicyEdit() {
+    public function guaranteePolicyEdit() {
         $idGarantia = isset($_GET['idGarantia']) ? $_GET['idGarantia'] : null;
-        $poliza = $this->model->getGuaranteePolicy($idGarantia);
+        $solicitudGarantia = $this->model->getGuaranteePolicy($idGarantia);
 
         $asegurados = $this->modelA->getInsuredList();
         $corredoras = $this->modelC->getInsuranceBrokersList();
@@ -79,14 +82,15 @@ class GuaranteePolicyController {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
-        $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
+        $idEmbalaje = isset($_GET['idEmbalaje']) ? $_GET['idEmbalaje'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
         $fechaInicio = isset($_GET['fechaInicio']) ? $_GET['fechaInicio'] : null;
+        $fechaInicio = date("Y-m-d", strtotime($fechaInicio));
         $plazo = isset($_GET['plazo']) ? $_GET['plazo'] : null;
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
 
-        return $this->model->editGuaranteePolicy($idGarantia, $idAsegurado, $idTipoMercaderia, $idCorredora, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        return $this->model->editGuaranteePolicy($idGarantia, $idAsegurado, $idTipoMercaderia, $idCorredora, $idEmbalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
     }
 
     public function deleteGuaranteePolicy() {

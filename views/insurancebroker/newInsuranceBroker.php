@@ -19,12 +19,12 @@ if (!isset($_SESSION)) {
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Nuevo Corredora</h4>
+            <h4 class="modal-title">Nuevo Cliente</h4>
         </div>
         <div class="modal-body">
             <!-- form start -->
             <form id="newInsuranceBrokerForm" class="form-horizontal">
-                <h5>Ingresa los datos de tu corredora.</h5>
+                <h5>Ingresa los datos de tu cliente.</h5>
                 <div class="box-body">
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="rut">Rut *</label>
@@ -254,7 +254,7 @@ if (!isset($_SESSION)) {
         }
         else
         {
-            // Aca creamos al usuario administrador de la empresa Corredora
+            // Aca creamos al usuario administrador del Cliente
             var e = 'ajax.php?controller=User&action=createNewUser'; //console.debug(e);
             debugger;
             $.ajax({

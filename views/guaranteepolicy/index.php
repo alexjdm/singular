@@ -41,8 +41,8 @@ if (!isset($_SESSION)) {
                     <th>Plazo</th>
                     <th>Monto CIF</th>
                     <th>Derechos + IVA</th>
-                    <th>RUT Corredora</th>
-                    <th>Corredora</th>
+                    <th>RUT Cliente</th>
+                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -58,8 +58,8 @@ if (!isset($_SESSION)) {
                     <th>Plazo</th>
                     <th>Monto CIF</th>
                     <th>Derechos + IVA</th>
-                    <th>RUT Corredora</th>
-                    <th>Corredora</th>
+                    <th>RUT Cliente</th>
+                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -87,7 +87,16 @@ if (!isset($_SESSION)) {
                             endforeach;
                             ?>
                         </td>
-                        <td><?php echo $garantia['EMBALAJE'] ?></td>
+                        <td>
+                            <?php
+                            foreach ($embalajes as $embalaje):
+                                if($embalaje['ID_EMBALAJE'] == $garantia['ID_EMBALAJE']):
+                                    echo utf8_encode($embalaje['EMBALAJE']);
+                                    break;
+                                endif;
+                            endforeach;
+                            ?>
+                        </td>
                         <td><?php echo $garantia['DIRECCION'] ?></td>
                         <td><?php echo $garantia['FECHA_INICIO'] ?></td>
                         <td><?php echo $garantia['PLAZO'] ?></td>
@@ -126,7 +135,9 @@ if (!isset($_SESSION)) {
 <script>
     $(function() {
 
-        var table = $('#tablaGuaranteePolicies').DataTable();
+        var table = $('#tablaGuaranteePolicies').DataTable({
+            "scrollX": true
+        });
 
         $("#newGuaranteePolicy").click(function() {
             ajax_loadModal($('#modalPrincipal'),
@@ -142,7 +153,7 @@ if (!isset($_SESSION)) {
             ajax_loadModal($('#modalPrincipal'),
                 'ajax.php?controller=GuaranteePolicy&action=guaranteePolicyEdit',
                 'GET',
-                { idGuaranteePolicy: id },
+                { idGarantia: id },
                 defaultMessage);
             return false;
         }));
@@ -165,7 +176,7 @@ if (!isset($_SESSION)) {
                         },
                         success: function(data) {
 
-                            if (data.status == 'error') {
+                            if (data.status === 'error') {
                                 $("#messageGuaranteePolicy").fadeOut( "slow", function() {
                                     $('#messageGuaranteePolicy').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                                 });

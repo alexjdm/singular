@@ -49,7 +49,7 @@ if (!isset($_SESSION)) {
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="corredora">Corredora *</label>
+                        <label class="col-sm-3 control-label" for="corredora">Cliente *</label>
                         <div class="col-sm-9">
                             <select id="corredora" class="form-control">
                                 <?php foreach ($corredoras as $corredora): ?>
@@ -60,9 +60,9 @@ if (!isset($_SESSION)) {
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="embalaje">Embalaje *</label>
+                        <label class="col-sm-3 control-label" for="idEmbalaje">Embalaje *</label>
                         <div class="col-sm-9">
-                            <select id="embalaje" class="form-control">
+                            <select id="idEmbalaje" class="form-control">
                                 <?php foreach ($embalajes as $embalaje): ?>
                                     <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                                 <?php endforeach; ?>
@@ -87,7 +87,7 @@ if (!isset($_SESSION)) {
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="plazo">Plazo *</label>
                         <div class="col-sm-9">
-                            <input class="form-control" id="plazo" type="text" placeholder="Plazo">
+                            <input class="form-control" id="plazo" type="text" placeholder="Ingrese el plazo en días">
                         </div>
                     </div>
 
@@ -101,7 +101,7 @@ if (!isset($_SESSION)) {
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="derechos">Derechos *</label>
                         <div class="col-sm-9">
-                            <input class="form-control" id="derechos" type="text" placeholder="Derechos">
+                            <input class="form-control" id="derechos" type="text" placeholder="Derechos" readonly>
                         </div>
                     </div>
                     
@@ -122,6 +122,11 @@ if (!isset($_SESSION)) {
 </div>
 
 <script type="application/javascript">
+
+    $("#montoCIF").keyup(function () {
+        var monto = $("#montoCIF").val();
+        $("#derechos").val(Math.round((1.06*1.19 - 1)*monto));
+    });
 
     $("#fechaInicio").val(moment().format('DD-MM-YYYY'));
 
@@ -147,15 +152,15 @@ if (!isset($_SESSION)) {
         var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
         var idTipoMercaderia = $("#tipoMercaderia").val(); //console.debug(idTipoMercaderia);
         var idCorredora = $("#corredora").val();
-        var embalaje = $("#embalaje").val();
+        var idEmbalaje = $("#idEmbalaje").val();
         var direccion = $("#direccion").val();
         var fechaInicio = $("#fechaInicio").val();
         var plazo = $("#plazo").val();
         var montoCIF = $("#montoCIF").val();
         var derechos = $("#derechos").val();
 
-        if(idAsegurado == '' || idTipoMercaderia == '' || idCorredora == '' || embalaje == '' || direccion == ''
-        || fechaInicio == '' || plazo == '' || montoCIF == '' || derechos == '')
+        if(idAsegurado === '' || idTipoMercaderia === '' || idCorredora === '' || idEmbalaje === '' || direccion === ''
+        || fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
         {
             $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -164,7 +169,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { idAsegurado: idAsegurado, idTipoMercaderia: idTipoMercaderia, idCorredora: idCorredora, embalaje: embalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
+                data: { idAsegurado: idAsegurado, idTipoMercaderia: idTipoMercaderia, idCorredora: idCorredora, idEmbalaje: idEmbalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newGuaranteePolicyBtn').html("Cargando...");

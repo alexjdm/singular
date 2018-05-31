@@ -6,8 +6,10 @@
  * Time: 0:30
  */
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_NOTICE);
 ini_set('display_errors', 1);
+ini_set('memory_limit', '-1');
 
 require_once 'helpers/SessionHelper.php';
 

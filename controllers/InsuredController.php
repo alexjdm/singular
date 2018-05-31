@@ -32,7 +32,6 @@ class InsuredController {
 
         //$usuario = getCurrentUser();
         $corredora = getCurrentInsuranceBroker();
-        $idsUsuariosCorredora = $this -> modelU -> getUsers($corredora['id']);
         $asegurados = array();
         if($isSuperAdmin == true)
         {
@@ -40,7 +39,15 @@ class InsuredController {
         }
         else
         {
-            $asegurados = $this -> model->getInsuredByInsuranceBrokerId($idsUsuariosCorredora);
+            $usuariosCorredora = $this -> modelU -> getUsersFromInsuredBroker($corredora['id']);
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuariosCorredora as $usuarioCorredora) {
+                array_push($arrayIds, $usuarioCorredora['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $asegurados = $this -> model->getInsuredByInsuranceBrokerId($ids);
         }
         $regiones = $this->modelR->getRegionList();
         $comunas = $this->modelC->getComunaList();

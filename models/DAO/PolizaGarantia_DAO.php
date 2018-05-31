@@ -29,7 +29,7 @@ class PolizaGarantia_DAO {
     }
 
 
-    public function newGuaranteePolicy($idAsegurado, $idTipoMercaderia, $idCorredora, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
+    public function newGuaranteePolicy($idAsegurado, $idTipoMercaderia, $idCorredora, $idEmbalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
@@ -42,8 +42,8 @@ class PolizaGarantia_DAO {
 
         if ($resultado == null) {
 
-            $sql = $pdo->prepare("INSERT INTO `poliza_garantia`(`ID_ASEGURADO`, `ID_TIPO_MERCADERIA`, `ID_CORREDORA`, `EMBALAJE`, `DIRECCION`, `FECHA_INICIO`, `PLAZO`, `MONTO_CIF`, `DERECHOS`, `HABILITADO`) VALUES (:ID_ASEGURADO, :ID_TIPO_MERCADERIA, 1)");
-            $sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos, 'ID_CORREDORA' => $idCorredora));
+            $sql = $pdo->prepare("INSERT INTO `poliza_garantia`(`ID_ASEGURADO`, `ID_TIPO_MERCADERIA`, `ID_CORREDORA`, `ID_EMBALAJE`, `DIRECCION`, `FECHA_INICIO`, `PLAZO`, `MONTO_CIF`, `DERECHOS`, `HABILITADO`) VALUES (:ID_ASEGURADO, :ID_TIPO_MERCADERIA, :ID_CORREDORA, :ID_EMBALAJE, :DIRECCION, :FECHA_INICIO, :PLAZO, :MONTO_CIF, :DERECHOS, 1)");
+            $sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'ID_CORREDORA' => $idCorredora, 'ID_EMBALAJE' => $idEmbalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos));
             $id = $pdo->lastInsertId();
 
             if(!empty($id)) {
@@ -58,7 +58,7 @@ class PolizaGarantia_DAO {
         }
         else{
             $status  = "error";
-            $message = "Este poliza ya se encuentra registrado.";
+            $message = "Este garantía ya se encuentra registrado.";
         }
         
         $data = array(
@@ -81,13 +81,13 @@ class PolizaGarantia_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function editGuaranteePolicy($idGarantia, $idAsegurado, $idTipoMercaderia, $idCorredora, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
+    public function editGuaranteePolicy($idGarantia, $idAsegurado, $idTipoMercaderia, $idCorredora, $idEmbalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE poliza_garantia set ID_ASEGURADO =: ID_ASEGURADO, ID_TIPO_MERCADERIA =:ID_TIPO_MERCADERIA, ID_CORREDORA =:ID_CORREDORA, EMBALAJE =: EMBALAJE, DIRECCION =: DIRECCION, FECHA_INICIO =: FECHA_INICIO, MONTO_CIF =: MONTO_CIF, DERECHOS =: DERECHOS WHERE ID_GARANTIA=:ID_GARANTIA");
+        $sql = $pdo->prepare("UPDATE poliza_garantia set ID_ASEGURADO =:ID_ASEGURADO, ID_TIPO_MERCADERIA =:ID_TIPO_MERCADERIA, ID_CORREDORA =:ID_CORREDORA, ID_EMBALAJE = :ID_EMBALAJE, DIRECCION = :DIRECCION, FECHA_INICIO = :FECHA_INICIO, PLAZO = :PLAZO, MONTO_CIF = :MONTO_CIF, DERECHOS = :DERECHOS WHERE ID_GARANTIA=:ID_GARANTIA");
 
-        if ($sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'ID_CORREDORA' => $idCorredora, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos, 'ID_GARANTIA' => $idGarantia))) {
+        if ($sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'ID_CORREDORA' => $idCorredora, 'ID_EMBALAJE' => $idEmbalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos, 'ID_GARANTIA' => $idGarantia))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }
@@ -111,7 +111,7 @@ class PolizaGarantia_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE poliza set HABILITADO =:HABILITADO WHERE ID_GARANTIA=:ID_GARANTIA");
+        $sql = $pdo->prepare("UPDATE poliza_garantia set HABILITADO =:HABILITADO WHERE ID_GARANTIA=:ID_GARANTIA");
 
         if ($sql->execute(array('HABILITADO' => 0, 'ID_GARANTIA' => $idGarantia ))) {
             $status  = "success";

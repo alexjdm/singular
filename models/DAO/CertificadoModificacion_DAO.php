@@ -33,7 +33,8 @@ class CertificadoModificacion_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT ID_USUARIO FROM corredora_usuario WHERE ID_CORREDORA = :ID_CORREDORA");
+        //$sql = $pdo->prepare("SELECT ID_USUARIO FROM corredora_usuario WHERE ID_CORREDORA = :ID_CORREDORA");
+        $sql = $pdo->prepare("SELECT ID_USUARIO FROM usuario WHERE ID_CORREDORA = :ID_CORREDORA");
         $sql->execute(array('ID_CORREDORA' => $idCorredora));
         $idUsuarios = $sql->fetchAll();
 

@@ -58,7 +58,7 @@ if (!isset($_SESSION)) {
                                 <div class="col-sm-8">
                                     <select id="idPoliza" class="form-control">
                                         <?php foreach ($polizas as $poliza): ?>
-                                            <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA']); ?></option>
+                                            <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA']) . " (" . $poliza['NUMERO'] . ")"; ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -184,21 +184,21 @@ if (!isset($_SESSION)) {
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="tasa">Tasa *</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" id="tasa" type="text" placeholder="Tasa">
+                                    <input class="form-control" id="tasa" type="text" placeholder="Tasa" value="<?php echo $corredora['TASA'] ?>">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="primaMin">Prima Mín. *</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" id="primaMin" type="text" placeholder="Prima Mínima">
+                                    <input class="form-control" id="primaMin" type="text" placeholder="Prima Mínima" value="<?php echo $corredora['PRIMA_MIN'] ?>">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="primaSeguro">Prima de Seguro *</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" id="primaSeguro" type="text" placeholder="Prima de Seguro">
+                                    <input class="form-control" id="primaSeguro" type="text" placeholder="Prima de Seguro" readonly>
                                 </div>
                             </div>
 
@@ -232,6 +232,33 @@ if (!isset($_SESSION)) {
 </div>
 
 <script type="application/javascript">
+    
+    function calcularPrimaDeSeguro() {
+        var tasa = parseFloat($('#tasa').val().replace(',','.').replace(' ',''));
+        var primaMin = parseFloat($('#primaMin').val());
+        var montoCIF = parseFloat($('#montoAseguradoCIF').val());
+        if(tasa > 0 && primaMin > 0 && montoCIF > 0)
+        {
+            var primaSeguro = montoCIF * tasa < primaMin ? primaMin : montoCIF * tasa / 100;
+
+            $('#primaSeguro').val(primaSeguro);
+        }
+        else {
+            $('#primaSeguro').val("0");
+        }
+    }
+
+    $('#montoAseguradoCIF').keyup(function () {
+        calcularPrimaDeSeguro();
+    });
+
+    $('#tasa').keyup(function () {
+        calcularPrimaDeSeguro();
+    });
+
+    $('#primaMin').keyup(function () {
+        calcularPrimaDeSeguro();
+    });
 
     <?php if(count($tipoMercaderias) == 0 || count($polizas) == 0 || count($materiasAseguradas) == 0 || count($embalajes) == 0) { ?>
     $('#newCertificateRequestForm').hide();
@@ -298,10 +325,10 @@ if (!isset($_SESSION)) {
         var primaSeguro = $("#primaSeguro").val();
         var observaciones = $("#observaciones").val();
 
-        if(idAsegurado == '' || idTipoMercaderia == '' || aFavorDe == '' || tipo == '' || origen == ''
-            || destino == '' || via == '' || fechaEmbarque == '' || transportista == '' || naveVueloCamion == '' || blAwbCrt == ''
-            || referenciaDespacho == '' || idMateriaAsegurada == '' || detalleMercaderia == '' || idEmbalaje == '' || montoAseguradoCIF == ''
-            || tasa == '' || primaMin == '' || primaSeguro == '')
+        if(idAsegurado === '' || idTipoMercaderia === '' || aFavorDe === '' || tipo === '' || origen === ''
+            || destino === '' || via === '' || fechaEmbarque === '' || transportista === '' || naveVueloCamion === '' || blAwbCrt === ''
+            || referenciaDespacho === '' || idMateriaAsegurada === '' || detalleMercaderia === '' || idEmbalaje === '' || montoAseguradoCIF === ''
+            || tasa === '' || primaMin === '' || primaSeguro === '')
         {
             $('#messageNewCertificateRequest').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }

@@ -28,6 +28,7 @@ class UserController {
         $usuarios = $this->model->getUsersList();
         $cargos = $this->modelC->getJobTitlesList();
         $corredoras = $this->modelCo->getInsuranceBrokersList();
+        $perfiles = $this->modelP->getPerfilesList();
 
         require_once('views/user/index.php');
     }
@@ -38,6 +39,7 @@ class UserController {
         $usuarios = $this->model->getUsers($idCorredora);
         $cargos = $this->modelC->getJobTitlesList();
         $corredoras = $this->modelCo->getInsuranceBrokersList();
+        $perfiles = $this->modelP->getPerfilesList();
 
         require_once('views/user/index.php');
     }
@@ -252,6 +254,7 @@ class UserController {
     public function createNewSeller() {
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
         $rut = isset($_GET['rut']) ? $_GET['rut'] : null;
+        $rut = FormatearRut($rut);
         $apellido = isset($_GET['apellido']) ? $_GET['apellido'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
@@ -291,6 +294,7 @@ class UserController {
 
     public function createNewUser() {
         $identificador = isset($_GET['identificador']) ? $_GET['identificador'] : null;
+        $identificador = FormatearRut($identificador);
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
         $apellido = isset($_GET['apellido']) ? $_GET['apellido'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
@@ -325,6 +329,7 @@ class UserController {
     public function userEdit2db() {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
         $rut = isset($_GET['rut']) ? $_GET['rut'] : null;
+        $rut = FormatearRut($rut);
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
         $apellido = isset($_GET['apellido']) ? $_GET['apellido'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
