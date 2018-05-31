@@ -27,6 +27,31 @@ if (!isset($_SESSION)) {
                 <div class="box-body">
 
                     <div class="form-group">
+                        <label class="col-sm-3 control-label" for="idAsegurado">Asegurado *</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="buscadorAsegurado" class="form-control" placeholder="Ingresa el rut del asegurado">
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="btnBuscar" class="btn btn-default">Buscar</button>
+                        </div>
+                        <div class="col-sm-9 col-sm-offset-3" id="resultadoAsegurado"></div>
+                    </div>
+
+                    <table id="tablaAsegurados" style="display: none;">
+                        <tbody class="buscar">
+                        <?php foreach ($asegurados as $asegurado): ?>
+                            <tr>
+                                <td class="identificadorAsegurado" data-nombre="<?php echo utf8_encode($asegurado['NOMBRE']); ?>"
+                                    data-identificador="<?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>"
+                                    data-idasegurado="<?php echo $asegurado['ID_ASEGURADO']; ?>">
+                                    <?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <!--<div class="form-group">
                         <label class="col-sm-3 control-label" for="asegurado">Asegurado *</label>
                         <div class="col-sm-9">
                             <select id="asegurado" class="form-control">
@@ -35,7 +60,7 @@ if (!isset($_SESSION)) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
@@ -123,6 +148,40 @@ if (!isset($_SESSION)) {
 
 <script type="application/javascript">
 
+    var idAseguradoSeleccionado = "";
+
+    $('#btnBuscar').click(function () {
+        var nombreAsegurado = "";
+        var identificadorAsegurado = "";
+        var textoAbuscar = $('#buscadorAsegurado').val();
+
+        var rex = new RegExp(textoAbuscar, 'i'); //console.log(rex);
+        var i = 0;
+        var filtro = $('.identificadorAsegurado').filter(function () {
+
+            if(rex.test($(this).text()) === true)
+            {
+                nombreAsegurado = $(this).data("nombre"); //console.log($(this).data("nombre"));
+                identificadorAsegurado = $(this).data("identificador");
+                idAseguradoSeleccionado = $(this).data("idasegurado");
+                i = i +1;
+            }
+
+            if(i > 1)
+            {
+                nombreAsegurado = "";
+                identificadorAsegurado = "No hay un resultado único a esta búsqueda.";
+            }
+
+            return "";
+        });
+
+        $('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+
+        return false;
+
+    });
+
     $("#montoCIF").keyup(function () {
         var monto = $("#montoCIF").val();
         $("#derechos").val(Math.round((1.06*1.19 - 1)*monto));
@@ -149,7 +208,8 @@ if (!isset($_SESSION)) {
     $('#newGuaranteePolicyBtn').click(function(){
         var e = 'ajax.php?controller=GuaranteePolicy&action=createNewGuaranteePolicy'; console.debug(e);
 
-        var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
+        //var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
+        var idAsegurado = idAseguradoSeleccionado;
         var idTipoMercaderia = $("#tipoMercaderia").val(); //console.debug(idTipoMercaderia);
         var idCorredora = $("#corredora").val();
         var idEmbalaje = $("#idEmbalaje").val();

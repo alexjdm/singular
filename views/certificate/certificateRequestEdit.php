@@ -19,6 +19,35 @@
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="idAsegurado">Asegurado *</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="buscadorAsegurado" class="form-control" placeholder="Ingresa el rut del asegurado">
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="btnBuscar" class="btn btn-default">Buscar</button>
+                        </div>
+                        <div class="col-sm-8 col-sm-offset-4" id="resultadoAsegurado">
+                            <?php foreach ($asegurados as $asegurado): ?>
+                                <?php if($asegurado['ID_ASEGURADO'] == $certificadoSolicitud['ID_ASEGURADO']) { echo utf8_encode($asegurado['NOMBRE']); } ?>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <table id="tablaAsegurados" style="display: none;">
+                        <tbody class="buscar">
+                        <?php foreach ($asegurados as $asegurado): ?>
+                            <tr>
+                                <td class="identificadorAsegurado" data-nombre="<?php echo utf8_encode($asegurado['NOMBRE']); ?>"
+                                    data-identificador="<?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>"
+                                    data-idasegurado="<?php echo $asegurado['ID_ASEGURADO']; ?>">
+                                    <?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <!--<div class="form-group">
+                        <label class="col-sm-4 control-label" for="idAsegurado">Asegurado *</label>
                         <div class="col-sm-8">
                             <select id="idAsegurado" class="form-control">
                                 <?php foreach ($asegurados as $asegurado): ?>
@@ -26,7 +55,7 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="aFavorDe">A favor de *</label>
@@ -218,6 +247,40 @@
 
 <script type="application/javascript">
 
+    var idAseguradoSeleccionado = "";
+
+    $('#btnBuscar').click(function () {
+        var nombreAsegurado = "";
+        var identificadorAsegurado = "";
+        var textoAbuscar = $('#buscadorAsegurado').val();
+
+        var rex = new RegExp(textoAbuscar, 'i'); //console.log(rex);
+        var i = 0;
+        var filtro = $('.identificadorAsegurado').filter(function () {
+
+            if(rex.test($(this).text()) === true)
+            {
+                nombreAsegurado = $(this).data("nombre"); //console.log($(this).data("nombre"));
+                identificadorAsegurado = $(this).data("identificador");
+                idAseguradoSeleccionado = $(this).data("idasegurado");
+                i = i +1;
+            }
+
+            if(i > 1)
+            {
+                nombreAsegurado = "";
+                identificadorAsegurado = "No hay un resultado único a esta búsqueda.";
+            }
+
+            return "";
+        });
+
+        $('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+
+        return false;
+
+    });
+
     $("#fechaEmbarque").val(moment().format('DD-MM-YYYY'));
 
     $("#fechaEmbarque").daterangepicker({
@@ -240,7 +303,8 @@
         var e = 'ajax.php?controller=Certificate&action=certificateRequestEdit2db';
 
         var idCertificadoSolicitud = $("#idCertificadoSolicitud").val();
-        var idAsegurado = $("#idAsegurado").val();
+        //var idAsegurado = $("#idAsegurado").val();
+        var idAsegurado = idAseguradoSeleccionado;
         var idTipoMercaderia = $("#idTipoMercaderia").val();
         var idPoliza = $("#idPoliza").val();
         var aFavorDe = $("#aFavorDe").val();
@@ -262,10 +326,10 @@
         var primaSeguro = $("#primaSeguro").val();
         var observaciones = $("#observaciones").val();
 
-        if(idAsegurado == '' || idTipoMercaderia == '' || aFavorDe == '' || tipo == '' || origen == ''
-            || destino == '' || via == '' || fechaEmbarque == '' || transportista == '' || naveVueloCamion == '' || blAwbCrt == ''
-            || referenciaDespacho == '' || idMateriaAsegurada == '' || detalleMercaderia == '' || idEmbalaje == '' || montoAseguradoCIF == ''
-            || tasa == '' || primaMin == '' || primaSeguro == '')
+        if(idAsegurado === '' || idTipoMercaderia === '' || aFavorDe === '' || tipo === '' || origen === ''
+            || destino === '' || via === '' || fechaEmbarque === '' || transportista === '' || naveVueloCamion === '' || blAwbCrt === ''
+            || referenciaDespacho === '' || idMateriaAsegurada === '' || detalleMercaderia === '' || idEmbalaje === '' || montoAseguradoCIF === ''
+            || tasa === '' || primaMin === '' || primaSeguro === '')
         {
             $('#messageEditCertificadoSolicitud').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }

@@ -37,6 +37,31 @@ if (!isset($_SESSION)) {
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="idAsegurado">Asegurado *</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="buscadorAsegurado" class="form-control" placeholder="Ingresa el rut del asegurado">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button id="btnBuscar" class="btn btn-default">Buscar</button>
+                                </div>
+                                <div class="col-sm-8 col-sm-offset-4" id="resultadoAsegurado"></div>
+                            </div>
+
+                            <table id="tablaAsegurados" style="display: none;">
+                                <tbody class="buscar">
+                                <?php foreach ($asegurados as $asegurado): ?>
+                                    <tr>
+                                        <td class="identificadorAsegurado" data-nombre="<?php echo utf8_encode($asegurado['NOMBRE']); ?>"
+                                            data-identificador="<?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>"
+                                            data-idasegurado="<?php echo $asegurado['ID_ASEGURADO']; ?>">
+                                            <?php echo utf8_encode($asegurado['IDENTIFICADOR']); ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+
+                            <!--<div class="form-group">
+                                <label class="col-sm-4 control-label" for="idAsegurado">Asegurado *</label>
                                 <div class="col-sm-8">
                                     <select id="idAsegurado" class="form-control">
                                         <?php foreach ($asegurados as $asegurado): ?>
@@ -44,7 +69,7 @@ if (!isset($_SESSION)) {
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                            </div>
+                            </div>-->
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="aFavorDe">A favor de *</label>
@@ -232,7 +257,60 @@ if (!isset($_SESSION)) {
 </div>
 
 <script type="application/javascript">
-    
+
+    //$('#tablaAsegurados').show();
+
+    /*$('#buscadorAsegurado').keyup(function () {
+
+        var rex = new RegExp($(this).val(), 'i');
+        $('.buscar tr').hide();
+        $('.buscar tr').filter(function () {
+            return rex.test($(this).text());
+        }).show();
+    });*/
+
+    var idAseguradoSeleccionado = "";
+
+    $('#btnBuscar').click(function () {
+        var nombreAsegurado = "";
+        var identificadorAsegurado = "";
+        var textoAbuscar = $('#buscadorAsegurado').val();
+
+        var rex = new RegExp(textoAbuscar, 'i'); //console.log(rex);
+        var i = 0;
+        var filtro = $('.identificadorAsegurado').filter(function () {
+
+            /*if(textoAbuscar === $(this).text() )
+            {
+                nombreAsegurado = $(this).data("nombre");
+            }*/
+
+            //console.log(rex.test($(this).text()));
+            if(rex.test($(this).text()) === true)
+            {
+                nombreAsegurado = $(this).data("nombre"); //console.log($(this).data("nombre"));
+                identificadorAsegurado = $(this).data("identificador");
+                idAseguradoSeleccionado = $(this).data("idasegurado");
+                i = i +1;
+            }
+
+            if(i > 1)
+            {
+                nombreAsegurado = "";
+                identificadorAsegurado = "No hay un resultado único a esta búsqueda.";
+            }
+
+            //return rex.test($(this).text());
+            return "";
+        });
+        //console.log(filtro);
+
+        $('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+
+        return false;
+
+    });
+
     function calcularPrimaDeSeguro() {
         var tasa = parseFloat($('#tasa').val().replace(',','.').replace(' ',''));
         var primaMin = parseFloat($('#primaMin').val());
@@ -303,7 +381,8 @@ if (!isset($_SESSION)) {
         var e = 'ajax.php?controller=Certificate&action=createNewCertificateRequest'; //console.debug(e);
 
         //var idCertificadoSolicitud = $("#idCertificadoSolicitud").val();
-        var idAsegurado = $("#idAsegurado").val();
+        //var idAsegurado = $("#idAsegurado").val();
+        var idAsegurado = idAseguradoSeleccionado;
         var idTipoMercaderia = $("#idTipoMercaderia").val();
         var idPoliza = $("#idPoliza").val();
         var aFavorDe = $("#aFavorDe").val();
