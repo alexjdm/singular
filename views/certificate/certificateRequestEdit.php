@@ -69,7 +69,7 @@
                         <div class="col-sm-8">
                             <select id="idPoliza" class="form-control">
                                 <?php foreach ($polizas as $poliza): ?>
-                                    <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoSolicitud['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA']); ?></option>
+                                    <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoSolicitud['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")"); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -179,7 +179,7 @@
                         <div class="col-sm-8">
                             <select id="idEmbalaje" class="form-control">
                                 <?php foreach ($embalajes as $embalaje): ?>
-                                    <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>" <?php if($embalaje['ID_EMBALAJE'] == $certificadoSolicitud['ID_EMBALAJE']) { echo "selected"; } ?>><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
+                                    <option data-idPoliza="<?php echo $embalaje['ID_POLIZA']; ?>" value="<?php echo $embalaje['ID_EMBALAJE']; ?>" <?php if($embalaje['ID_EMBALAJE'] == $certificadoSolicitud['ID_EMBALAJE']) { echo "selected"; } ?>><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -246,6 +246,15 @@
 </div>
 
 <script type="application/javascript">
+
+    var idPolizaSeleccionada = $('#idPoliza').val();
+    var embalajes = $("#idEmbalaje").html();
+    $('#idPoliza').change(function () {
+        var idPoliza = $("#idPoliza :selected").val();
+        $("#idEmbalaje").html(embalajes);
+        $('#idEmbalaje :not([data-idPoliza^="' + idPoliza + '"])').remove();
+    });
+    $('#idPoliza').trigger("change");
 
     var idAseguradoSeleccionado = "";
 

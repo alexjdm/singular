@@ -193,7 +193,7 @@ if (!isset($_SESSION)) {
                                 <div class="col-sm-8">
                                     <select id="idEmbalaje" class="form-control">
                                         <?php foreach ($embalajes as $embalaje): ?>
-                                            <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
+                                            <option data-idPoliza="<?php echo $embalaje['ID_POLIZA']; ?>" value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -257,6 +257,17 @@ if (!isset($_SESSION)) {
 </div>
 
 <script type="application/javascript">
+
+    var idPolizaSeleccionada = $('#idPoliza').val();
+    var embalajes = $("#idEmbalaje").html();
+    $('#idPoliza').change(function () {
+        var idPoliza = $("#idPoliza :selected").val();
+        $("#idEmbalaje").html(embalajes);
+        $('#idEmbalaje :not([data-idPoliza^="' + idPoliza + '"])').remove();
+
+    });
+    $('#idPoliza').trigger("change");
+
 
     //$('#tablaAsegurados').show();
 
@@ -427,7 +438,7 @@ if (!isset($_SESSION)) {
                 success: function (data) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
-                    if(data.status == "success"){
+                    if(data.status === "success"){
                         $('#messageNewCertificateRequest').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                         $('#newCertificateRequestBtn').html('Agregar');
                         window.location.reload(true);
