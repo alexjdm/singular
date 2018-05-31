@@ -32,6 +32,7 @@ if (!isset($_SESSION)) {
                 <thead>
                 <tr>
                     <th>N°</th>
+                    <th>Poliza</th>
                     <th>Embalaje</th>
                     <th></th>
                 </tr>
@@ -39,6 +40,7 @@ if (!isset($_SESSION)) {
                 <tfoot>
                 <tr>
                     <th>N°</th>
+                    <th>Poliza</th>
                     <th>Embalaje</th>
                     <th></th>
                 </tr>
@@ -48,6 +50,15 @@ if (!isset($_SESSION)) {
                 <?php foreach ($embalajes as $embalaje): ?>
                     <tr data-id="<?php echo $embalaje['ID_EMBALAJE'] ?>">
                         <th><?php echo $n ?></th>
+                        <td>
+                            <?php
+                            foreach ($polizas as $poliza):
+                                if($poliza['ID_POLIZA'] == $embalaje['ID_POLIZA']) {
+                                    echo $poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")";
+                                }
+                            endforeach;
+                            ?>
+                        </td>
                         <td><?php echo utf8_encode($embalaje['EMBALAJE']) ?></td>
                         <td>
                             <button data-original-title="Editar" class="btn btn-xs btn-default editPacking">

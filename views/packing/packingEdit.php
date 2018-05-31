@@ -12,6 +12,18 @@
         </div>
         <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
             <input id="idEmbalaje" value="<?php echo $embalaje['ID_EMBALAJE'] ?>" type="hidden">
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="poliza">Poliza *</label>
+                <div class="col-sm-9">
+                    <select id="poliza" class="form-control">
+                        <?php foreach ($polizas as $poliza): ?>
+                            <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $embalaje['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")"); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="embalaje">Embalaje</label>
                 <div class="col-sm-9">
@@ -42,12 +54,13 @@
     $('#savePackingEdit').click(function(){
         var e = 'ajax.php?controller=Packing&action=packingEdit2db';
         var idEmbalaje = $("#idEmbalaje").val();
+        var idPoliza = $("#poliza").val();
         var embalaje = $("#embalaje").val();
 
         $.ajax({
             type: 'GET',
             url: e,
-            data: { idEmbalaje: idEmbalaje, embalaje: embalaje },
+            data: { idEmbalaje: idEmbalaje, idPoliza: idPoliza, embalaje: embalaje },
             dataType : "json",
             beforeSend: function () {
                 $('#savePackingEdit').html("Cargando...");

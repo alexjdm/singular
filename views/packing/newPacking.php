@@ -25,6 +25,18 @@ if (!isset($_SESSION)) {
             <!-- form start -->
             <form id="newPackingForm" class="form-horizontal">
                 <div class="box-body">
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="poliza">Poliza *</label>
+                        <div class="col-sm-6">
+                            <select id="poliza" class="form-control">
+                                <?php foreach ($polizas as $poliza): ?>
+                                    <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")"); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="embalaje">Embalaje *</label>
                         <div class="col-sm-6">
@@ -53,9 +65,10 @@ if (!isset($_SESSION)) {
     $('#newPackingBtn').click(function(){
         var e = 'ajax.php?controller=Packing&action=createNewPacking'; console.debug(e);
 
+        var idPoliza = $('#poliza').val();
         var embalaje = $("#embalaje").val(); console.debug(embalaje);
 
-        if(embalaje == '')
+        if(embalaje === '' || idPoliza === '')
         {
             $('#messageNewPacking').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -64,7 +77,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { embalaje: embalaje },
+                data: { embalaje: embalaje, idPoliza: idPoliza },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newPackingBtn').html("Cargando...");
@@ -72,7 +85,7 @@ if (!isset($_SESSION)) {
                 success: function (data) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
-                    if(data.status == "success"){
+                    if(data.status === "success"){
                         $('#messageNewPacking').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                         $('#newPackingBtn').html('Agregar');
                         window.location.reload(true);

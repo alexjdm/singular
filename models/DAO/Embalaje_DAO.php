@@ -18,21 +18,21 @@ class Embalaje_DAO {
         return $sql->fetchAll();
     }
 
-    public function newPacking($nombre){
+    public function newPacking($nombre, $idPoliza){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM embalaje WHERE EMBALAJE =:EMBALAJE");
-        $sql->execute(array('EMBALAJE' => $nombre));
+        $sql = $pdo->prepare("SELECT * FROM embalaje WHERE EMBALAJE =:EMBALAJE AND ID_POLIZA =:ID_POLIZA");
+        $sql->execute(array('EMBALAJE' => $nombre, 'ID_POLIZA' => $idPoliza));
         $resultado = $sql->fetch();
 
         if ($resultado == null) {
 
-            $sql = $pdo->prepare("INSERT INTO `embalaje`(`EMBALAJE`, `HABILITADO`) VALUES (:EMBALAJE, TRUE)");
-            $sql->execute(array('EMBALAJE' => $nombre));
+            $sql = $pdo->prepare("INSERT INTO `embalaje`(`EMBALAJE`, `ID_POLIZA`, `HABILITADO`) VALUES (:EMBALAJE, :ID_POLIZA, TRUE)");
+            $sql->execute(array('EMBALAJE' => $nombre, 'ID_POLIZA' => $idPoliza));
             $id = $pdo->lastInsertId();
 
             if(!empty($id)) {
@@ -70,13 +70,13 @@ class Embalaje_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function editPacking($idPacking, $nombre){
+    public function editPacking($idPacking, $nombre, $idPoliza){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE embalaje set EMBALAJE =:EMBALAJE WHERE ID_EMBALAJE=:ID_EMBALAJE");
+        $sql = $pdo->prepare("UPDATE embalaje set EMBALAJE =:EMBALAJE, ID_POLIZA = :ID_POLIZA WHERE ID_EMBALAJE=:ID_EMBALAJE");
 
-        if ($sql->execute(array('EMBALAJE' => $nombre, 'ID_EMBALAJE' => $idPacking ))) {
+        if ($sql->execute(array('EMBALAJE' => $nombre, 'ID_POLIZA' => $idPoliza, 'ID_EMBALAJE' => $idPacking ))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }
