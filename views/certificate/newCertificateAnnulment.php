@@ -30,7 +30,7 @@ if (!isset($_SESSION)) {
             <!-- form start -->
             <form id="newCertificateAnnulmentForm" class="form-horizontal">
                 <div class="box-body">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-sm-3 control-label" for="poliza">Poliza *</label>
                         <div class="col-sm-9">
                             <select id="poliza" class="form-control">
@@ -49,7 +49,19 @@ if (!isset($_SESSION)) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                    </div>-->
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="idCertificado">Certificado *</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="buscadorCertificado" class="form-control" placeholder="Ingresa el número del certificado">
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="btnBuscar" class="btn btn-default">Buscar</button>
+                        </div>
+                        <div class="col-sm-9 col-sm-offset-3" id="resultadoCertificado"></div>
                     </div>
+
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="motivo">Motivo *</label>
                         <div class="col-sm-9">
@@ -57,6 +69,19 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
 
+                    <table id="tablaCertificados" style="display: none;">
+                        <tbody class="buscar">
+                        <?php foreach ($certificados as $certificado): ?>
+                            <tr>
+                                <td class="numeroCertificado"
+                                    data-numerocertificado="<?php echo $certificado['NUMERO']; ?>"
+                                    data-idcertificado="<?php echo $certificado['ID_CERTIFICADO']; ?>">
+                                    <?php echo utf8_encode($certificado['NUMERO']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
 
                     <div id="messageNewCertificateAnnulment" style="margin: 20px;"></div>
 
@@ -83,25 +108,61 @@ if (!isset($_SESSION)) {
         $('#sinData').show();
     <?php endif; ?>
 
+    var idCertificadoSeleccionado = 0;
+
+    $('#btnBuscar').click(function () {
+
+        var numeroCertificado = "";
+        var textoAbuscar = $('#buscadorCertificado').val();
+        if(textoAbuscar === "") return false;
+
+        var rex = new RegExp(textoAbuscar, 'i'); //console.log(rex);
+        var i = 0;
+
+        $(".numeroCertificado").each(function() {
+            //console.log($(this).data("numerocertificado"));
+            if($(this).data("numerocertificado") == textoAbuscar)
+            {
+                numeroCertificado = $(this).data("numerocertificado");
+                idCertificadoSeleccionado = $(this).data("idcertificado");
+
+                $('#resultadoCertificado').html("Certificado " + numeroCertificado + " existente.");
+
+                return false;
+            }
+            else
+            {
+                $('#resultadoCertificado').html("No hay resultados para tu búsqueda.");
+            }
+
+        });
+
+        return false;
+
+    });
+
     var certificados = $("#certificado").html();
 
-    $('#poliza').change(function () {
+    /*$('#poliza').change(function () {
 
         var idPoliza = $("#poliza :selected").val();
         $("#certificado").html(certificados);
         $('#certificado :not([data-idPoliza^="' + idPoliza + '"])').remove();
 
     });
-    $('#poliza').trigger("change");
+    $('#poliza').trigger("change");*/
 
     $('#newCertificateAnnulmentBtn').click(function(){
         var e = 'ajax.php?controller=Certificate&action=createNewCertificateAnnulment'; //console.debug(e);
 
-        var idPoliza = $("#poliza").val(); //console.debug(poliza);
-        var idCertificado = $("#certificado").val(); //console.debug(idCertificado);
+        //var idPoliza = $("#poliza").val(); //console.debug(poliza);
+        //var idCertificado = $("#certificado").val(); //console.debug(idCertificado);
+
+        var idCertificado = idCertificadoSeleccionado;
         var motivo = $("#motivo").val(); //console.debug(motivo);
 
-        if(idPoliza === '' || idCertificado === '' || motivo === '')
+        //if(idPoliza === '' || idCertificado === '' || motivo === '')
+        if(idCertificado === '' || idCertificado === 0 || motivo === '')
         {
             $('#messageNewCertificateAnnulment').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }

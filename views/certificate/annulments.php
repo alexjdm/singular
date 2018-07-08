@@ -118,7 +118,7 @@ if (!isset($_SESSION)) {
                             echo '<td>Listo</td>';
                         }
                         ?>
-                        <td>
+                        <td style="width: 100px;">
                             <?php if($certificadoAnulacion['ESTADO_ANULACION'] == 0 || $isSuperAdmin == true): ?>
                                 <button title="Marcar como nulo" class="btn btn-xs btn-default setCertificateAnnulment">
                                     <i class="fa fa-check"></i>

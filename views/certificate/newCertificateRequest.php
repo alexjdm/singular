@@ -127,15 +127,15 @@ if (!isset($_SESSION)) {
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <!--<div class="form-group">
                                 <label class="col-sm-4 control-label" for="transportista">Transportista *</label>
                                 <div class="col-sm-8">
                                     <input class="form-control" id="transportista" type="text" placeholder="Transportista">
                                 </div>
-                            </div>
+                            </div>-->
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label" for="naveVueloCamion">Nave / Vuelo / Camión *</label>
+                                <label class="col-sm-4 control-label" for="naveVueloCamion">Medio de Transporte *</label>
                                 <div class="col-sm-8">
                                     <input class="form-control" id="naveVueloCamion" type="text" placeholder="Nave / Vuelo / Camión">
                                 </div>
@@ -316,7 +316,8 @@ if (!isset($_SESSION)) {
         });
         //console.log(filtro);
 
-        $('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+        //$('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+        $('#resultadoAsegurado').html(nombreAsegurado);
 
         return false;
 
@@ -328,7 +329,19 @@ if (!isset($_SESSION)) {
         var montoCIF = parseFloat($('#montoAseguradoCIF').val());
         if(tasa > 0 && primaMin > 0 && montoCIF > 0)
         {
-            var primaSeguro = montoCIF * tasa < primaMin ? primaMin : montoCIF * tasa / 100;
+            var var1 = montoCIF * tasa / 100;
+            var primaSeguro = 0;
+            /*console.log("montoCIF * tasa / 100 = " + var1);
+            console.log("primaMin = " + primaMin);
+            console.log("primaSeg2 = " + (montoCIF * tasa / 100));*/
+            if(var1 < primaMin)
+            {
+                primaSeguro = primaMin;
+            }
+            else
+            {
+                primaSeguro = montoCIF * tasa / 100;
+            }
 
             $('#primaSeguro').val(primaSeguro);
         }
@@ -402,7 +415,8 @@ if (!isset($_SESSION)) {
         var destino = $("#destino").val();
         var via = $("#via").val();
         var fechaEmbarque = $("#fechaEmbarque").val();
-        var transportista = $("#transportista").val();
+        //var transportista = $("#transportista").val();
+        var transportista = "S/I";
         var naveVueloCamion = $("#naveVueloCamion").val();
         var blAwbCrt = $("#blAwbCrt").val();
         var referenciaDespacho = $("#referenciaDespacho").val();

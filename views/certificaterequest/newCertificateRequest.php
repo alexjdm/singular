@@ -272,7 +272,8 @@ if (!isset($_SESSION)) {
             return "";
         });
 
-        $('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+        //$('#resultadoAsegurado').html(identificadorAsegurado + " " + nombreAsegurado);
+        $('#resultadoAsegurado').html(nombreAsegurado);
 
         return false;
 

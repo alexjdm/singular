@@ -526,13 +526,13 @@ class Certificado_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function editCertificateAnnulment($idCertificadoAnulacion, $idCertificado, $motivo){
+    public function editCertificateAnnulment($idCertificado, $motivo){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE certificado_anulacion set ID_CERTIFICADO =:ID_CERTIFICADO, MOTIVO =:MOTIVO WHERE ID_CERTIFICADO_ANULACION=:ID_CERTIFICADO_ANULACION");
+        $sql = $pdo->prepare("UPDATE certificado set MOTIVO =:MOTIVO WHERE ID_CERTIFICADO=:ID_CERTIFICADO");
 
-        if ($sql->execute(array('ID_CERTIFICADO' => $idCertificado, 'MOTIVO' => $motivo, 'ID_CERTIFICADO_ANULACION' => $idCertificadoAnulacion ))) {
+        if ($sql->execute(array('MOTIVO' => $motivo, 'ID_CERTIFICADO' => $idCertificado ))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }

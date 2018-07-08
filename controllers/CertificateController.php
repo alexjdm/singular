@@ -380,22 +380,22 @@ class CertificateController {
 
     public function certificateAnnulmentEdit() {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
-        $certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
-        $certificadoAnular = $this->model->getCertificate($certificadoAnulacion['ID_CERTIFICADO']);
-        $polizas = $this->modelP->getPoliciesList();
+        //$certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
+        $certificadoAnular = $this->model->getCertificate($idCertificadoAnulacion);
+        //$polizas = $this->modelP->getPoliciesList();
         $certificados = $this->model->getCertificatesList();
 
         require_once('views/certificate/certificateAnnulmentEdit.php');
     }
 
     public function certificateAnnulmentEdit2db() {
-        $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
+        //$idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $motivo = isset($_GET['motivo']) ? $_GET['motivo'] : null;
         //$idCertificadoReemplazo = isset($_GET['idCertificadoReemplazo']) ? $_GET['idCertificadoReemplazo'] : null;
         //$estado = isset($_GET['estado']) ? $_GET['estado'] : null;
 
-        return $this->model->editCertificateAnnulment($idCertificadoAnulacion, $idCertificado, $motivo);
+        return $this->model->editCertificateAnnulment($idCertificado, $motivo);
     }
 
     public function addReplaceCertificateNumber() {

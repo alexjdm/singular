@@ -51,7 +51,7 @@ class GuaranteePolicyController {
     public function createNewGuaranteePolicy() {
 
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
-        $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
+        //$idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
         $idEmbalaje = isset($_GET['idEmbalaje']) ? $_GET['idEmbalaje'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
