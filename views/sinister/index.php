@@ -38,7 +38,7 @@ if (!isset($_SESSION)) {
                     <th>Nombre</th>
                     <th>Motivo</th>
                     <th>Nombre Contacto</th>
-                    <th>Cargo</th>
+                    <!--<th>Cargo</th>-->
                     <th>Teléfono</th>
                     <th>Correo</th>
                     <th></th>
@@ -53,7 +53,7 @@ if (!isset($_SESSION)) {
                     <th>Nombre</th>
                     <th>Motivo</th>
                     <th>Nombre Contacto</th>
-                    <th>Cargo</th>
+                    <!--<th>Cargo</th>-->
                     <th>Teléfono</th>
                     <th>Correo</th>
                     <th></th>
@@ -67,13 +67,18 @@ if (!isset($_SESSION)) {
                         <?php
                         $idCertificado = 0;
                         $idAsegurado = 0;
-                        foreach ($seguros as $seguro):
-                            if($seguro['ID_SEGURO'] == $siniestro['ID_SEGURO']):
+                        foreach ($certificados as $certificado):
+                            if($certificado['ID_CERTIFICADO'] == $siniestro['ID_CERTIFICADO']):
                                 echo "<td>";
-                                echo utf8_encode($seguro['POLIZA']);
+                                foreach ($polizas as $poliza):
+                                    if($certificado['ID_POLIZA'] == $poliza['ID_POLIZA']):
+                                        echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")");
+                                        break;
+                                    endif;
+                                endforeach;
                                 echo "</td>";
-                                $idCertificado = $seguro['ID_CERTIFICADO'];
-                                $idAsegurado = $seguro['ID_ASEGURADO'];
+                                $idCertificado = $certificado['ID_CERTIFICADO'];
+                                $idAsegurado = $certificado['ID_ASEGURADO'];
                                 break;
                             endif;
                         endforeach;
@@ -101,10 +106,10 @@ if (!isset($_SESSION)) {
                         ?>
                         <td><?php echo $siniestro['MOTIVO'] ?></td>
                         <td><?php echo $siniestro['NOMBRE'] ?></td>
-                        <td><?php echo $siniestro['CARGO'] ?></td>
+                        <!--<td><?php echo $siniestro['CARGO'] ?></td>-->
                         <td><?php echo $siniestro['TELEFONO'] ?></td>
                         <td><?php echo $siniestro['CORREO'] ?></td>
-                        <td>
+                        <td style="width: 70px;">
                             <button data-original-title="Editar" class="btn btn-xs btn-default editSinister">
                                 <i class="fa fa-pencil"></i>
                             </button>
@@ -144,7 +149,7 @@ if (!isset($_SESSION)) {
         $("#tablaSiniestros").on("click", ".editSinister", (function() {
             var id = $(this).closest('tr').data("id"); console.debug("idSiniestro: " + id);
             ajax_loadModal($('#modalPrincipal'),
-                'ajax.php?controller=Sinister&action=jobTitleEdit',
+                'ajax.php?controller=Sinister&action=sinisterEdit',
                 'GET',
                 { idSiniestro: id },
                 defaultMessage);
@@ -169,7 +174,7 @@ if (!isset($_SESSION)) {
                         },
                         success: function(data) {
 
-                            if (data.status == 'error') {
+                            if (data.status === 'error') {
                                 $("#messageSinister").fadeOut("slow", function() {
                                     $('#messageSinister').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                                 });

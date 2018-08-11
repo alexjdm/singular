@@ -93,6 +93,7 @@ $controllers = array(
         'newCertificate', 'addCertificate', 'changeCertificate', 'changeNewCertificate',
         'index', 'createNewCertificate', 'certificateEdit', 'certificateEdit2db', 'viewCertificate', 'deleteCertificate',
         'annulments', 'newCertificateAnnulment', 'createNewCertificateAnnulment', 'certificateAnnulmentEdit', 'certificateAnnulmentEdit2db', 'deleteCertificateAnnulment', 'addReplaceCertificateNumber', 'addReplaceCertificateNumber2db', 'setCertificateAnnulment',
+        'searchCertificate',
         'error'],
     //'CertificateRequest' => ['index', 'newCertificateRequest', 'createNewCertificateRequest', 'certificateRequestEdit', 'certificateRequestEdit2db', 'deleteCertificateRequest', 'error'],
     'CertificateModify' => ['index', 'newCertificateModify', 'createNewCertificateModify', 'certificateModifyEdit', 'certificateModifyEdit2db', 'setCertificateModify', 'deleteCertificateModify', 'error'],

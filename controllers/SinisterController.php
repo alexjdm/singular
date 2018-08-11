@@ -44,8 +44,6 @@ class SinisterController {
             $siniestros = $this->model->getSinisters($idCorredora);
         }
 
-        //$seguros = $this->modelS->getInsurancesList();
-
         require_once('views/sinister/index.php');
     }
 
@@ -64,32 +62,36 @@ class SinisterController {
         $telefono = isset($_GET['telefono']) ? $_GET['telefono'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
 
-        return $this->model->newSinister($idCertificado, $motivo, $nombre, $telefono, $correo);
+        $this->model->newSinister($idCertificado, $motivo, $nombre, $telefono, $correo);
     }
 
     public function sinisterEdit() {
         $idSiniestro = isset($_GET['idSiniestro']) ? $_GET['idSiniestro'] : null;
-        $cargo = $this->model->getSinister($idSiniestro);
+        $siniestro = $this->model->getSinister($idSiniestro);
+
+        $certificado = $this->modelC->getCertificate($siniestro['ID_CERTIFICADO']);
+        $numeroCertificado = $certificado['NUMERO'];
+
+        $polizas = $this->modelP->getPoliciesList();
 
         require_once('views/sinister/sinisterEdit.php');
     }
 
     public function sinisterEdit2db() {
         $idSiniestro = isset($_GET['idSiniestro']) ? $_GET['idSiniestro'] : null;
-        $idSeguro = isset($_GET['idSeguro']) ? $_GET['idSeguro'] : null;
+        $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $motivo = isset($_GET['motivo']) ? $_GET['motivo'] : null;
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
-        $cargo = isset($_GET['cargo']) ? $_GET['cargo'] : null;
         $telefono = isset($_GET['telefono']) ? $_GET['telefono'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
 
-        return $this->model->editSinister($idSiniestro, $idSeguro, $motivo, $nombre, $cargo, $telefono, $correo);
+        $this->model->editSinister($idSiniestro, $idCertificado, $motivo, $nombre, $telefono, $correo);
     }
 
     public function deleteSinister() {
         $idSiniestro = isset($_GET['idSiniestro']) ? $_GET['idSiniestro'] : null;
 
-        return $this->model->deleteSinister($idSiniestro);
+        $this->model->deleteSinister($idSiniestro);
     }
 
     public function error() {

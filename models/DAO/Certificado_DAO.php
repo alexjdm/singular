@@ -145,6 +145,18 @@ class Certificado_DAO {
         return $sql->fetchAll()[0];
     }
 
+    public function searchCertificate($idPoliza, $numero){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_POLIZA=:ID_POLIZA AND NUMERO = :NUMERO AND HABILITADO = :HABILITADO");
+        $sql->execute(array('ID_POLIZA' => $idPoliza, 'NUMERO' => $numero, 'HABILITADO' => 1));
+
+        Database::disconnect();
+
+        return $sql->fetchAll()[0];
+    }
+
     public function getLastNumber (){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -440,6 +440,21 @@ class CertificateController {
         return $this->model->setCertificateAnnulment($idCertificadoAnulacion, $estado);
     }
 
+    public function searchCertificate()
+    {
+        $idPoliza = isset($_GET['idPoliza']) ? $_GET['idPoliza'] : null;
+        $numero = isset($_GET['numero']) ? $_GET['numero'] : null;
+
+        $certificado = $this->model->searchCertificate($idPoliza, $numero);
+        $certificado['FECHA_EMBARQUE'] = FormatearFechaSpa($certificado['FECHA_EMBARQUE']);
+
+        $data = array(
+            'status'  => "success",
+            'message' => array($certificado)
+        );
+        echo json_encode($data);
+    }
+
     public function error() {
         require_once('views/error/error.php');
     }
