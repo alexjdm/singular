@@ -16,15 +16,13 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="idAsegurado">Asegurado *</label>
                 <div class="col-sm-7">
-                    <input type="text" id="buscadorAsegurado" class="form-control" placeholder="Ingresa el rut del asegurado">
+                    <input type="text" id="buscadorAsegurado" class="form-control" placeholder="Ingresa el rut del asegurado" value="<?php echo utf8_encode($aseguradoSel['IDENTIFICADOR']); ?>">
                 </div>
                 <div class="col-sm-2">
                     <button id="btnBuscar" class="btn btn-default">Buscar</button>
                 </div>
                 <div class="col-sm-9 col-sm-offset-3" id="resultadoAsegurado">
-                    <?php foreach ($asegurados as $asegurado): ?>
-                        <?php if($asegurado['ID_ASEGURADO'] == $solicitudGarantia['ID_ASEGURADO']) { echo utf8_encode($asegurado['NOMBRE']); } ?>
-                    <?php endforeach; ?>
+                    <?php echo utf8_encode($aseguradoSel['NOMBRE']); ?>
                 </div>
             </div>
 
@@ -52,7 +50,7 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-            </div>-->
+            </div>
 
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
@@ -66,24 +64,27 @@
             </div>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="corredora">Cliente *</label>
+                <label class="col-sm-3 control-label" for="embalaje">Embalaje *</label>
                 <div class="col-sm-9">
-                    <select id="corredora" class="form-control">
-                        <?php foreach ($corredoras as $corredora): ?>
-                            <option value="<?php echo $corredora['ID_CORREDORA']; ?>" <?php if($corredora['ID_CORREDORA'] == $solicitudGarantia['ID_CORREDORA']) { echo "selected"; } ?>><?php echo utf8_encode($corredora['NOMBRE']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="idEmbalaje">Embalaje *</label>
-                <div class="col-sm-9">
-                    <select id="idEmbalaje" class="form-control">
+                    <select id="embalaje" class="form-control">
                         <?php foreach ($embalajes as $embalaje): ?>
                             <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>" <?php if($embalaje['ID_EMBALAJE'] == $solicitudGarantia['ID_EMBALAJE']) { echo "selected"; } ?>><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+            </div>-->
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="tipoMercaderia" type="text" placeholder="Ingrese el tipo de mercadería" value="<?php echo $solicitudGarantia['TIPO_MERCADERIA'] ?>">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="embalaje">Embalaje *</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="embalaje" type="text" placeholder="Embalaje" value="<?php echo $solicitudGarantia['EMBALAJE'] ?>">
                 </div>
             </div>
 
@@ -171,21 +172,22 @@
 
     });
 
+    $('#btnBuscar').trigger("click");
+
     $('#saveGuaranteePolicyEdit').click(function(){
         var e = 'ajax.php?controller=GuaranteePolicy&action=guaranteePolicyEdit2db';
         var idGarantia = $("#idGarantia").val();
         //var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
         var idAsegurado = idAseguradoSeleccionado;
-        var idTipoMercaderia = $("#tipoMercaderia").val(); //console.debug(idTipoMercaderia);
-        var idCorredora = $("#corredora").val();
-        var idEmbalaje = $("#idEmbalaje").val();
+        var tipoMercaderia = $("#tipoMercaderia").val(); //console.debug(tipoMercaderia);
+        var embalaje = $("#embalaje").val();
         var direccion = $("#direccion").val();
         var fechaInicio = $("#fechaInicio").val();
         var plazo = $("#plazo").val();
         var montoCIF = $("#montoCIF").val();
         var derechos = $("#derechos").val();
 
-        if(idAsegurado === '' || idTipoMercaderia === '' || idCorredora === '' || idEmbalaje === '' || direccion === ''
+        if(idAsegurado === '' || tipoMercaderia === '' || embalaje === '' || direccion === ''
             || fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
         {
             $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
@@ -194,7 +196,7 @@
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { idGarantia: idGarantia, idAsegurado: idAsegurado, idTipoMercaderia: idTipoMercaderia, idCorredora: idCorredora, idEmbalaje: idEmbalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
+                data: { idGarantia: idGarantia, idAsegurado: idAsegurado, tipoMercaderia: tipoMercaderia, embalaje: embalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
                 dataType : "json",
                 beforeSend: function () {
                     $('#saveGuaranteePolicyEdit').html("Cargando...");

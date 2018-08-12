@@ -107,7 +107,8 @@ if (!isset($_SESSION)) {
         //var idPoliza = $("#poliza :selected").val();
         //$("#certificado").html(certificados);
         //$('#certificado :not([data-idPoliza^="' + idPoliza + '"])').remove();
-
+        $('#buscadorCertificado').html("");
+        $('#resultadoCertificado').html("");
     });
     //$('#poliza').trigger("change");
 

@@ -60,7 +60,7 @@ if (!isset($_SESSION)) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                    </div>-->
+                    </div>
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
@@ -73,30 +73,33 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
 
-                    <!--<div class="form-group">
-                        <label class="col-sm-3 control-label" for="corredora">Cliente *</label>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="embalaje">Embalaje *</label>
                         <div class="col-sm-9">
-                            <select id="corredora" class="form-control">
-                                <?php foreach ($corredoras as $corredora): ?>
-                                    <option value="<?php echo $corredora['ID_CORREDORA']; ?>"><?php echo utf8_encode($corredora['NOMBRE']); ?></option>
+                            <select id="embalaje" class="form-control">
+                                <?php foreach ($embalajes as $embalaje): ?>
+                                    <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>-->
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="idEmbalaje">Embalaje *</label>
+                        <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
                         <div class="col-sm-9">
-                            <select id="idEmbalaje" class="form-control">
-                                <?php foreach ($embalajes as $embalaje): ?>
-                                    <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <input class="form-control" id="tipoMercaderia" type="text" placeholder="Ingrese el tipo de mercadería">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="direccion">Dirección *</label>
+                        <label class="col-sm-3 control-label" for="embalaje">Embalaje *</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="embalaje" type="text" placeholder="Embalaje">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="direccion">Dirección Almacen *</label>
                         <div class="col-sm-9">
                             <input class="form-control" id="direccion" type="text" placeholder="Dirección">
                         </div>
@@ -211,16 +214,15 @@ if (!isset($_SESSION)) {
 
         //var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
         var idAsegurado = idAseguradoSeleccionado;
-        var idTipoMercaderia = $("#tipoMercaderia").val(); //console.debug(idTipoMercaderia);
-        //var idCorredora = $("#corredora").val();
-        var idEmbalaje = $("#idEmbalaje").val();
+        var tipoMercaderia = $("#tipoMercaderia").val(); //console.debug(tipoMercaderia);
+        var embalaje = $("#embalaje").val();
         var direccion = $("#direccion").val();
         var fechaInicio = $("#fechaInicio").val();
         var plazo = $("#plazo").val();
         var montoCIF = $("#montoCIF").val();
         var derechos = $("#derechos").val();
 
-        if(idAsegurado === '' || idTipoMercaderia === '' || /*idCorredora === '' ||*/ idEmbalaje === '' || direccion === ''
+        if(idAsegurado === '' || tipoMercaderia === '' || embalaje === '' || direccion === ''
         || fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
         {
             $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
@@ -230,7 +232,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { idAsegurado: idAsegurado, idTipoMercaderia: idTipoMercaderia, /*idCorredora: idCorredora,*/ idEmbalaje: idEmbalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
+                data: { idAsegurado: idAsegurado, tipoMercaderia: tipoMercaderia, embalaje: embalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newGuaranteePolicyBtn').html("Cargando...");

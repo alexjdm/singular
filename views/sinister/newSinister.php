@@ -126,6 +126,8 @@ if (!isset($_SESSION)) {
         //$("#certificado").html(certificados);
         //$('#certificado :not([data-idPoliza^="' + idPoliza + '"])').remove();
 
+        $('#buscadorCertificado').html("");
+        $('#resultadoCertificado').html("");
     });
     //$('#poliza').trigger("change");
 

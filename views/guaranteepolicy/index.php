@@ -41,8 +41,6 @@ if (!isset($_SESSION)) {
                     <th>Plazo</th>
                     <th>Monto CIF</th>
                     <th>Derechos + IVA</th>
-                    <th>RUT Cliente</th>
-                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -58,8 +56,6 @@ if (!isset($_SESSION)) {
                     <th>Plazo</th>
                     <th>Monto CIF</th>
                     <th>Derechos + IVA</th>
-                    <th>RUT Cliente</th>
-                    <th>Cliente</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -77,7 +73,7 @@ if (!isset($_SESSION)) {
                             endif;
                         endforeach;
                         ?>
-                        <td>
+                        <!--<td>
                             <?php
                             foreach ($tipoMercaderias as $tipoMercaderia):
                                 if($tipoMercaderia['ID_TIPO_MERCADERIA'] == $garantia['ID_TIPO_MERCADERIA']):
@@ -96,22 +92,15 @@ if (!isset($_SESSION)) {
                                 endif;
                             endforeach;
                             ?>
-                        </td>
+                        </td>-->
+                        <td><?php echo $garantia['TIPO_MERCADERIA'] ?></td>
+                        <td><?php echo $garantia['EMBALAJE'] ?></td>
                         <td><?php echo $garantia['DIRECCION'] ?></td>
                         <td><?php echo $garantia['FECHA_INICIO'] ?></td>
                         <td><?php echo $garantia['PLAZO'] ?></td>
                         <td><?php echo $garantia['MONTO_CIF'] ?></td>
                         <td><?php echo $garantia['DERECHOS'] ?></td>
-                        <?php
-                        foreach ($corredoras as $corredora):
-                            if($corredora['ID_CORREDORA'] == $garantia['ID_CORREDORA']):
-                                echo '<td>' . utf8_encode($corredora['RUT']) . '</td>';
-                                echo '<td>' . utf8_encode($corredora['NOMBRE']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
-                        <td>
+                        <td style="width: 70px;">
                             <button data-original-title="Editar" class="btn btn-xs btn-default editGuaranteePolicy">
                                 <i class="fa fa-pencil"></i>
                             </button>
