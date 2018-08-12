@@ -267,7 +267,7 @@
                 primaSeguro = montoCIF * tasa / 100;
             }
 
-            $('#primaSeguro').val(primaSeguro);
+            $('#primaSeguro').val(primaSeguro.toFixed(2));
         }
         else {
             $('#primaSeguro').val("0");
