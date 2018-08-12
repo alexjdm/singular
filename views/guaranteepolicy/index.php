@@ -34,6 +34,7 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>RUT Asegurado</th>
                     <th>Asegurado</th>
+                    <th>Tipo Garantía</th>
                     <th>Tipo Mercadería</th>
                     <th>Embalaje</th>
                     <th>Dirección</th>
@@ -49,6 +50,7 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>RUT Asegurado</th>
                     <th>Asegurado</th>
+                    <th>Tipo Garantía</th>
                     <th>Tipo Mercadería</th>
                     <th>Embalaje</th>
                     <th>Dirección</th>
@@ -93,6 +95,7 @@ if (!isset($_SESSION)) {
                             endforeach;
                             ?>
                         </td>-->
+                        <td><?php echo $garantia['TIPO_GARANTIA'] ?></td>
                         <td><?php echo $garantia['TIPO_MERCADERIA'] ?></td>
                         <td><?php echo $garantia['EMBALAJE'] ?></td>
                         <td><?php echo $garantia['DIRECCION'] ?></td>

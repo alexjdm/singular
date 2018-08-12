@@ -29,7 +29,7 @@ class PolizaGarantia_DAO {
     }
 
 
-    public function newGuaranteePolicy($idAsegurado, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
+    public function newGuaranteePolicy($idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");
 
@@ -42,8 +42,8 @@ class PolizaGarantia_DAO {
 
         if ($resultado == null) {
 
-            $sql = $pdo->prepare("INSERT INTO `poliza_garantia`(`ID_ASEGURADO`, `TIPO_MERCADERIA`, `EMBALAJE`, `DIRECCION`, `FECHA_INICIO`, `PLAZO`, `MONTO_CIF`, `DERECHOS`, `HABILITADO`) VALUES (:ID_ASEGURADO, :TIPO_MERCADERIA, :EMBALAJE, :DIRECCION, :FECHA_INICIO, :PLAZO, :MONTO_CIF, :DERECHOS, 1)");
-            $sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'TIPO_MERCADERIA' => $tipoMercaderia, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos));
+            $sql = $pdo->prepare("INSERT INTO `poliza_garantia`(`ID_ASEGURADO`, `TIPO_GARANTIA`, `TIPO_MERCADERIA`, `EMBALAJE`, `DIRECCION`, `FECHA_INICIO`, `PLAZO`, `MONTO_CIF`, `DERECHOS`, `HABILITADO`) VALUES (:ID_ASEGURADO, :TIPO_GARANTIA, :TIPO_MERCADERIA, :EMBALAJE, :DIRECCION, :FECHA_INICIO, :PLAZO, :MONTO_CIF, :DERECHOS, 1)");
+            $sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'TIPO_GARANTIA' => $tipoGarantia, 'TIPO_MERCADERIA' => $tipoMercaderia, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos));
             $id = $pdo->lastInsertId();
 
             if(!empty($id)) {
@@ -81,13 +81,13 @@ class PolizaGarantia_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function editGuaranteePolicy($idGarantia, $idAsegurado, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
+    public function editGuaranteePolicy($idGarantia, $idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("UPDATE poliza_garantia set ID_ASEGURADO =:ID_ASEGURADO, TIPO_MERCADERIA =:TIPO_MERCADERIA, EMBALAJE = :EMBALAJE, DIRECCION = :DIRECCION, FECHA_INICIO = :FECHA_INICIO, PLAZO = :PLAZO, MONTO_CIF = :MONTO_CIF, DERECHOS = :DERECHOS WHERE ID_GARANTIA=:ID_GARANTIA");
+        $sql = $pdo->prepare("UPDATE poliza_garantia set ID_ASEGURADO =:ID_ASEGURADO, TIPO_GARANTIA =:TIPO_GARANTIA, TIPO_MERCADERIA =:TIPO_MERCADERIA, EMBALAJE = :EMBALAJE, DIRECCION = :DIRECCION, FECHA_INICIO = :FECHA_INICIO, PLAZO = :PLAZO, MONTO_CIF = :MONTO_CIF, DERECHOS = :DERECHOS WHERE ID_GARANTIA=:ID_GARANTIA");
 
-        if ($sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'TIPO_MERCADERIA' => $tipoMercaderia, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos, 'ID_GARANTIA' => $idGarantia))) {
+        if ($sql->execute(array('ID_ASEGURADO' => $idAsegurado, 'TIPO_GARANTIA' => $tipoGarantia, 'TIPO_MERCADERIA' => $tipoMercaderia, 'EMBALAJE' => $embalaje, 'DIRECCION' => $direccion, 'FECHA_INICIO' => $fechaInicio, 'PLAZO' => $plazo, 'MONTO_CIF' => $montoCIF, 'DERECHOS' => $derechos, 'ID_GARANTIA' => $idGarantia))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }

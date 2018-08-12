@@ -47,6 +47,7 @@ class GuaranteePolicyController {
     public function createNewGuaranteePolicy() {
 
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
+        $tipoGarantia = isset($_GET['tipoGarantia']) ? $_GET['tipoGarantia'] : null;
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
         $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
@@ -56,7 +57,7 @@ class GuaranteePolicyController {
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
 
-        return $this->model->newGuaranteePolicy($idAsegurado, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        return $this->model->newGuaranteePolicy($idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
     }
 
     public function guaranteePolicyEdit() {
@@ -80,6 +81,7 @@ class GuaranteePolicyController {
 
         $idGarantia = isset($_GET['idGarantia']) ? $_GET['idGarantia'] : null;
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
+        $tipoGarantia = isset($_GET['tipoGarantia']) ? $_GET['tipoGarantia'] : null;
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
         $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
@@ -89,7 +91,7 @@ class GuaranteePolicyController {
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
 
-        return $this->model->editGuaranteePolicy($idGarantia, $idAsegurado, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        return $this->model->editGuaranteePolicy($idGarantia, $idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
     }
 
     public function deleteGuaranteePolicy() {

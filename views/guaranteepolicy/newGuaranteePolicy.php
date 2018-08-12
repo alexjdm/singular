@@ -85,6 +85,18 @@ if (!isset($_SESSION)) {
                     </div>-->
 
                     <div class="form-group">
+                        <label class="col-sm-3 control-label" for="tipoGarantia">Tipo de Garantía *</label>
+                        <div class="col-sm-9">
+                            <select id="tipoGarantia" class="form-control">
+                                <option value="ALMACEN PARTICULAR">ALMACEN PARTICULAR</option>
+                                <option value="ADMISION TEMPORAL">ADMISION TEMPORAL</option>
+                                <option value="EMBARCADOR">EMBARCADOR</option>
+                                <option value="AGENTE DE CARGA">AGENTE DE CARGA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-sm-3 control-label" for="tipoMercaderia">Tipo de Mercadería *</label>
                         <div class="col-sm-9">
                             <input class="form-control" id="tipoMercaderia" type="text" placeholder="Ingrese el tipo de mercadería">
@@ -214,6 +226,7 @@ if (!isset($_SESSION)) {
 
         //var idAsegurado = $("#asegurado").val(); //console.debug(idAsegurado);
         var idAsegurado = idAseguradoSeleccionado;
+        var tipoGarantia = $("#tipoGarantia").val();
         var tipoMercaderia = $("#tipoMercaderia").val(); //console.debug(tipoMercaderia);
         var embalaje = $("#embalaje").val();
         var direccion = $("#direccion").val();
@@ -222,7 +235,7 @@ if (!isset($_SESSION)) {
         var montoCIF = $("#montoCIF").val();
         var derechos = $("#derechos").val();
 
-        if(idAsegurado === '' || tipoMercaderia === '' || embalaje === '' || direccion === ''
+        if(idAsegurado === '' || tipoGarantia === '' || tipoMercaderia === '' || embalaje === '' || direccion === ''
         || fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
         {
             $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
@@ -232,7 +245,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { idAsegurado: idAsegurado, tipoMercaderia: tipoMercaderia, embalaje: embalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
+                data: { idAsegurado: idAsegurado, tipoGarantia: tipoGarantia, tipoMercaderia: tipoMercaderia, embalaje: embalaje, direccion: direccion, fechaInicio: fechaInicio, plazo: plazo, montoCIF: montoCIF, derechos: derechos },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newGuaranteePolicyBtn').html("Cargando...");
