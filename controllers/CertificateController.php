@@ -366,7 +366,7 @@ class CertificateController {
         $polizas = $this->modelP->getPoliciesList();
         //$seguros = $this->modelS->getInsurancesList();
         //$asegurados = $this->modelA->getInsuredList();
-        $certificados = $this->model->getCertificatesList();
+        //$certificados = $this->model->getCertificatesList();
 
         require_once('views/certificate/newCertificateAnnulment.php');
     }
@@ -382,8 +382,8 @@ class CertificateController {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         //$certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
         $certificadoAnular = $this->model->getCertificate($idCertificadoAnulacion);
-        //$polizas = $this->modelP->getPoliciesList();
-        $certificados = $this->model->getCertificatesList();
+        $polizas = $this->modelP->getPoliciesList();
+        //$certificados = $this->model->getCertificatesList();
 
         require_once('views/certificate/certificateAnnulmentEdit.php');
     }
@@ -446,11 +446,21 @@ class CertificateController {
         $numero = isset($_GET['numero']) ? $_GET['numero'] : null;
 
         $certificado = $this->model->searchCertificate($idPoliza, $numero);
-        $certificado['FECHA_EMBARQUE'] = FormatearFechaSpa($certificado['FECHA_EMBARQUE']);
+
+        if($certificado != null)
+        {
+            $certificado['FECHA_EMBARQUE'] = FormatearFechaSpa($certificado['FECHA_EMBARQUE']);
+            $respuesta = array($certificado);
+            $status = "success";
+        }
+        else {
+            $status = "error";
+            $respuesta = "No se ha encontrado ningún certificado con ese número asociado a la póliza seleccionada.";
+        }
 
         $data = array(
-            'status'  => "success",
-            'message' => array($certificado)
+            'status'  => $status,
+            'message' => $respuesta
         );
         echo json_encode($data);
     }

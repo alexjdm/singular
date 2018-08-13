@@ -154,7 +154,11 @@ class Certificado_DAO {
 
         Database::disconnect();
 
-        return $sql->fetchAll()[0];
+        $resultado = $sql->fetchAll();
+        if($resultado != null)
+            return $resultado[0];
+        else
+            return null;
     }
 
     public function getLastNumber (){

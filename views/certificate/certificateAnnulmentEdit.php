@@ -14,14 +14,25 @@
             <input id="idCertificadoAnulacion" value="<?php echo $certificadoAnular['ID_CERTIFICADO'] ?>" type="hidden">
 
             <div class="form-group">
-                <label class="col-sm-3 control-label" for="idCertificado">Certificado *</label>
+                <label class="col-sm-3 control-label" for="idPoliza">Poliza *</label>
+                <div class="col-sm-9">
+                    <select id="idPoliza" class="form-control">
+                        <?php foreach ($polizas as $poliza): ?>
+                            <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoAnular['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="buscadorCertificado">Certificado *</label>
                 <div class="col-sm-7">
                     <input type="text" id="buscadorCertificado" class="form-control" placeholder="Ingresa el número del certificado" value="<?php echo $certificadoAnular['NUMERO'] ?>" readonly>
                 </div>
                 <div class="col-sm-2">
                     <button id="btnBuscar" class="btn btn-default" disabled>Buscar</button>
                 </div>
-                <div class="col-sm-9 col-sm-offset-3" id="resultadoCertificado"></div>
+                <div class="col-sm-9 col-sm-offset-3" id="resultadoCertificado" style="margin-top: 10px;"></div>
             </div>
 
             <div class="form-group">
@@ -31,22 +42,8 @@
                 </div>
             </div>
 
-            <table id="tablaCertificados" style="display: none;">
-                <tbody class="buscar">
-                <?php foreach ($certificados as $certificado): ?>
-                    <tr>
-                        <td class="numeroCertificado"
-                            data-numerocertificado="<?php echo $certificado['NUMERO']; ?>"
-                            data-idcertificado="<?php echo $certificado['ID_CERTIFICADO']; ?>">
-                            <?php echo utf8_encode($certificado['NUMERO']); ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-
             <br>
-            <div id="messageEditCertificateAnnulment"></div>
+            <div id="messageEditCertificateAnnulment" style="margin: 20px;"></div>
         </div>
 
         <div class="modal-footer">
@@ -66,48 +63,68 @@
 
 <script type="application/javascript">
 
-    var idCertificadoSeleccionado = 0;
+    $("#btnBuscar").click(function () {
+        var url = 'ajax.php?controller=Certificate&action=searchCertificate'; console.debug(url);
+        var idPoliza = $("#idPoliza :selected").val();
+        var numero = $("#buscadorCertificado").val();
 
-    $('#btnBuscar').click(function () {
-
-        var numeroCertificado = "";
-        var textoAbuscar = $('#buscadorCertificado').val();
-        if(textoAbuscar === "") return false;
-
-        var rex = new RegExp(textoAbuscar, 'i'); //console.log(rex);
-        var i = 0;
-
-        $(".numeroCertificado").each(function() {
-            //console.log($(this).data("numerocertificado"));
-            if($(this).data("numerocertificado") == textoAbuscar)
-            {
-                numeroCertificado = $(this).data("numerocertificado");
-                idCertificadoSeleccionado = $(this).data("idcertificado");
-
-                $('#resultadoCertificado').html("Certificado " + numeroCertificado + " existente.");
-
-                return false;
-            }
-            else
-            {
-                $('#resultadoCertificado').html("No hay resultados para tu búsqueda.");
-            }
-
-        });
+        if(idPoliza === '' || numero === '')
+        {
+            $('#resultadoCertificado').html('<p><strong>Error! </strong> Debes ingresar el número del certificado</p>');
+        }
+        else
+        {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { idPoliza: idPoliza, numero: numero },
+                dataType : "json",
+                beforeSend: function () {
+                    $('#resultadoCertificado').html("Buscando...");
+                },
+                success: function (data) {
+                    console.debug("success");
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    //debugger;
+                    if(data.status === "success"){
+                        console.debug("success");
+                        //debugger;
+                        $('#resultadoCertificado').html("<p id='idCertificado' data-idcertificado='" + data.message[0].ID_CERTIFICADO + "'> N° " + data.message[0].NUMERO + " de " + data.message[0].ORIGEN + " a " + data.message[0].DESTINO + " el " + data.message[0].FECHA_EMBARQUE + "</p>");
+                    }
+                    else{
+                        console.debug("fail");
+                        $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
+                    }
+                },
+                error: function (data) {
+                    console.log("error");
+                    console.debug(data);
+                    //debugger;
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
+                }
+            });
+        }
 
         return false;
-
     });
 
     $('#btnBuscar').trigger("click");
 
+    $('#idPoliza').change(function () {
+        $('#buscadorCertificado').html("");
+        $('#resultadoCertificado').html("");
+    });
+
     $('#saveCertificateAnnulmentEdit').click(function(){
         var e = 'ajax.php?controller=Certificate&action=certificateAnnulmentEdit2db';
-        var idCertificado = idCertificadoSeleccionado;
+
+        var idPoliza = $("#idPoliza :selected").val();
+        var idCertificado = $("#idCertificado").data('idcertificado'); console.log(idCertificado);
         var motivo = $("#motivo").val(); //console.debug(motivo);
 
-        //if(idPoliza === '' || idCertificado === '' || motivo === '')
-        if(idCertificado === '' || idCertificado === 0 || motivo === '')
+        if(idPoliza === '' || idCertificado === undefined || idCertificado === '' || idCertificado === 0 || motivo === '')
         {
             $('#messageNewCertificateAnnulment').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -124,7 +141,7 @@
                 success: function (data) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
-                    if(data.status == "success"){
+                    if(data.status === "success"){
                         $('#messageNewCertificateAnnulment').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                         $('#newCertificateAnnulmentBtn').html('Agregar');
                         window.location.reload(true);

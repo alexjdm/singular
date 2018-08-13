@@ -136,37 +136,44 @@ if (!isset($_SESSION)) {
         var idPoliza = $("#idPoliza :selected").val();
         var numero = $("#buscadorCertificado").val();
 
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: { idPoliza: idPoliza, numero: numero },
-            dataType : "json",
-            beforeSend: function () {
-                $('#resultadoCertificado').html("Buscando...");
-            },
-            success: function (data) {
-                console.debug("success");
-                console.debug(data);
-                //var returnedData = JSON.parse(data); console.debug(returnedData);
-
-                if(data.status === "success"){
+        if(idPoliza === '' || numero === '')
+        {
+            $('#resultadoCertificado').html('<p><strong>Error! </strong> Debes ingresar el número del certificado</p>');
+        }
+        else
+        {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { idPoliza: idPoliza, numero: numero },
+                dataType : "json",
+                beforeSend: function () {
+                    $('#resultadoCertificado').html("Buscando...");
+                },
+                success: function (data) {
                     console.debug("success");
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+
+                    if(data.status === "success"){
+                        console.debug("success");
+                        //debugger;
+                        $('#resultadoCertificado').html("<p id='idCertificado' data-idcertificado='" + data.message[0].ID_CERTIFICADO + "'> N° " + data.message[0].NUMERO + " de " + data.message[0].ORIGEN + " a " + data.message[0].DESTINO + " el " + data.message[0].FECHA_EMBARQUE + "</p>");
+                    }
+                    else{
+                        console.debug("fail");
+                        $('#resultadoCertificado').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
+                    }
+                },
+                error: function (data) {
+                    console.debug("error");
+                    console.debug(data);
                     //debugger;
-                    $('#resultadoCertificado').html("<p id='idCertificado' data-idcertificado='" + data.message[0].ID_CERTIFICADO + "'> N° " + data.message[0].NUMERO + " de " + data.message[0].ORIGEN + " a " + data.message[0].DESTINO + " el " + data.message[0].FECHA_EMBARQUE + "</p>");
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
                 }
-                else{
-                    console.debug("fail");
-                    $('#resultadoCertificado').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-                }
-            },
-            error: function (data) {
-                console.debug("error");
-                console.debug(data);
-                //debugger;
-                //var returnedData = JSON.parse(data); console.debug(returnedData);
-                $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
-            }
-        });
+            });
+        }
 
         return false;
     });
@@ -182,7 +189,7 @@ if (!isset($_SESSION)) {
         var telefonoContacto = $("#telefonoContacto").val();
         var correoContacto = $("#correoContacto").val();
 
-        if(idPoliza === '' || idCertificado === '' || nombreContacto === '' || telefonoContacto === '' || correoContacto === '')
+        if(idPoliza === '' || idCertificado === '' || idCertificado === undefined || nombreContacto === '' || telefonoContacto === '' || correoContacto === '')
         {
             $('#messageNewSinister').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }

@@ -34,24 +34,25 @@ if (!isset($_SESSION)) {
 
                 <div class="box-body">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="poliza">Poliza *</label>
+                        <label class="col-sm-3 control-label" for="idPoliza">Poliza *</label>
                         <div class="col-sm-9">
-                            <select id="poliza" class="form-control">
+                            <select id="idPoliza" class="form-control">
                                 <?php foreach ($polizas as $poliza): ?>
                                     <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoModificado['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" for="certificado">Certificado *</label>
-                        <div class="col-sm-9">
-                            <select id="certificado" class="form-control">
-                                <?php foreach ($certificados as $certificado): ?>
-                                    <option data-idPoliza="<?php echo $certificado['ID_POLIZA']; ?>" value="<?php echo $certificado['ID_CERTIFICADO']; ?>" <?php if($certificado['ID_CERTIFICADO'] == $certificadoModificado['ID_CERTIFICADO']) { echo "selected"; } ?>><?php echo "N° " . $certificado['NUMERO'] . " de " . $certificado['ORIGEN'] . " a " . $certificado['DESTINO'] . " el " . FormatearFechaSpa($certificado['FECHA_EMBARQUE']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                        <label class="col-sm-3 control-label" for="buscadorCertificado">Certificado *</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="buscadorCertificado" class="form-control" placeholder="Ingresa el número del certificado" value="<?php echo $certificadoModificado['NUMERO'] ?>" readonly>
                         </div>
+                        <div class="col-sm-2">
+                            <button id="btnBuscar" class="btn btn-default" disabled>Buscar</button>
+                        </div>
+                        <div class="col-sm-9 col-sm-offset-3" id="resultadoCertificado" style="margin-top: 10px;"></div>
                     </div>
 
                     <div class="form-group">
@@ -65,19 +66,6 @@ if (!isset($_SESSION)) {
                             <textarea id="debeDecir" class="form-control" minlength="1" maxlength="200" style="resize: vertical; height: 200px;"><?php echo $certificadoModificacion['DEBE_DECIR'] ?></textarea>
                         </div>
                     </div>
-
-                    <!--<div class="form-group">
-                        <label class="col-sm-3 control-label" for="dondeDice">Donde dice *</label>
-                        <div class="col-sm-9">
-                            <input id="dondeDice" class="form-control" type="text" minlength="1" maxlength="200" value="<?php echo $certificadoModificacion['DONDE_DICE'] ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label" for="debeDecir">Debe decir *</label>
-                        <div class="col-sm-9">
-                            <input id="debeDecir" class="form-control" type="text" minlength="1" maxlength="200" value="<?php echo $certificadoModificacion['DEBE_DECIR'] ?>">
-                        </div>
-                    </div>-->
 
                     <div id="messageNewCertificateModify" style="margin: 20px;"></div>
 
@@ -104,27 +92,70 @@ if (!isset($_SESSION)) {
     $('#sinData').show();
     <?php endif; ?>
 
-    var certificados = $("#certificado").html();
+    $("#btnBuscar").click(function () {
+        var url = 'ajax.php?controller=Certificate&action=searchCertificate'; console.debug(url);
+        var idPoliza = $("#idPoliza :selected").val();
+        var numero = $("#buscadorCertificado").val();
 
-    $('#poliza').change(function () {
+        if(idPoliza === '' || numero === '')
+        {
+            $('#resultadoCertificado').html('<p><strong>Error! </strong> Debes ingresar el número del certificado</p>');
+        }
+        else
+        {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { idPoliza: idPoliza, numero: numero },
+                dataType : "json",
+                beforeSend: function () {
+                    $('#resultadoCertificado').html("Buscando...");
+                },
+                success: function (data) {
+                    console.debug("success");
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    //debugger;
+                    if(data.status === "success"){
+                        console.debug("success");
+                        //debugger;
+                        $('#resultadoCertificado').html("<p id='idCertificado' data-idcertificado='" + data.message[0].ID_CERTIFICADO + "'> N° " + data.message[0].NUMERO + " de " + data.message[0].ORIGEN + " a " + data.message[0].DESTINO + " el " + data.message[0].FECHA_EMBARQUE + "</p>");
+                    }
+                    else{
+                        console.debug("fail");
+                        $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
+                    }
+                },
+                error: function (data) {
+                    console.log("error");
+                    console.debug(data);
+                    //debugger;
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    $('#resultadoCertificado').html('<p><strong>Error! </strong>' + data.message + '</p>');
+                }
+            });
+        }
 
-        var idPoliza = $("#poliza :selected").val();
-        $("#certificado").html(certificados);
-        $('#certificado :not([data-idPoliza^="' + idPoliza + '"])').remove();
-
+        return false;
     });
-    $('#poliza').trigger("change");
+
+    $('#btnBuscar').trigger("click");
+
+    $('#idPoliza').change(function () {
+        $('#buscadorCertificado').html("");
+        $('#resultadoCertificado').html("");
+    });
 
     $('#editCertificateModifyBtn').click(function(){
         var e = 'ajax.php?controller=CertificateModify&action=certificateModifyEdit2db'; //console.debug(e);
 
-        var idPoliza = $("#poliza").val(); //console.debug(poliza);
-        var idCertificado = $("#certificado").val(); //console.debug(idCertificado);
+        var idPoliza = $("#idPoliza :selected").val();
+        var idCertificado = $("#idCertificado").data('idcertificado'); console.log(idCertificado);
         var idCertificadoModificacion = $("#idCertificadoModificacion").val(); //console.debug(idCertificadoModificacion);
         var dondeDice = $("#dondeDice").val(); //console.debug(dondeDice);
         var debeDecir = $("#debeDecir").val(); //console.debug(debeDecir);
 
-        if(idPoliza === '' || idCertificado === '' || dondeDice === '' || debeDecir === '')
+        if(idPoliza === '' || idCertificado === undefined || idCertificado === '' || dondeDice === '' || debeDecir === '')
         {
             $('#messageNewCertificateModify').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
