@@ -2,63 +2,33 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/Asegurado_DAO.php");
-include_once("models/DAO/Region_DAO.php");
-include_once("models/DAO/Comuna_DAO.php");
-include_once("models/DAO/Usuario_DAO.php");
 include_once("helpers/SessionHelper.php");
 include_once("businesslogic/Notification.php");
+include_once("businesslogic/Insured.php");
 
 require "lib/phpmailer/class.phpmailer.php";
 
 class InsuredController {
 
-    public $model;
-    public $modelR;
-    public $modelC;
-    public $modelU;
-
     public function __construct()
     {
-        $this->model = new Asegurado_DAO();
-        $this->modelR = new Region_DAO();
-        $this->modelC = new Comuna_DAO();
-        $this->modelU = new Usuario_DAO();
     }
 
     public function index() {
 
-        $isSuperAdmin = isSuperAdmin();
-
-        //$usuario = getCurrentUser();
-        $corredora = getCurrentInsuranceBroker();
-        $asegurados = array();
-        if($isSuperAdmin == true)
-        {
-            $asegurados = $this -> model->getInsuredList();
-        }
-        else
-        {
-            $usuariosCorredora = $this -> modelU -> getUsersFromInsuredBroker($corredora['id']);
-            $ids = '';
-            $arrayIds = array();
-            foreach ($usuariosCorredora as $usuarioCorredora) {
-                array_push($arrayIds, $usuarioCorredora['ID_USUARIO']);
-            }
-            $ids = join("','",$arrayIds);
-
-            $asegurados = $this -> model->getInsuredByInsuranceBrokerId($ids);
-        }
-        $regiones = $this->modelR->getRegionList();
-        $comunas = $this->modelC->getComunaList();
-        $usuarios = $this->modelU->getUsersList();
+        $insuredBusiness = new Insured();
+        $aseguradosVM = $insuredBusiness->getInsuredList();
 
         require_once('views/insured/index.php');
     }
 
     public function newInsured() {
-        $regiones = $this->modelR->getRegionList();
-        $comunas = $this->modelC->getComunaList();
+
+        $regionBusiness = new Region();
+        $comunaBusiness = new Comuna();
+
+        $regiones = $regionBusiness->getRegionList();
+        $comunas = $comunaBusiness->getComunaList();
 
         require_once('views/insured/newInsured.php');
     }
@@ -84,14 +54,20 @@ class InsuredController {
             Notification::NotificarAsegurado($currentUser, $nombre, $giro, $idRegion, $idComuna, $direccion);
         }
 
-        return $this->model->newInsured($idUsuario, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion, $estado);
+        $insuredBusiness = new Insured();
+        $insuredBusiness->newInsured($idUsuario, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion, $estado);
     }
 
     public function insuredEdit() {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
-        $asegurado = $this->model->getInsured($idAsegurado);
-        $regiones = $this->modelR->getRegionList();
-        $comunas = $this->modelC->getComunaList();
+
+        $insuredBusiness = new Insured();
+        $regionBusiness = new Region();
+        $comunaBusiness = new Comuna();
+
+        $asegurado = $insuredBusiness->getInsured($idAsegurado);
+        $regiones = $regionBusiness->getRegionList();
+        $comunas = $comunaBusiness->getComunaList();
 
         require_once('views/insured/insuredEdit.php');
     }
@@ -105,25 +81,35 @@ class InsuredController {
         $idComuna = isset($_GET['idComuna']) ? $_GET['idComuna'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
 
-        return $this->model->editInsured($idAsegurado, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion);
+        $insuredBusiness = new Insured();
+        $insuredBusiness->editInsured($idAsegurado, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion);
     }
 
     public function deleteInsured() {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
 
-        return $this->model->deleteInsured($idAsegurado);
+        $insuredBusiness = new Insured();
+        $insuredBusiness->deleteInsured($idAsegurado);
     }
 
     public function validateInsured() {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
 
-        return $this->model->validateInsured($idAsegurado);
+        $insuredBusiness = new Insured();
+        $insuredBusiness->validateInsured($idAsegurado);
     }
 
     public function invalidateInsured() {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
 
-        return $this->model->invalidateInsured($idAsegurado);
+        $insuredBusiness = new Insured();
+        $insuredBusiness->invalidateInsured($idAsegurado);
+    }
+
+    public function approveAllInsured() {
+
+        $insuredBusiness = new Insured();
+        $insuredBusiness->approveAllInsured();
     }
 
     public function error() {

@@ -2,20 +2,20 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/TipoMedio_DAO.php");
+include_once("businesslogic/MediaType.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class MedioTypeController {
 
-    public $model;
-
     public function __construct()
     {
-        $this->model = new TipoMedio_DAO();
     }
 
     public function index() {
-        $tipoMedios = $this->model->getMedioTypesList();
+
+        $tipoMedioBusiness = new MediaType();
+        $tipoMedios = $tipoMedioBusiness->getMedioTypesList();
+
         require_once('views/mediotype/index.php');
     }
 
@@ -26,12 +26,15 @@ class MedioTypeController {
     public function createNewMedioType() {
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
 
-        return $this->model->newMedioType($nombre);
+        $tipoMedioBusiness = new MediaType();
+        $tipoMedioBusiness->newMedioType($nombre);
     }
 
     public function medioTypeEdit() {
         $idMedioType = isset($_GET['idMedioType']) ? $_GET['idMedioType'] : null;
-        $medioType = $this->model->getMedioType($idMedioType);
+
+        $tipoMedioBusiness = new MediaType();
+        $medioType = $tipoMedioBusiness->getMedioType($idMedioType);
 
         require_once('views/mediotype/medioTypeEdit.php');
     }
@@ -40,13 +43,15 @@ class MedioTypeController {
         $idMedioType = isset($_GET['idMedioType']) ? $_GET['idMedioType'] : null;
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
 
-        return $this->model->editMedioType($idMedioType, $nombre);
+        $tipoMedioBusiness = new MediaType();
+        $tipoMedioBusiness->editMedioType($idMedioType, $nombre);
     }
 
     public function deleteMedioType() {
         $idMedioType = isset($_GET['idMedioType']) ? $_GET['idMedioType'] : null;
 
-        return $this->model->deleteMedioType($idMedioType);
+        $tipoMedioBusiness = new MediaType();
+        $tipoMedioBusiness->deleteMedioType($idMedioType);
     }
 
     public function error() {

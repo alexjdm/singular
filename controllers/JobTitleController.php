@@ -2,20 +2,21 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/Cargo_DAO.php");
+include_once("businesslogic/JobTitle.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class JobTitleController {
 
-    public $model;
-
     public function __construct()
     {
-        $this->model = new Cargo_DAO();
     }
 
     public function index() {
-        $cargos = $this->model->getJobTitlesList();
+
+        $corredora = getCurrentInsuranceBroker();
+        $cargoBusiness = new JobTitle();
+        $cargos = $cargoBusiness->getJobTitlesByInsuranceBrokerId($corredora['id']);
+
         require_once('views/jobtitle/index.php');
     }
 
@@ -26,12 +27,15 @@ class JobTitleController {
     public function createNewJobTitle() {
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
 
-        return $this->model->newJobTitle($nombre);
+        $cargoBusiness = new JobTitle();
+        $cargoBusiness->newJobTitle($nombre);
     }
 
     public function jobTitleEdit() {
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
-        $cargo = $this->model->getJobTitle($idCargo);
+
+        $cargoBusiness = new JobTitle();
+        $cargo = $cargoBusiness ->getJobTitle($idCargo);
 
         require_once('views/jobtitle/jobTitleEdit.php');
     }
@@ -40,13 +44,15 @@ class JobTitleController {
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
 
-        return $this->model->editJobTitle($idCargo, $nombre);
+        $cargoBusiness = new JobTitle();
+        $cargoBusiness->editJobTitle($idCargo, $nombre);
     }
 
     public function deleteJobTitle() {
         $idCargo = isset($_GET['idCargo']) ? $_GET['idCargo'] : null;
 
-        return $this->model->deleteJobTitle($idCargo);
+        $cargoBusiness = new JobTitle();
+        $cargoBusiness->deleteJobTitle($idCargo);
     }
 
     public function error() {

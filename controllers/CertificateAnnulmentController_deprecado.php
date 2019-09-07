@@ -8,7 +8,7 @@ include_once("models/DAO/Asegurado_DAO.php");
 include_once("models/DAO/Certificado_DAO.php");
 require "lib/phpmailer/class.phpmailer.php";
 
-class CertificateAnnulmentController {
+class CertificateAnnulmentControllerDeprecado {
 
     public $model;
     public $modelS;
@@ -41,7 +41,7 @@ class CertificateAnnulmentController {
         $asegurados = $this->modelA->getInsuredList();
         $certificados = $this->modelC->getCertificatesList();
 
-        require_once('views/certificateannulment/index.php');
+        require_once('views/certificateannulment_deprecado/index.php');
     }
 
     public function newCertificateAnnulment() {
@@ -49,7 +49,7 @@ class CertificateAnnulmentController {
         $asegurados = $this->modelA->getInsuredList();
         $certificados = $this->modelC->getCertificatesList();
 
-        require_once('views/certificateannulment/newCertificateAnnulment.php');
+        require_once('views/certificateannulment_deprecado/newCertificateAnnulment.php');
     }
 
     public function createNewCertificateAnnulment() {
@@ -65,7 +65,7 @@ class CertificateAnnulmentController {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         $certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
 
-        require_once('views/certificateannulment/certificateAnnulmentEdit.php');
+        require_once('views/certificateannulment_deprecado/certificateAnnulmentEdit.php');
     }
 
     public function certificateAnnulmentEdit2db() {

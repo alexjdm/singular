@@ -210,6 +210,15 @@ require_once 'helpers/CommonHelper.php';
                     </ul>
                 </li>-->
 
+                <!-- Company Account -->
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-building"></i>
+                        <span class="hidden-xs"><?php echo $corredora['nombre'] ?></span>
+                    </a>
+                </li>
+
+
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

@@ -33,14 +33,10 @@ if (!isset($_SESSION)) {
                 <tr>
                     <th>N°</th>
                     <th>Fecha Solicitud</th>
-                    <th>RUT Asegurado</th>
+                    <th>Cliente</th>
                     <th>Asegurado</th>
-                    <th>A favor de</th>
-                    <th>Transporte</th>
+                    <th>Póliza</th>
                     <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Via</th>
                     <th>Estado</th>
                     <?php if($isSuperAdmin): ?>
                     <th>Solicitado Por</th>
@@ -52,14 +48,10 @@ if (!isset($_SESSION)) {
                 <tr>
                     <th>N°</th>
                     <th>Fecha Solicitud</th>
-                    <th>RUT Asegurado</th>
+                    <th>Cliente</th>
                     <th>Asegurado</th>
-                    <th>A favor de</th>
-                    <th>Transporte</th>
+                    <th>Póliza</th>
                     <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Via</th>
                     <th>Estado</th>
                     <?php if($isSuperAdmin): ?>
                     <th>Solicitado Por</th>
@@ -69,51 +61,17 @@ if (!isset($_SESSION)) {
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($certificadoSolicitudes as $certificadoSolicitud): ?>
-                    <tr data-id="<?php echo $certificadoSolicitud['ID_CERTIFICADO'] ?>">
+                <?php foreach ($certificadosVM as $certificadoVM): ?>
+                    <tr data-id="<?php echo $certificadoVM['ID_CERTIFICADO'] ?>">
                         <th><?php echo $n ?></th>
-                        <td><?php echo FormatearFechaCompletaSpa($certificadoSolicitud['FECHA_SOLICITUD']) ?></td>
-                        <?php
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $certificadoSolicitud['ID_ASEGURADO']):
-                                echo '<td>' . utf8_encode($asegurado['IDENTIFICADOR']) . '</td>';
-                                echo '<td>' . utf8_encode($asegurado['NOMBRE']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
-                        <td><?php echo $certificadoSolicitud['A_FAVOR_DE'] ?></td>
-                        <?php
-                        foreach ($polizas as $poliza):
-                            if($poliza['ID_POLIZA'] == $certificadoSolicitud['ID_POLIZA']):
-                                echo '<td>' . utf8_encode($poliza['TIPO_POLIZA']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
-                        <td><?php echo $certificadoSolicitud['TIPO'] ?></td>
-                        <td><?php echo $certificadoSolicitud['ORIGEN'] ?></td>
-                        <td><?php echo $certificadoSolicitud['DESTINO'] ?></td>
-                        <td><?php echo $certificadoSolicitud['VIA'] ?></td>
-                        <?php
-                        if($certificadoSolicitud['ESTADO_SOLICITUD'] == 0)
-                        {
-                            echo '<td>Pendiente</td>';
-                        }
-                        else if($certificadoSolicitud['ESTADO_SOLICITUD'] == 1)
-                        {
-                            echo '<td>Listo</td>';
-                        }
-                        ?>
+                        <td><?php echo $certificadoVM['FECHA_SOLICITUD'] ?></td>
+                        <td><?php echo $certificadoVM['CLIENTE'] ?></td>
+                        <td><?php echo $certificadoVM['ASEGURADO'] ?></td>
+                        <td><?php echo $certificadoVM['POLIZA'] ?></td>
+                        <td><?php echo $certificadoVM['TIPO'] ?></td>
+                        <td><?php echo $certificadoVM['ESTADO_SOLICITUD'] ?></td>
                         <?php if($isSuperAdmin): ?>
-                            <?php
-                            foreach ($usuarios as $usuario):
-                                if($usuario['ID_USUARIO'] == $certificadoSolicitud['ID_USUARIO_SOLICITANTE']):
-                                    echo '<td>' . utf8_encode($usuario['NOMBRE'] . ' ' . $usuario['APELLIDO']) . '</td>';
-                                    break;
-                                endif;
-                            endforeach;
-                            ?>
+                            <?php echo '<td>' . $certificadoVM['USUARIO_SOLICITANTE'] . '</td>' ?>
                         <?php endif; ?>
                         <td style="width: 110px;">
                             <?php if($isSuperAdmin == true): ?>
@@ -122,7 +80,7 @@ if (!isset($_SESSION)) {
                             </button>
                             &nbsp
                             <?php endif; ?>
-                            <?php if($certificadoSolicitud['ESTADO_SOLICITUD'] == 0 || $isSuperAdmin == true): ?>
+                            <?php if($certificadoVM['ESTADO_SOLICITUD'] == "Pendiente" || $isSuperAdmin == true): ?>
                             <button title="Editar" class="btn btn-xs btn-default editCertificateRequest">
                                 <i class="fa fa-pencil"></i>
                             </button>
@@ -221,5 +179,5 @@ if (!isset($_SESSION)) {
                 });
         }));
 
-    } );
+    });
 </script>

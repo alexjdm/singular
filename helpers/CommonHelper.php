@@ -57,6 +57,45 @@ function upload($file){
     return $target_file;
 }
 
+function GetPoliceNumber($nombreArchivo)
+{
+    if(isset($nombreArchivo))
+    {
+        $split = explode(' ', $nombreArchivo);
+        $split = explode('-', $split[1]);
+        $index = strpos($split[1], '.');
+        return substr($split[1], 0, $index);
+    }
+
+    return 0;
+}
+
+function GetCertificateNumber($nombreArchivo)
+{
+    if(isset($nombreArchivo))
+    {
+        $split = explode(' ', $nombreArchivo);
+        $split = explode('-', $split[1]);
+        return $split[0];
+    }
+
+    return 0;
+}
+
+function FormatearFechaEn($fecha){
+    $fechaSpa = explode(' ', $fecha);
+    if(strpos($fecha, '-'))
+    {
+        list($dia, $mes, $año) = explode('-', $fechaSpa[0]);
+    }
+    else
+    {
+        list($dia, $mes, $año) = explode('/', $fechaSpa[0]);
+    }
+    $fechaEn = $año . "-" . $mes . "-" . $dia;
+    return $fechaEn;
+}
+
 function FormatearFechaSpa($fecha){
     $fechaSpa = explode(' ', $fecha);
     if(strpos($fecha, '-'))
@@ -152,3 +191,83 @@ function paginate_function($item_per_page, $current_page, $total_records, $total
     }
     return $pagination; //return pagination links
 }
+
+function getMes($fecha)
+{
+    return date("m", strtotime($fecha));
+}
+
+
+function getCompany($companias, $idCompania)
+{
+    foreach ($companias as $compania):
+        if($compania['ID_COMPANIA'] == $idCompania):
+            return $compania;
+        endif;
+    endforeach;
+
+    return null;
+}
+
+function getTipoMercaderia($tiposMercaderia, $idTipoMercaderia)
+{
+    foreach ($tiposMercaderia as $tipoMercaderia):
+        if($tipoMercaderia['ID_TIPO_MERCADERIA'] == $idTipoMercaderia):
+            return $tipoMercaderia;
+        endif;
+    endforeach;
+
+    return null;
+}
+
+function getCertificado($certificados, $idCertificado)
+{
+    foreach ($certificados as $certificado):
+        if($certificado['ID_CERTIFICADO'] == $idCertificado):
+            return $certificado;
+        endif;
+    endforeach;
+
+    return null;
+}
+
+function getAsegurado($asegurados, $idAsegurado)
+{
+    foreach ($asegurados as $asegurado):
+        if($asegurado['ID_ASEGURADO'] == $idAsegurado):
+            return $asegurado;
+        endif;
+    endforeach;
+
+    return null;
+}
+
+function getPoliza($polizas, $idPoliza)
+{
+    foreach ($polizas as $poliza):
+        if($poliza['ID_POLIZA'] == $idPoliza):
+            return $poliza;
+        endif;
+    endforeach;
+
+    return null;
+}
+
+function getCliente($idUsuarioSolicitante)
+{
+    $usuario = getUsuarioSolicitante($idUsuarioSolicitante);
+
+    $corredoraBusiness = new InsuranceBroker();
+    $corredora = $corredoraBusiness->getInsuranceBrokerByIdUser($usuario['ID_USUARIO']);
+
+    return $corredora;
+}
+
+function getUsuarioSolicitante($idUsuarioSolicitante)
+{
+    $usuarioBusiness = new Usuario();
+    $usuario = $usuarioBusiness->getUser($idUsuarioSolicitante);
+
+    return $usuario;
+}
+

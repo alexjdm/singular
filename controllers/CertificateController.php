@@ -3,74 +3,46 @@
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
 require_once 'helpers/SessionHelper.php';
-include_once("models/DAO/Certificado_DAO.php");
-include_once("models/DAO/CertificadoModificacion_DAO.php");
-include_once("models/DAO/Asegurado_DAO.php");
-include_once("models/DAO/TipoMercaderia_DAO.php");
-include_once("models/DAO/MateriaAsegurada_DAO.php");
-include_once("models/DAO/Embalaje_DAO.php");
-include_once("models/DAO/Poliza_DAO.php");
-include_once("models/DAO/Usuario_DAO.php");
-include_once("models/DAO/Corredora_DAO.php");
-include_once ("helpers/SessionHelper.php");
+include_once("businesslogic/Insured.php");
+include_once("businesslogic/MerchandiseType.php");
+include_once("businesslogic/InsuredMatter.php");
+include_once("businesslogic/Packing.php");
+include_once("businesslogic/Policy.php");
+include_once("businesslogic/Usuario.php");
+include_once("businesslogic/InsuranceBroker.php");
 include_once("businesslogic/Notification.php");
 include_once("businesslogic/Certificate.php");
+include_once("businesslogic/Insured.php");
 
 require "lib/phpmailer/class.phpmailer.php";
 
 class CertificateController {
 
-    public $model;
-    public $modelTM;
-    public $modelP;
-    public $modelMA;
-    public $modelE;
-    public $modelU;
-    public $modelC;
-
     public function __construct()
     {
-        $this->model = new Certificado_DAO();
-        $this->modelCM = new CertificadoModificacion_DAO();
-        $this->modelA = new Asegurado_DAO();
-        $this->modelTM = new TipoMercaderia_DAO();
-        $this->modelP = new Poliza_DAO();
-        $this->modelMA = new MateriaAsegurada_DAO();
-        $this->modelE = new Embalaje_DAO();
-        $this->modelU = new Usuario_DAO();
-        $this->modelC = new Corredora_DAO();
     }
 
     public function index() {
 
-        $isSuperAdmin = isSuperAdmin();
-        if($isSuperAdmin)
-        {
-            $certificados = $this->model->getCertificatesList();
-        }
-        else
-        {
-            $currentUser = getCurrentUser();
-            $idCorredora = $currentUser['idCorredora'];
-            $usuarios = $this->modelU->getUsers($idCorredora);
-            $certificados = $this->model->getCertificates($usuarios);
-        }
-
-        $asegurados = $this->modelA->getInsuredList();
-        $usuarios = $this->modelU->getUsersList();
+        $certificadoBusiness = new Certificate();
+        $certificadosVM = $certificadoBusiness -> getCertificatesListVM();
 
         require_once('views/certificate/index.php');
     }
 
     public function newCertificate() {
-        $certificadoSolicitudes = $this->modelCS->getCertificateRequestsList();
+
+        $certificadoBusiness = new Certificate();
+        $certificadoSolicitudes = $certificadoBusiness -> getCertificateRequestsList();
 
         require_once('views/certificate/newCertificate.php');
     }
 
     public function addCertificate() {
         $idCertificadoSolicitud = isset($_GET['idCertificadoSolicitud']) ? $_GET['idCertificadoSolicitud'] : null;
-        $certificadoSolicitud = $this->model->getCertificateRequest($idCertificadoSolicitud);
+
+        $certificadoBusiness = new Certificate();
+        $certificadoSolicitud = $certificadoBusiness->getCertificateRequest($idCertificadoSolicitud);
 
         require_once('views/certificate/addCertificate.php');
     }
@@ -84,31 +56,18 @@ class CertificateController {
                 $dirpath = dirname($_SERVER['SCRIPT_FILENAME']);
 
                 $idCertificadoSolicitud = isset($_POST['idCertificadoSolicitud']) ? $_POST['idCertificadoSolicitud'] : null;
-                $numeroCertificado = isset($_POST['numeroCertificado']) ? $_POST['numeroCertificado'] : null;
+                //$numeroCertificado = isset($_POST['numeroCertificado']) ? $_POST['numeroCertificado'] : null;
                 $certificateBusiness = new Certificate();
                 $numeroPoliza = $certificateBusiness->getPolicyNumber($idCertificadoSolicitud); //En realidad el idCertificadoSolicitud = idCertificado
                 //$randomNumber = rand();
 
-                $sourcePath = $_FILES['certificado']['tmp_name'];
-                $targetPath = "upload/" . $numeroPoliza . '-' . $numeroCertificado . '-' . $_FILES['certificado']['name'];
+                $numeroPolizaArchivo = GetPoliceNumber($_FILES['certificado']['name']);
+                $numeroCertificado = GetCertificateNumber($_FILES['certificado']['name']);
 
-                $ubicacion = $targetPath;
-                $formato = pathinfo($targetPath, PATHINFO_EXTENSION);
-
-                if(move_uploaded_file($sourcePath, $dirpath . '/' . $targetPath)) {
-
-                    //$numero = $this->model->getLastNumber() + 1;
-
-                    //Enviar correo de notificación al solicitante del certificado
-                    $currentUser = getCurrentUser();
-                    Notification::NotificarCertificado($currentUser, $idCertificadoSolicitud);
-
-                    return $this->model->addCertificate($idCertificadoSolicitud, $numeroCertificado, $formato, $ubicacion);
-                }
-                else
+                if($numeroPolizaArchivo != $numeroPoliza)
                 {
                     $status  = "error";
-                    $message = "Error, por favor intente nuevamente.";
+                    $message = "El número de póliza ingresado en el archivo no es igual al ingresado en la solicitud.";
 
                     $data = array(
                         'status'  => $status,
@@ -117,14 +76,66 @@ class CertificateController {
 
                     echo json_encode($data);
                 }
+                else
+                {
+                    if($numeroCertificado > 0)
+                    {
+                        $sourcePath = $_FILES['certificado']['tmp_name'];
+                        $targetPath = "upload/Certificado " . $numeroCertificado . '-' . $numeroPoliza . '-' . $_FILES['certificado']['name'];
+                        // TODO: Verificar si se sube con el mismo nombre
+
+                        $ubicacion = $targetPath;
+                        $formato = pathinfo($targetPath, PATHINFO_EXTENSION);
+
+                        if(move_uploaded_file($sourcePath, $dirpath . '/' . $targetPath)) {
+
+                            //$numero = $this->model->getLastNumber() + 1;
+
+                            //Enviar correo de notificación al solicitante del certificado
+                            $currentUser = getCurrentUser();
+                            $notificationBusiness = new Notification();
+                            $notificationBusiness->NotificarCertificado($currentUser, $idCertificadoSolicitud);
+
+                            $certificadoBusiness = new Certificate();
+                            $certificadoBusiness->addCertificate($idCertificadoSolicitud, $numeroCertificado, $formato, $ubicacion);
+                        }
+                        else
+                        {
+                            $status  = "error";
+                            $message = "Error, por favor intente nuevamente.";
+
+                            $data = array(
+                                'status'  => $status,
+                                'message' => $message
+                            );
+
+                            echo json_encode($data);
+                        }
+                    }
+                    else
+                    {
+                        $status  = "error";
+                        $message = "El número de certificado ingresado no es mayor a cero.";
+
+                        $data = array(
+                            'status'  => $status,
+                            'message' => $message
+                        );
+
+                        echo json_encode($data);
+                    }
+                }
+
             }
         }
     }
 
     public function changeCertificate() {
         $idCertificadoModificacion = isset($_GET['idCertificadoModificacion']) ? $_GET['idCertificadoModificacion'] : null;
-        $certificadoModificacion = $this->modelCM->getCertificateModify($idCertificadoModificacion);
-        $certificado = $this->model->getCertificate($certificadoModificacion['ID_CERTIFICADO']);
+
+        $certificadoBusiness = new Certificate();
+        $certificadoModificacion = $certificadoBusiness->getCertificateModify($idCertificadoModificacion);
+        $certificado = $certificadoBusiness->getCertificate($certificadoModificacion['ID_CERTIFICADO']);
 
         require_once('views/certificate/changeCertificate.php');
     }
@@ -145,7 +156,8 @@ class CertificateController {
                 //$randomNumber = rand();
 
                 $sourcePath = $_FILES['certificado']['tmp_name'];
-                $targetPath = "upload/" . $numeroPoliza . '_' . $numeroCertificado . '_' . $_FILES['certificado']['name'];
+                $targetPath = "upload/Certificado " . $numeroCertificado . '-' . $numeroPoliza . '-' . $_FILES['certificado']['name'];
+                // TODO: Verificar si se sube con el mismo nombre
 
                 $ubicacion = $targetPath;
                 $formato = pathinfo($targetPath, PATHINFO_EXTENSION);
@@ -158,9 +170,10 @@ class CertificateController {
                     $currentUser = getCurrentUser();
                     Notification::NotificarCertificado($currentUser, $idCertificado);
 
-                    $this->modelCM->setCertificateModify($idCertificadoModificacion, true);
+                    $certificadoBusiness = new Certificate();
+                    $certificadoBusiness->setCertificateModify($idCertificadoModificacion, true);
 
-                    return $this->model->changeCertificate($idCertificado, $numeroCertificado, $formato, $ubicacion);
+                    $certificadoBusiness->changeCertificate($idCertificado, $numeroCertificado, $formato, $ubicacion);
                 }
                 else
                 {
@@ -180,27 +193,36 @@ class CertificateController {
 
     public function viewCertificate() {
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
-        $certificado = $this->model->getCertificate($idCertificado);
+
+        $certificadoBusiness = new Certificate();
+        $certificado = $certificadoBusiness->getCertificate($idCertificado);
 
         require_once('views/certificate/viewCertificate.php');
     }
 
     public function certificateEdit() {
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
-        $certificadoSolicitud = $this->model->getCertificate($idCertificado);
 
-        $asegurados = $this->modelA->getInsuredList();
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $polizas = $this->modelP->getPoliciesList();
-        $materiasAseguradas = $this->modelMA->getInsuredMattersList();
-        $embalajes = $this->modelE->getPackingsList();
+        $certificadoBusiness = new Certificate();
+        $aseguradosBusiness = new Insured();
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $polizaBusiness = new Policy();
+        $materiaAseguradaBusiness = new InsuredMatter();
+        $embalajeBusiness = new Packing();
+
+        $certificadoSolicitud = $certificadoBusiness->getCertificate($idCertificado);
+        $asegurados = $aseguradosBusiness->getInsuredList();
+        $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
+        $polizas = $polizaBusiness->getPoliciesList();
+        $materiasAseguradas = $materiaAseguradaBusiness->getInsuredMattersList();
+        $embalajes = $embalajeBusiness->getPackingsList();
 
         require_once('views/certificate/certificateEdit.php');
     }
 
     public function certificateEdit2db() {
 
-        $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
+        /*$idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
         $idPoliza = isset($_GET['idPoliza']) ? $_GET['idPoliza'] : null;
@@ -208,48 +230,42 @@ class CertificateController {
         $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : null;
         $origen = isset($_GET['origen']) ? $_GET['origen'] : null;
 
-
-        return $this->model->editCertificate($idCertificado, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloCamion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->editCertificate($idCertificado, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloCamion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones);*/
     }
 
     public function deleteCertificate() {
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
 
-        return $this->model->deleteCertificate($idCertificado);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->deleteCertificate($idCertificado);
     }
 
     public function request() {
 
-        $isSuperAdmin = isSuperAdmin();
-        if($isSuperAdmin)
-        {
-            $usuarios = $this->modelU->getUsersList();
-            $certificadoSolicitudes = $this->model->getCertificateRequestsList();
-        }
-        else
-        {
-            $currentUser = getCurrentUser();
-            $idCorredora = $currentUser['idCorredora'];
-            $certificadoSolicitudes = $this->model->getCertificateRequests($idCorredora);
-        }
-
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $polizas = $this->modelP->getPoliciesList();
-        $materiasAseguradas = $this->modelMA->getInsuredMattersList();
-        $embalajes = $this->modelE->getPackingsList();
-        $asegurados = $this->modelA->getInsuredList();
+        $certificadoBusiness = new Certificate();
+        $certificadosVM = $certificadoBusiness -> getRequestList();
 
         require_once('views/certificate/request.php');
     }
 
     public function newCertificateRequest() {
-        $asegurados = $this->modelA->getInsuredList();
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $polizas = $this->modelP->getPoliciesList();
-        $materiasAseguradas = $this->modelMA->getInsuredMattersList();
-        $embalajes = $this->modelE->getPackingsList();
+
+        $aseguradosBusiness = new Insured();
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $polizaBusiness = new Policy();
+        $materiaAseguradaBusiness = new InsuredMatter();
+        $embalajeBusiness = new Packing();
+        $corredoraBusiness = new InsuranceBroker();
+
+        $asegurados = $aseguradosBusiness->getAllInsured();
+        //$asegurados = $aseguradosBusiness->getInsuredList();
+        $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
+        $polizas = $polizaBusiness->getValidatePoliciesList();
+        $materiasAseguradas = $materiaAseguradaBusiness->getInsuredMattersList();
+        $embalajes = $embalajeBusiness->getPackingsList();
         $currentCorredora = getCurrentInsuranceBroker();
-        $corredora = $this->modelC->getInsuranceBroker($currentCorredora['id']);
+        $corredora = $corredoraBusiness->getInsuranceBroker($currentCorredora['id']);
 
         require_once('views/certificate/newCertificateRequest.php');
     }
@@ -278,6 +294,7 @@ class CertificateController {
         $primaMin = isset($_GET['primaMin']) ? $_GET['primaMin'] : null;
         $primaSeguro = isset($_GET['primaSeguro']) ? $_GET['primaSeguro'] : null;
         $observaciones = isset($_GET['observaciones']) ? $_GET['observaciones'] : null;
+        $habilitado = 1;
 
         //Enviar correo de notificación a los superAdmin
         $estadoSolicitud = 0;
@@ -290,23 +307,32 @@ class CertificateController {
         }
         else
         {
-            Notification::NotificarCertificadoSolicitud($currentUser, $idAsegurado, $idTipoMercaderia, $idPoliza);
+            $notificationBusiness = new Notification();
+            $notificationBusiness -> NotificarCertificadoSolicitud($currentUser, $idAsegurado, $idTipoMercaderia, $idPoliza);
         }
 
-        return $this->model->newCertificateRequest($idUsuarioSolicitante, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo,
+        $certificateBusiness = new Certificate();
+        $certificateBusiness->newCertificateRequest($idUsuarioSolicitante, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo,
             $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloCamion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada,
-            $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones, $estadoSolicitud, $estadoAnulacion);
+            $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones, $estadoSolicitud, $estadoAnulacion, $habilitado);
     }
 
     public function certificateRequestEdit() {
         $idCertificadoSolicitud = isset($_GET['idCertificadoSolicitud']) ? $_GET['idCertificadoSolicitud'] : null;
-        $certificadoSolicitud = $this->model->getCertificateRequest($idCertificadoSolicitud);
 
-        $asegurados = $this->modelA->getInsuredList();
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $polizas = $this->modelP->getPoliciesList();
-        $materiasAseguradas = $this->modelMA->getInsuredMattersList();
-        $embalajes = $this->modelE->getPackingsList();
+        $certificadoBusiness = new Certificate();
+        $aseguradosBusiness = new Insured();
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $polizaBusiness = new Policy();
+        $materiaAseguradaBusiness = new InsuredMatter();
+        $embalajeBusiness = new Packing();
+
+        $certificadoSolicitud = $certificadoBusiness->getCertificateRequest($idCertificadoSolicitud);
+        $asegurados = $aseguradosBusiness->getInsuredList();
+        $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
+        $polizas = $polizaBusiness->getPoliciesList();
+        $materiasAseguradas = $materiaAseguradaBusiness->getInsuredMattersList();
+        $embalajes = $embalajeBusiness->getPackingsList();
 
         require_once('views/certificate/certificateRequestEdit.php');
     }
@@ -337,36 +363,36 @@ class CertificateController {
         $primaSeguro = isset($_GET['primaSeguro']) ? $_GET['primaSeguro'] : null;
         $observaciones = isset($_GET['observaciones']) ? $_GET['observaciones'] : null;
 
-
-        return $this->model->editCertificateRequest($idCertificadoSolicitud, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloCamion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->editCertificateRequest($idCertificadoSolicitud, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloCamion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones);
     }
 
     public function annulments() {
 
-        $isSuperAdmin = isSuperAdmin();
-        if($isSuperAdmin)
-        {
-            $certificadoAnulaciones = $this->model->getCertificateAnnulmentsList();
-        }
-        else
-        {
-            $currentUser = getCurrentUser();
-            $idCorredora = $currentUser['idCorredora'];
-            $certificadoAnulaciones = $this->model->getCertificateAnnulments($idCorredora);
-        }
-
-        $polizas = $this->modelP->getPoliciesList();
-        $asegurados = $this->modelA->getInsuredList();
-        $certificados = $this->model->getCertificatesList();
+        $certificadoBusiness = new Certificate();
+        $certificadosVM = $certificadoBusiness -> getAnnulmentsVM();
 
         require_once('views/certificate/annulments.php');
     }
 
+    public function annulmentrequest() {
+
+        $certificadoBusiness = new Certificate();
+        $aseguradosBusiness = new Insured();
+        $polizaBusiness = new Policy();
+
+        $polizas = $polizaBusiness->getPoliciesList();
+        $asegurados = $aseguradosBusiness->getInsuredList();
+        $certificados = $certificadoBusiness->getCertificatesList();
+        $certificadoAnulaciones = $certificadoBusiness->getCertificateAnnulmentsList();
+
+        require_once('views/certificate/annulmentrequest.php');
+    }
+
     public function newCertificateAnnulment() {
-        $polizas = $this->modelP->getPoliciesList();
-        //$seguros = $this->modelS->getInsurancesList();
-        //$asegurados = $this->modelA->getInsuredList();
-        //$certificados = $this->model->getCertificatesList();
+
+        $polizaBusiness = new Policy();
+        $polizas = $polizaBusiness->getValidatePoliciesList();
 
         require_once('views/certificate/newCertificateAnnulment.php');
     }
@@ -375,47 +401,39 @@ class CertificateController {
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $motivo = isset($_GET['motivo']) ? $_GET['motivo'] : null;
 
-        return $this->model->newCertificateAnnulment($idCertificado, $motivo);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->newCertificateAnnulment($idCertificado, $motivo);
     }
 
     public function certificateAnnulmentEdit() {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
-        //$certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
-        $certificadoAnular = $this->model->getCertificate($idCertificadoAnulacion);
-        $polizas = $this->modelP->getPoliciesList();
-        //$certificados = $this->model->getCertificatesList();
+
+        $certificadoBusiness = new Certificate();
+        $polizaBusiness = new Policy();
+
+        $certificadoAnular = $certificadoBusiness->getCertificate($idCertificadoAnulacion);
+        $polizas = $polizaBusiness->getPoliciesList();
+
 
         require_once('views/certificate/certificateAnnulmentEdit.php');
     }
 
     public function certificateAnnulmentEdit2db() {
-        //$idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
         $motivo = isset($_GET['motivo']) ? $_GET['motivo'] : null;
-        //$idCertificadoReemplazo = isset($_GET['idCertificadoReemplazo']) ? $_GET['idCertificadoReemplazo'] : null;
-        //$estado = isset($_GET['estado']) ? $_GET['estado'] : null;
 
-        return $this->model->editCertificateAnnulment($idCertificado, $motivo);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->editCertificateAnnulment($idCertificado, $motivo);
     }
 
     public function addReplaceCertificateNumber() {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
-        $certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
 
-        $isSuperAdmin = isSuperAdmin();
+        $certificadoBusiness = new Certificate();
+        $certificadoAnulacion = $certificadoBusiness->getCertificateAnnulment($idCertificadoAnulacion);
+
         $certificados = array();
-        $certificados1 = array();
-        if($isSuperAdmin)
-        {
-            $certificados1 = $this->model->getCertificatesList();
-        }
-        else
-        {
-            $currentUser = getCurrentUser();
-            $idCorredora = $currentUser['idCorredora'];
-            $usuarios = $this->modelU->getUsers($idCorredora);
-            $certificados1 = $this->model->getCertificates($usuarios);
-        }
+        $certificados1 = $certificadoBusiness->getCertificatesList();
 
         foreach ($certificados1 as $certificado):
             if($certificadoAnulacion['ID_CERTIFICADO'] != $certificado['ID_CERTIFICADO']):
@@ -430,14 +448,16 @@ class CertificateController {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         $idCertificado = isset($_GET['idCertificado']) ? $_GET['idCertificado'] : null;
 
-        return $this->model->addReplaceCertificateNumber2db($idCertificadoAnulacion, $idCertificado);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->addReplaceCertificateNumber2db($idCertificadoAnulacion, $idCertificado);
     }
 
     public function setCertificateAnnulment() {
         $idCertificadoAnulacion = isset($_GET['idCertificadoAnulacion']) ? $_GET['idCertificadoAnulacion'] : null;
         $estado = isset($_GET['estado']) ? $_GET['estado'] : null;
 
-        return $this->model->setCertificateAnnulment($idCertificadoAnulacion, $estado);
+        $certificadoBusiness = new Certificate();
+        $certificadoBusiness->setCertificateAnnulment($idCertificadoAnulacion, $estado);
     }
 
     public function searchCertificate()
@@ -445,10 +465,19 @@ class CertificateController {
         $idPoliza = isset($_GET['idPoliza']) ? $_GET['idPoliza'] : null;
         $numero = isset($_GET['numero']) ? $_GET['numero'] : null;
 
-        $certificado = $this->model->searchCertificate($idPoliza, $numero);
+        $certificadoBusiness = new Certificate();
+        $certificado = $certificadoBusiness -> searchCertificate($idPoliza, $numero);
 
         if($certificado != null)
         {
+            $aseguradoBusiness = new Insured();
+            $asegurados = $aseguradoBusiness->getAllInsured();
+            $asegurado = getAsegurado($asegurados, $certificado['ID_ASEGURADO']);
+            if(isset($asegurado))
+                $certificado['NOMBRE_ASEGURADO'] = $asegurado['NOMBRE'];
+            else
+                $certificado['NOMBRE_ASEGURADO'] = "--";
+
             $certificado['FECHA_EMBARQUE'] = FormatearFechaSpa($certificado['FECHA_EMBARQUE']);
             $respuesta = array($certificado);
             $status = "success";

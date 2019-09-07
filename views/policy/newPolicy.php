@@ -51,6 +51,20 @@ if (!isset($_SESSION)) {
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="fechaInicio">Fecha Inicio *</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="fechaInicio" type="text" placeholder="Fecha Inicio">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="fechaFin">Fecha Fin *</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="fechaFin" type="text" placeholder="Fecha Fin">
+                        </div>
+                    </div>
+
                     <div id="messageNewPolicy" style="margin: 20px;"></div>
 
                 </div>
@@ -69,14 +83,51 @@ if (!isset($_SESSION)) {
 
 <script type="application/javascript">
 
+    $("#fechaInicio").val(moment().format('DD-MM-YYYY'));
+    $("#fechaFin").val(moment().add('years', 1).format('DD-MM-YYYY'));
+
+    $("#fechaInicio").daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        format: 'DD-MM-YYYY',
+        locale: {
+            //format: 'DD-MM-YYYY',
+            applyLabel: 'Aceptar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
+    $("#fechaFin").daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        format: 'DD-MM-YYYY',
+        locale: {
+            //format: 'DD-MM-YYYY',
+            applyLabel: 'Aceptar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
     $('#newPolicyBtn').click(function(){
         var e = 'ajax.php?controller=Policy&action=createNewPolicy'; //console.debug(e);
 
         var tipoPoliza = $("#tipoPoliza").val(); //console.debug(tipoPoliza);
         var numeroPoliza = $("#numeroPoliza").val(); //console.debug(numeroPoliza);
         var idCompania = $("#compania").val(); //console.debug(idCompania);
+        var fechaInicio = $("#fechaInicio").val(); //console.debug(idCompania);
+        var fechaFin = $("#fechaFin").val(); //console.debug(idCompania);
 
-        if(tipoPoliza == '' || numeroPoliza == '' || idCompania == '')
+        if(tipoPoliza === '' || numeroPoliza === '' || idCompania === '' || fechaInicio === '' || fechaFin === '')
         {
             $('#messageNewPolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -85,7 +136,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { tipoPoliza: tipoPoliza, numeroPoliza: numeroPoliza, idCompania: idCompania },
+                data: { tipoPoliza: tipoPoliza, numeroPoliza: numeroPoliza, idCompania: idCompania, fechaInicio: fechaInicio, fechaFin: fechaFin },
                 dataType : "json",
                 beforeSend: function () {
                     $('#newPolicyBtn').html("Cargando...");

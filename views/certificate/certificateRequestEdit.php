@@ -247,6 +247,32 @@
 
 <script type="application/javascript">
 
+    var tasaMinGeneral = <?php echo $corredora['TASA'] ?>;
+    var primaMinGeneral = <?php echo $corredora['PRIMA_MIN'] ?>;
+
+    function validarCondicionesGenerales()
+    {
+        var tasa = parseFloat($('#tasa').val().replace(',','.').replace(' ',''));
+        var primaMin = parseFloat($('#primaMin').val());
+
+        if(tasa < tasaMinGeneral)
+        {
+            tasa = tasaMinGeneral;
+            $('#tasa').val(tasa);
+        }
+
+        if(primaMin < primaMinGeneral)
+        {
+            primaMin = primaMinGeneral;
+            $('#primaMin').val(primaMin);
+        }
+
+        //console.log(tasa);
+        //console.log(primaMin);
+
+        calcularPrimaDeSeguro();
+    }
+
     function calcularPrimaDeSeguro() {
         var tasa = parseFloat($('#tasa').val().replace(',','.').replace(' ',''));
         var primaMin = parseFloat($('#primaMin').val());
@@ -284,6 +310,14 @@
 
     $('#primaMin').keyup(function () {
         calcularPrimaDeSeguro();
+    });
+
+    $('#tasa').focusout(function () {
+        validarCondicionesGenerales();
+    });
+
+    $('#primaMin').focusout(function () {
+        validarCondicionesGenerales();
     });
 
     var idPolizaSeleccionada = $('#idPoliza').val();

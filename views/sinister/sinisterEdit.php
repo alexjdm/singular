@@ -26,7 +26,7 @@ if (!isset($_SESSION)) {
             <!-- form start -->
             <form id="editSinisterForm" class="form-horizontal">
 
-                <input type="hidden" id="idSiniestro" value="<?php $siniestro['ID_SINIESTRO'] ?>">
+                <input type="hidden" id="idSiniestro" value="<?php echo $siniestro['ID_SINIESTRO'] ?>">
 
                 <div class="box-body">
                     <div class="form-group">
@@ -79,6 +79,15 @@ if (!isset($_SESSION)) {
                         <label class="col-sm-3 control-label" for="correoContacto">Email *</label>
                         <div class="col-sm-9">
                             <input class="form-control" id="correoContacto" type="text" placeholder="Escriba su correo electrónico" value="<?php echo $siniestro['CORREO']; ?>">
+                        </div>
+                    </div>
+
+                    <h5>Número del siniestro</h5>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="numeroSiniestro">Número</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="numeroSiniestro" type="text" placeholder="Acá puede ingresar el número del siniestro" value="<?php echo $siniestro['NUMERO']; ?>">
                         </div>
                     </div>
 
@@ -172,6 +181,7 @@ if (!isset($_SESSION)) {
         var nombreContacto = $("#nombreContacto").val();
         var telefonoContacto = $("#telefonoContacto").val();
         var correoContacto = $("#correoContacto").val();
+        var numeroSiniestro = $("#numeroSiniestro").val();
 
         if(idPoliza === '' || idCertificado === '' || idCertificado === undefined || nombreContacto === '' || telefonoContacto === '' || correoContacto === '')
         {
@@ -182,7 +192,7 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: e,
-                data: { idSiniestro: idSiniestro, idCertificado: idCertificado, motivo: motivoSiniestro, nombre: nombreContacto, telefono: telefonoContacto, correo: correoContacto },
+                data: { idSiniestro: idSiniestro, idCertificado: idCertificado, motivo: motivoSiniestro, nombre: nombreContacto, telefono: telefonoContacto, correo: correoContacto, numeroSiniestro: numeroSiniestro },
                 dataType : "json",
                 beforeSend: function () {
                     $('#editSinisterBtn').html("Cargando...");
@@ -190,7 +200,7 @@ if (!isset($_SESSION)) {
                 success: function (data) {
                     console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
-                    if(data.status == "success"){
+                    if(data.status === "success"){
                         $('#messageEditSinister').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                         $('#editSinisterBtn').html('Agregar');
                         window.location.reload(true);

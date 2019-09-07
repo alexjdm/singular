@@ -66,6 +66,39 @@ class CertificadoModificacion_DAO {
         return $certificadosModificacion;
     }
 
+    public function getCertificateModifiesByUsers($usuarios)
+    {
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadosModificacion = array();
+        if ($usuarios != null) {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificados = $sql->fetchAll();
+
+            $ids = '';
+            $arrayIds = array();
+            foreach ($certificados as $certificado) {
+                array_push($arrayIds, $certificado['ID_CERTIFICADO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado_modificacion WHERE ID_CERTIFICADO IN ('$ids') AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificadosModificacion = $sql->fetchAll();
+        }
+
+        return $certificadosModificacion;
+    }
+
     public function getCertificateModifiesByInsuredBrokerAndState($idCorredora, $estado){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -85,6 +118,39 @@ class CertificadoModificacion_DAO {
             $ids = join("','",$arrayIds);
 
             $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificados = $sql->fetchAll();
+
+            $ids = '';
+            foreach ($certificados as $certificado)
+            {
+                $ids = $ids . $certificado['ID_CERTIFICADO'] . ',';
+            }
+            substr($ids, 0, -1);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado_modificacion WHERE ID_CERTIFICADO IN (:ID_CERTIFICADO) AND ESTADO = :ESTADO AND HABILITADO = 1");
+            $sql->execute(array('ID_CERTIFICADO' => $ids, 'ESTADO' => $estado));
+            $certificadosModificacion = $sql->fetchAll();
+        }
+
+        return $certificadosModificacion;
+    }
+
+    public function getCertificateModifiesByUsersAndState($usuarios, $estado){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadosModificacion = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO = 1");
             $sql->execute(array());
             $certificados = $sql->fetchAll();
 

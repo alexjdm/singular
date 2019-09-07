@@ -2,20 +2,20 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/TipoMercaderia_DAO.php");
+include_once("businesslogic/MerchandiseType.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class MerchandiseTypeController {
 
-    public $model;
-
     public function __construct()
     {
-        $this->model = new TipoMercaderia_DAO();
     }
 
     public function index() {
-        $tipoMercaderias = $this->model->getMerchandiseTypesList();
+
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $tipoMercaderias = $tipoMercaderiaBusiness -> getMerchandiseTypesList();
+
         require_once('views/merchandisetype/index.php');
     }
 
@@ -26,12 +26,15 @@ class MerchandiseTypeController {
     public function createNewMerchandiseType() {
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
 
-        return $this->model->newMerchandiseType($tipoMercaderia);
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $tipoMercaderiaBusiness->newMerchandiseType($tipoMercaderia);
     }
 
     public function merchandiseTypeEdit() {
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
-        $tipoMercaderia = $this->model->getMerchandiseType($idTipoMercaderia);
+
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $tipoMercaderia = $tipoMercaderiaBusiness->getMerchandiseType($idTipoMercaderia);
 
         require_once('views/merchandisetype/merchandiseTypeEdit.php');
     }
@@ -40,13 +43,15 @@ class MerchandiseTypeController {
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
 
-        return $this->model->editMerchandiseType($idTipoMercaderia, $tipoMercaderia);
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $tipoMercaderiaBusiness->editMerchandiseType($idTipoMercaderia, $tipoMercaderia);
     }
 
     public function deleteMerchandiseType() {
         $idTipoMercaderia = isset($_GET['idTipoMercaderia']) ? $_GET['idTipoMercaderia'] : null;
 
-        return $this->model->deleteMerchandiseType($idTipoMercaderia);
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $tipoMercaderiaBusiness->deleteMerchandiseType($idTipoMercaderia);
     }
 
     public function error() {

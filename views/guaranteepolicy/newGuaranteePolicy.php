@@ -78,7 +78,7 @@ if (!isset($_SESSION)) {
                         <div class="col-sm-9">
                             <select id="embalaje" class="form-control">
                                 <?php foreach ($embalajes as $embalaje): ?>
-                                    <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
+                                    <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['Packing']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -88,6 +88,7 @@ if (!isset($_SESSION)) {
                         <label class="col-sm-3 control-label" for="tipoGarantia">Tipo de Garantía *</label>
                         <div class="col-sm-9">
                             <select id="tipoGarantia" class="form-control">
+                                <option value="0">Seleccione...</option>
                                 <option value="ALMACEN PARTICULAR">ALMACEN PARTICULAR</option>
                                 <option value="ADMISION TEMPORAL">ADMISION TEMPORAL</option>
                                 <option value="EMBARCADOR">EMBARCADOR</option>
@@ -127,14 +128,14 @@ if (!isset($_SESSION)) {
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="plazo">Plazo *</label>
                         <div class="col-sm-9">
-                            <input class="form-control" id="plazo" type="text" placeholder="Ingrese el plazo en días">
+                            <input class="form-control allownumericwithoutdecimal" id="plazo" type="text" placeholder="Ingrese el plazo en días">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="montoCIF">Monto CIF *</label>
                         <div class="col-sm-9">
-                            <input class="form-control" id="montoCIF" type="text" placeholder="Monto CIF">
+                            <input class="form-control allownumericwithdecimal" id="montoCIF" type="text" placeholder="Monto CIF">
                         </div>
                     </div>
 
@@ -198,9 +199,29 @@ if (!isset($_SESSION)) {
 
     });
 
+    $(".allownumericwithdecimal").on("keypress keyup blur",function (event) {
+        $(this).val($(this).val().replace(/[^0-9\.]/g,''));
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    $(".allownumericwithoutdecimal").on("keypress keyup blur",function (event) {
+        $(this).val($(this).val().replace(/[^\d].+/, ""));
+        if ((event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    function round(value, precision) {
+        var aPrecision = Math.pow(10, precision);
+        return Math.round(value*aPrecision)/aPrecision;
+    }
+
     $("#montoCIF").keyup(function () {
+        $(this).val($(this).val().replace(/,/g, '.'));
         var monto = $("#montoCIF").val();
-        $("#derechos").val(Math.round((1.06*1.19 - 1)*monto));
+        $("#derechos").val(round((1.06*1.19 - 1)*monto, 2));
     });
 
     $("#fechaInicio").val(moment().format('DD-MM-YYYY'));
@@ -209,6 +230,7 @@ if (!isset($_SESSION)) {
         singleDatePicker: true,
         showDropdowns: true,
         format: 'DD-MM-YYYY',
+        minDate: moment(),
         locale: {
             //format: 'DD-MM-YYYY',
             applyLabel: 'Aceptar',
@@ -235,8 +257,9 @@ if (!isset($_SESSION)) {
         var montoCIF = $("#montoCIF").val();
         var derechos = $("#derechos").val();
 
-        if(idAsegurado === '' || tipoGarantia === '' || tipoMercaderia === '' || embalaje === '' || direccion === ''
-        || fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
+        if(tipoGarantia === 0 ||
+            idAsegurado === '' || tipoGarantia === '' || tipoMercaderia === '' || embalaje === '' || direccion === '' ||
+            fechaInicio === '' || plazo === '' || montoCIF === '' || derechos === '')
         {
             $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }
@@ -251,9 +274,9 @@ if (!isset($_SESSION)) {
                     $('#newGuaranteePolicyBtn').html("Cargando...");
                 },
                 success: function (data) {
-                    console.debug(data);
+                    //console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
-                    if(data.status == "success"){
+                    if(data.status === "success"){
                         $('#messageNewGuaranteePolicy').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
                         $('#newGuaranteePolicyBtn').html('Agregar');
                         window.location.reload(true);
@@ -265,7 +288,7 @@ if (!isset($_SESSION)) {
                     return false;
                 },
                 error: function (data) {
-                    console.debug(data);
+                    //console.debug(data);
                     //var returnedData = JSON.parse(data); console.debug(returnedData);
                     $('#messageNewGuaranteePolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
                     $('#newGuaranteePolicyBtn').html("Agregar");

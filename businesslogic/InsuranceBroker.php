@@ -20,7 +20,7 @@ class InsuranceBroker
     public function save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor)
     {
         $corredora = getCurrentInsuranceBroker();
-        return $this->model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor, $corredora['id']);
+        $this->model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor, $corredora['id']);
     }
 
     public function getClientsForCurrentUser()
@@ -37,6 +37,24 @@ class InsuranceBroker
             array_push($corredoras, $corredora);
         }
 
+        return $corredoras;
+    }
+
+    public function getInsuranceBrokerByIdUser($idUsuario)
+    {
+        $corredora = $this->model->getInsuranceBrokerByUserId($idUsuario);
+        return $corredora;
+    }
+
+    public function getInsuranceBroker($idCorredora)
+    {
+        $corredora = $this->model->getInsuranceBroker($idCorredora);
+        return $corredora;
+    }
+
+    public function getInsuranceBrokersList()
+    {
+        $corredoras = $this->model->getInsuranceBrokersList();
         return $corredoras;
     }
 

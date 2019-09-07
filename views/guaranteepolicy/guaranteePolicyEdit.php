@@ -186,6 +186,50 @@
 
     $('#btnBuscar').trigger("click");
 
+    $(".allownumericwithdecimal").on("keypress keyup blur",function (event) {
+        $(this).val($(this).val().replace(/[^0-9\.]/g,''));
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    $(".allownumericwithoutdecimal").on("keypress keyup blur",function (event) {
+        $(this).val($(this).val().replace(/[^\d].+/, ""));
+        if ((event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+    function round(value, precision) {
+        var aPrecision = Math.pow(10, precision);
+        return Math.round(value*aPrecision)/aPrecision;
+    }
+
+    $("#montoCIF").keyup(function () {
+        $(this).val($(this).val().replace(/,/g, '.'));
+        var monto = $("#montoCIF").val();
+        $("#derechos").val(round((1.06*1.19 - 1)*monto, 2));
+    });
+
+    $("#fechaInicio").val(moment().format('DD-MM-YYYY'));
+
+    $("#fechaInicio").daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        format: 'DD-MM-YYYY',
+        minDate: moment(),
+        locale: {
+            //format: 'DD-MM-YYYY',
+            applyLabel: 'Aceptar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
     $('#saveGuaranteePolicyEdit').click(function(){
         var e = 'ajax.php?controller=GuaranteePolicy&action=guaranteePolicyEdit2db';
         var idGarantia = $("#idGarantia").val();

@@ -34,8 +34,8 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Poliza</th>
                     <th>Certificado</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Donde dice</th>
                     <th>Debe decir</th>
                     <th>Estado</th>
@@ -47,8 +47,8 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Poliza</th>
                     <th>Certificado</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Donde dice</th>
                     <th>Debe decir</th>
                     <th>Estado</th>
@@ -57,58 +57,22 @@ if (!isset($_SESSION)) {
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($certificadoModificaciones as $certificadoModificacion): ?>
+                <?php foreach ($certificadosVM as $certificadoModificacion): ?>
                     <tr data-id="<?php echo $certificadoModificacion['ID_CERTIFICADO_MODIFICACION'] ?>">
                         <th><?php echo $n ?></th>
+                        <td><?php echo $certificadoModificacion['POLIZA'] ?></td>
                         <?php
-                        foreach ($certificados as $certificado):
-                            if($certificado['ID_CERTIFICADO'] == $certificadoModificacion['ID_CERTIFICADO']):
-                                echo "<td>";
-                                foreach ($polizas as $poliza):
-                                    if($poliza['ID_POLIZA'] == $certificado['ID_POLIZA']):
-                                        echo utf8_encode($poliza['TIPO_POLIZA']);
-                                        break;
-                                    endif;
-                                endforeach;
-                                echo "</td>";
-                                echo "<td title='". $certificado['FORMATO'] ."'>";
-                                echo utf8_encode($certificado['NUMERO']);
-                                echo "</td>";
-                                foreach ($asegurados as $asegurado):
-                                    if($asegurado['ID_ASEGURADO'] == $certificado['ID_ASEGURADO']):
-                                        echo "<td>";
-                                        echo utf8_encode($asegurado['IDENTIFICADOR']);
-                                        echo "</td>";
-                                        echo "<td>";
-                                        echo utf8_encode($asegurado['NOMBRE']);
-                                        echo "</td>";
-                                        break;
-                                    endif;
-                                endforeach;
-                                break;
-                            endif;
-                        endforeach;
+                        echo "<td title='". $certificadoModificacion['FORMATO'] ."'>";
+                        echo utf8_encode($certificadoModificacion['NUMERO']);
+                        echo "</td>";
                         ?>
+                        <td><?php echo $certificadoModificacion['CLIENTE'] ?></td>
+                        <td><?php echo $certificadoModificacion['NOMBRE_ASEGURADO'] ?></td>
                         <td><?php echo $certificadoModificacion['DONDE_DICE'] ?></td>
                         <td><?php echo $certificadoModificacion['DEBE_DECIR'] ?></td>
-                        <td>
-                            <?php
-                                if($certificadoModificacion['ESTADO'] == 0)
-                                {
-                                    echo "Pendiente";
-                                }
-                                else if($certificadoModificacion['ESTADO'] == 1)
-                                {
-                                    echo "Listo";
-                                }
-                                else
-                                {
-                                    echo "Sin información";
-                                }
-                            ?>
-                        </td>
+                        <td><?php echo $certificadoModificacion['ESTADO'] ?></td>
                         <td style="width: 100px;">
-                            <?php if($isSuperAdmin == true && $certificadoModificacion['ESTADO'] == 0): ?>
+                            <?php if($isSuperAdmin == true && $certificadoModificacion['ESTADO'] == "Pendiente"): ?>
                                 <button title="Agregar" class="btn btn-xs btn-primary changeCertificate">
                                     <i class="fa fa-plus-circle"></i>
                                 </button>
@@ -121,7 +85,6 @@ if (!isset($_SESSION)) {
                             <button data-original-title="Eliminar" class="btn btn-xs btn-default deleteCertificateModify">
                                 <i class="fa fa-trash-o"></i>
                             </button>
-
                         </td>
                     </tr>
                     <?php $n++; ?>
@@ -172,7 +135,7 @@ if (!isset($_SESSION)) {
                 },
                 success: function(data) {
 
-                    if (data.status == 'error') {
+                    if (data.status === 'error') {
                         $("#messageCertificateModify").fadeOut( "slow", function() {
                             $('#messageCertificateModify').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                         });
@@ -219,7 +182,7 @@ if (!isset($_SESSION)) {
                         },
                         success: function(data) {
 
-                            if (data.status == 'error') {
+                            if (data.status === 'error') {
                                 $( "#messageCertificateModify" ).fadeOut( "slow", function() {
                                     $('#messageCertificateModify').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                                 });

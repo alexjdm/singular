@@ -27,7 +27,7 @@ $isSuperAdmin = isSuperAdmin();
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">Lista de Clientes</h3> &nbsp; &nbsp;
-            <button id="exportInsuranceBroker" class="btn btn-default"> <i class="fa fa-file-excel"></i> Exportar</button>
+            <button id="exportInsuranceBroker" class="btn btn-default" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Exportando"> <i class="fa fa-file-excel"></i> Exportar</button>
             <button id="newInsuranceBroker" class="btn btn-primary" style="float: right;">Agregar</button>
         </div>
 
@@ -45,6 +45,7 @@ $isSuperAdmin = isSuperAdmin();
                     <th>Razón Social</th>
                     <th>Tasa</th>
                     <th>Prima Mín.</th>
+                    <th>Comisión</th>
                     <th>Vendedor</th>
                     <th></th>
                 </tr>
@@ -61,6 +62,7 @@ $isSuperAdmin = isSuperAdmin();
                     <th>Razón Social</th>
                     <th>Tasa</th>
                     <th>Prima Mín.</th>
+                    <th>Comisión</th>
                     <th>Vendedor</th>
                     <th></th>
                 </tr>
@@ -79,9 +81,10 @@ $isSuperAdmin = isSuperAdmin();
                         <td><?php echo $corredora['RAZON_SOCIAL'] ?></td>
                         <td><?php echo $corredora['TASA'] ?></td>
                         <td><?php echo $corredora['PRIMA_MIN'] ?></td>
+                        <td><?php echo $corredora['COMISION'] ?></td>
                         <td><?php echo $corredora['VENDEDOR'] ?></td>
 
-                        <td>
+                        <td style="width: 100px;">
                             <button title="Usuarios" class="btn btn-xs btn-default viewUser">
                                 <i class="fa fa-user"></i>
                             </button>
@@ -124,6 +127,30 @@ $isSuperAdmin = isSuperAdmin();
 
         $("#exportInsuranceBroker").click(function() {
 
+            var button = $(this);
+            var url='ajax.php?controller=Export&action=ExportUsers';
+            $.ajax({
+                type:'POST',
+                url: url,
+                data: {},
+                dataType:'json',
+                beforeSend: function() {
+                    console.log("before");
+                    button.button('loading');
+                }
+            }).done(function(data){
+                var $a = $("<a>");
+                $a.attr("href",data.file);
+                $("body").append($a);
+                $a.attr("download","listado_clientes.xls");
+                $a[0].click();
+                $a.remove();
+
+                button.button('reset');
+            });
+
+            /*
+
             $.ajax({
                 type: 'GET',
                 url: 'ajax.php?controller=Export&action=ExportUsers',
@@ -131,17 +158,20 @@ $isSuperAdmin = isSuperAdmin();
                 dataType : "json",
                 beforeSend: function() {
                     console.log("before");
+                    button.button('loading');
                 },
                 success: function(data) {
                     console.log("success");
                     console.log(data);
                     //window.open('http://YOUR_URL','_blank' );
                     document.location.href =(data.url);
+                    button.button('reset');
                 },
                 error: function(data) {
                     console.log("error");
+                    button.button('reset');
                 }
-            });
+            });*/
 
         });
 

@@ -18,6 +18,16 @@ class Certificado_DAO {
         return $sql->fetchAll();
     }
 
+    public function getCertificatesByDates($fechaInicio, $fechaFin){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO='1' AND  '$fechaInicio' <= FECHA_SOLICITUD AND FECHA_SOLICITUD <= '$fechaFin'");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function getCertificatesWithIdPolicy(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -28,37 +38,27 @@ class Certificado_DAO {
         return $sql->fetchAll();
     }
 
-    public function getCertificates($usuarios){
+    public function getCertificatesByUsers($usuarios){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $certificadosFinal = array();
-        foreach ($usuarios as $usuario)
+        $certificados = array();
+        if($usuarios != null)
         {
-            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE = :ID_USUARIO_SOLICITANTE AND ESTADO_SOLICITUD = 1 AND HABILITADO=1");
-            $sql->execute(array('ID_USUARIO_SOLICITANTE' => $usuario['ID_USUARIO']));
-
-            $certificadoSolicitudes = $sql->fetchAll();
-            if($certificadoSolicitudes != null)
-            {
-                foreach ($certificadoSolicitudes as $certificadoSolicitud)
-                {
-                    $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_CERTIFICADO = :ID_CERTIFICADO  AND ESTADO_ANULACION != 1  AND HABILITADO=1");
-                    $sql->execute(array('ID_CERTIFICADO' => $certificadoSolicitud['ID_CERTIFICADO']));
-
-                    $certificados = $sql->fetchAll();
-                    if($certificados != null)
-                    {
-                        foreach ($certificados as $certificado)
-                        {
-                            array_push($certificadosFinal, $certificado);
-                        }
-                    }
-                }
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
             }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO=1");
+            $sql->execute();
+
+            $certificados = $sql->fetchAll();
         }
 
-        return $certificadosFinal;
+        return $certificados;
     }
 
     public function addCertificate($idCertificadoSolicitud, $numero, $formato, $ubicacion){
@@ -145,20 +145,56 @@ class Certificado_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function searchCertificate($idPoliza, $numero){
+    public function searchCertificate($idPoliza, $numero, $usuarios){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_POLIZA=:ID_POLIZA AND NUMERO = :NUMERO AND HABILITADO = :HABILITADO");
-        $sql->execute(array('ID_POLIZA' => $idPoliza, 'NUMERO' => $numero, 'HABILITADO' => 1));
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
 
-        Database::disconnect();
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ID_POLIZA=:ID_POLIZA AND NUMERO = :NUMERO AND HABILITADO = :HABILITADO");
+            $sql->execute(array('ID_POLIZA' => $idPoliza, 'NUMERO' => $numero, 'HABILITADO' => 1));
+            $resultado = $sql->fetchAll();
 
-        $resultado = $sql->fetchAll();
-        if($resultado != null)
-            return $resultado[0];
-        else
-            return null;
+            Database::disconnect();
+
+            if(isset($resultado))
+                return $resultado[0];
+        }
+
+        return null;
+    }
+
+    public function searchAnnulmentCertificate($idPoliza, $numero, $usuarios){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ID_POLIZA=:ID_POLIZA AND NUMERO = :NUMERO AND HABILITADO = :HABILITADO");
+            $sql->execute(array('ID_POLIZA' => $idPoliza, 'NUMERO' => $numero, 'HABILITADO' => 1));
+            $resultado = $sql->fetchAll();
+
+            Database::disconnect();
+
+            if(isset($resultado))
+                return $resultado[0];
+        }
+
+        return null;
     }
 
     public function getLastNumber (){
@@ -264,6 +300,28 @@ class Certificado_DAO {
         return $certificadoSolicitudes;
     }
 
+    public function getCertificateRequestsByUsers($usuarios){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadoSolicitudes = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ESTADO_SOLICITUD = 0 AND ESTADO_ANULACION != 1 AND HABILITADO = 1 ORDER BY ESTADO_SOLICITUD ASC");
+            $sql->execute(array());
+            $certificadoSolicitudes = $sql->fetchAll();
+        }
+
+        return $certificadoSolicitudes;
+    }
+
     public function getCertificateRequestsByInsuredBrokerAndState($idCorredora, $state){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -290,6 +348,28 @@ class Certificado_DAO {
         return $certificadoSolicitudes;
     }
 
+    public function getCertificateRequestsByUsersAndState($usuarios, $state){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadoSolicitudes = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ESTADO_SOLICITUD =:ESTADO_SOLICITUD AND HABILITADO = 1 ORDER BY ESTADO_SOLICITUD ASC");
+            $sql->execute(array('ESTADO_SOLICITUD' => $state));
+            $certificadoSolicitudes = $sql->fetchAll();
+        }
+
+        return $certificadoSolicitudes;
+    }
+
     public function getCertificateAnnulmentsByInsuredBrokerAndState($idCorredora, $state){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -305,6 +385,28 @@ class Certificado_DAO {
             $arrayIds = array();
             foreach ($idUsuarios as $idUsuario) {
                 array_push($arrayIds, $idUsuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE IN ('$ids') AND ESTADO_ANULACION =:ESTADO_ANULACION AND HABILITADO = 1 ORDER BY ESTADO_SOLICITUD ASC");
+            $sql->execute(array('ESTADO_ANULACION' => $state));
+            $certificadoAnulaciones = $sql->fetchAll();
+        }
+
+        return $certificadoAnulaciones;
+    }
+
+    public function getCertificateAnnulmentsByUsersAndState($usuarios, $state){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadoAnulaciones = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
             }
             $ids = join("','",$arrayIds);
 
@@ -356,7 +458,7 @@ class Certificado_DAO {
         return $certificadoAnulaciones;
     }
 
-    public function newCertificateRequest($idUsuarioSolicitante, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloAvion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones, $estado){
+    public function newCertificateRequest($idUsuarioSolicitante, $idAsegurado, $idTipoMercaderia, $idPoliza, $aFavorDe, $tipo, $origen, $destino, $via, $fechaEmbarque, $transportista, $naveVueloAvion, $blAwbCrt, $referenciaDespacho, $idMateriaAsegurada, $detalleMercaderia, $idEmbalaje, $montoAseguradoCIF, $tasa, $primaMin, $primaSeguro, $observaciones, $estadoSolicitud, $estadoAnulacion, $habilitado){
 
         date_default_timezone_set('America/Santiago');
         $fechaSolicitud = date("Y-m-d H:i:s");
@@ -366,8 +468,9 @@ class Certificado_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("INSERT INTO `certificado`(`ID_USUARIO_SOLICITANTE`, `ID_ASEGURADO`, `ID_TIPO_MERCADERIA`, `ID_POLIZA`, `A_FAVOR_DE`, `TIPO`, `ORIGEN`, `DESTINO`, `VIA`, `FECHA_EMBARQUE`, `TRANSPORTISTA`, `NAVE_VUELO_CAMION`, `BL_AWB_CRT`, `REFERENCIA_DESPACHO`, `ID_MATERIA_ASEGURADA`, `DETALLE_MERCADERIA`, `ID_EMBALAJE`, `MONTO_ASEGURADO_CIF`, `TASA`, `PRIMA_MIN`, `PRIMA_SEGURO`, `OBSERVACIONES`, `ESTADO_SOLICITUD`, `FECHA_SOLICITUD`, `ESTADO_ANULACION`, `HABILITADO`) VALUES (:ID_USUARIO_SOLICITANTE, :ID_ASEGURADO, :ID_TIPO_MERCADERIA, :ID_POLIZA, :A_FAVOR_DE, :TIPO,  :ORIGEN, :DESTINO, :VIA, :FECHA_EMBARQUE, :TRANSPORTISTA, :NAVE_VUELO_CAMION, :BL_AWB_CRT, :REFERENCIA_DESPACHO, :ID_MATERIA_ASEGURADA, :DETALLE_MERCADERIA, :ID_EMBALAJE, :MONTO_ASEGURADO_CIF, :TASA, :PRIMA_MIN, :PRIMA_SEGURO, :OBSERVACIONES, :ESTADO_SOLICITUD, :FECHA_SOLICITUD, -1, 1)");
-        $sql->execute(array('ID_USUARIO_SOLICITANTE' => $idUsuarioSolicitante, 'ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'ID_POLIZA' => $idPoliza, 'A_FAVOR_DE' => $aFavorDe, 'TIPO' => $tipo, 'ORIGEN' => $origen, 'DESTINO' => $destino, 'VIA' => $via, 'FECHA_EMBARQUE' => $fechaEmbarque, 'TRANSPORTISTA' => $transportista, 'NAVE_VUELO_CAMION' => $naveVueloAvion, 'BL_AWB_CRT' => $blAwbCrt, 'REFERENCIA_DESPACHO' => $referenciaDespacho, 'ID_MATERIA_ASEGURADA' => $idMateriaAsegurada, 'DETALLE_MERCADERIA' => $detalleMercaderia, 'ID_EMBALAJE' => $idEmbalaje, 'MONTO_ASEGURADO_CIF' => $montoAseguradoCIF, 'TASA' => $tasa, 'PRIMA_MIN' => $primaMin, 'PRIMA_SEGURO' => $primaSeguro, 'OBSERVACIONES' => $observaciones, 'ESTADO_SOLICITUD' => $estado, 'FECHA_SOLICITUD' => $fechaSolicitud));
+        $sql = $pdo->prepare("INSERT INTO `certificado`(`ID_USUARIO_SOLICITANTE`, `ID_ASEGURADO`, `ID_TIPO_MERCADERIA`, `ID_POLIZA`, `A_FAVOR_DE`, `TIPO`, `ORIGEN`, `DESTINO`, `VIA`, `FECHA_EMBARQUE`, `TRANSPORTISTA`, `NAVE_VUELO_CAMION`, `BL_AWB_CRT`, `REFERENCIA_DESPACHO`, `ID_MATERIA_ASEGURADA`, `DETALLE_MERCADERIA`, `ID_EMBALAJE`, `MONTO_ASEGURADO_CIF`, `TASA`, `PRIMA_MIN`, `PRIMA_SEGURO`, `OBSERVACIONES`, `ESTADO_SOLICITUD`, `FECHA_SOLICITUD`, `ESTADO_ANULACION`, `HABILITADO`) 
+                                      VALUES (:ID_USUARIO_SOLICITANTE, :ID_ASEGURADO, :ID_TIPO_MERCADERIA, :ID_POLIZA, :A_FAVOR_DE, :TIPO,  :ORIGEN, :DESTINO, :VIA, :FECHA_EMBARQUE, :TRANSPORTISTA, :NAVE_VUELO_CAMION, :BL_AWB_CRT, :REFERENCIA_DESPACHO, :ID_MATERIA_ASEGURADA, :DETALLE_MERCADERIA, :ID_EMBALAJE, :MONTO_ASEGURADO_CIF, :TASA, :PRIMA_MIN, :PRIMA_SEGURO, :OBSERVACIONES, :ESTADO_SOLICITUD, :FECHA_SOLICITUD, :ESTADO_ANULACION, :HABILITADO)");
+        $sql->execute(array('ID_USUARIO_SOLICITANTE' => $idUsuarioSolicitante, 'ID_ASEGURADO' => $idAsegurado, 'ID_TIPO_MERCADERIA' => $idTipoMercaderia, 'ID_POLIZA' => $idPoliza, 'A_FAVOR_DE' => $aFavorDe, 'TIPO' => $tipo, 'ORIGEN' => $origen, 'DESTINO' => $destino, 'VIA' => $via, 'FECHA_EMBARQUE' => $fechaEmbarque, 'TRANSPORTISTA' => $transportista, 'NAVE_VUELO_CAMION' => $naveVueloAvion, 'BL_AWB_CRT' => $blAwbCrt, 'REFERENCIA_DESPACHO' => $referenciaDespacho, 'ID_MATERIA_ASEGURADA' => $idMateriaAsegurada, 'DETALLE_MERCADERIA' => $detalleMercaderia, 'ID_EMBALAJE' => $idEmbalaje, 'MONTO_ASEGURADO_CIF' => $montoAseguradoCIF, 'TASA' => $tasa, 'PRIMA_MIN' => $primaMin, 'PRIMA_SEGURO' => $primaSeguro, 'OBSERVACIONES' => $observaciones, 'ESTADO_SOLICITUD' => $estadoSolicitud, 'ESTADO_ANULACION' => $estadoAnulacion, 'FECHA_SOLICITUD' => $fechaSolicitud, 'HABILITADO' => $habilitado));
         $id = $pdo->lastInsertId();
 
         if(!empty($id)) {
@@ -451,6 +554,67 @@ class Certificado_DAO {
         Database::disconnect();
     }*/
 
+    public function getCertificateAnnulledList(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ESTADO_ANULACION = 1 AND HABILITADO='1'");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
+    public function getCertificateAnnulled($idCorredora){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        //$sql = $pdo->prepare("SELECT ID_USUARIO FROM corredora_usuario WHERE ID_CORREDORA = :ID_CORREDORA");
+        $sql = $pdo->prepare("SELECT ID_USUARIO FROM usuario WHERE ID_CORREDORA = :ID_CORREDORA");
+        $sql->execute(array('ID_CORREDORA' => $idCorredora));
+        $idUsuarios = $sql->fetchAll();
+
+        $certificadosAnulacion = array();
+        if($idUsuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($idUsuarios as $idUsuario) {
+                array_push($arrayIds, $idUsuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_ANULACION ='1' AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificadosAnulacion = $sql->fetchAll();
+        }
+
+        return $certificadosAnulacion;
+    }
+
+    public function getCertificateAnnulledByUsers($usuarios){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadosAnulacion = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_ANULACION ='1' AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificadosAnulacion = $sql->fetchAll();
+        }
+
+        return $certificadosAnulacion;
+    }
+
     public function getCertificateAnnulmentsList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -477,6 +641,29 @@ class Certificado_DAO {
             $arrayIds = array();
             foreach ($idUsuarios as $idUsuario) {
                 array_push($arrayIds, $idUsuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_ANULACION ='0' AND HABILITADO = 1");
+            $sql->execute(array());
+            $certificadosAnulacion = $sql->fetchAll();
+        }
+
+        return $certificadosAnulacion;
+    }
+
+    public function getCertificateAnnulmentsByUsers($usuarios){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $certificadosAnulacion = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
             }
             $ids = join("','",$arrayIds);
 

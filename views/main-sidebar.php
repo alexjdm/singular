@@ -17,6 +17,8 @@ $notificacionGarantia = $guaranteeBusiness -> getNumberRequest();
 
 $sinisterBusiness = new Sinister();
 $notificacionSiniestro = $sinisterBusiness -> getNumberRequest();
+
+$isSuperAdmin = isSuperAdmin();
 ?>
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
@@ -40,8 +42,9 @@ $notificacionSiniestro = $sinisterBusiness -> getNumberRequest();
         <ul class="sidebar-menu tree" data-widget="tree">
 
             <li class="header">Certificado</li>
-            <li class="<?php if($controller=='Certificate' && $action == 'request'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=request"><i class="fa fa-link"></i> <span>Solicitar</span> <?php if($notificacionSolicitud > 0) { echo '<span class="pull-right-container"><small class="label pull-right bg-green">' . $notificacionSolicitud . '</small></span>'; } ?></a></li>
-            <li class="<?php if($controller=='Certificate' && $action == 'annulments'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=annulments"><i class="fa fa-link"></i> <span>Anulaciones</span> <?php if($notificacionAnulacion > 0) { echo '<span class="pull-right-container"><small class="label pull-right bg-green">' . $notificacionAnulacion . '</small></span>'; } ?></a></li>
+            <li class="<?php if($controller=='Certificate' && $action == 'request'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=request"><i class="fa fa-link"></i> <span>Solicitar Certificado</span> <?php if($notificacionSolicitud > 0) { echo '<span class="pull-right-container"><small class="label pull-right bg-green">' . $notificacionSolicitud . '</small></span>'; } ?></a></li>
+            <li class="<?php if($controller=='Certificate' && $action == 'annulmentrequest'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=annulmentrequest"><i class="fa fa-link"></i> <span>Solicitud Anulación</span> <?php if($notificacionAnulacion > 0) { echo '<span class="pull-right-container"><small class="label pull-right bg-green">' . $notificacionAnulacion . '</small></span>'; } ?></a></li>
+            <li class="<?php if($controller=='Certificate' && $action == 'annulments'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=annulments"><i class="fa fa-link"></i> <span>Anulaciones</span></a></li>
             <li class="<?php if($controller=='CertificateModify' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=CertificateModify&action=index"><i class="fa fa-link"></i> <span>Modificaciones</span> <?php if($notificacionModificacion > 0) { echo '<span class="pull-right-container"><small class="label pull-right bg-green">' . $notificacionModificacion . '</small></span>'; } ?></a></li>
 
             <li class="header">Solicitudes</li>
@@ -52,7 +55,7 @@ $notificacionSiniestro = $sinisterBusiness -> getNumberRequest();
             <li class="header">Reportes</li>
             <!-- Optionally, you can add icons to the links -->
             <li class="<?php if($controller=='Certificate' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=Certificate&action=index"><i class="fa fa-link"></i> <span>Certificados</span></a></li>
-            <li class="<?php if($controller=='Insurance' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=Insurance&action=index"><i class="fa fa-link"></i> <span>Seguros</span></a></li>
+            <!--<li class="<?php if($controller=='Insurance' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=Insurance&action=index"><i class="fa fa-link"></i> <span>Seguros</span></a></li>-->
             <!--<li class="<?php if($controller=='Company' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=Company&action=index"><i class="fa fa-link"></i> <span>Compañía</span></a></li>-->
             <!--<li class="<?php if($controller=='InsuranceBroker' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=InsuranceBroker&action=index"><i class="fa fa-link"></i> <span>Corredoras</span></a></li>-->
             <!--<li class="<?php if($controller=='Client' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=Client&action=index"><i class="fa fa-link"></i> <span>Clientes</span></a></li>-->
@@ -62,6 +65,13 @@ $notificacionSiniestro = $sinisterBusiness -> getNumberRequest();
             <!--<li class="<?php if($controller=='MerchandiseType' && $action == 'index'){ echo 'active'; } ?>"><a href="index.php?controller=MerchandiseType&action=index"><i class="fa fa-link"></i> <span>Tipos de Mercadería</span></a></li>-->
 
             <li class="header">Estadísticas</li>
+            <?php if($isSuperAdmin): ?>
+            <li class="<?php if($controller=='Stadistic' && $action == 'sinister'){ echo 'active'; } ?>"><a href="index.php?controller=Stadistic&action=sinister"><i class="fa fa-link"></i> <span>Siniestros</span> </a></li>
+            <li class="<?php if($controller=='Stadistic' && $action == 'sellertransport' && $isSuperAdmin){ echo 'active'; } ?>"><a href="index.php?controller=Stadistic&action=sellertransport"><i class="fa fa-link"></i> <span>Transporte Vendedor</span> </a></li>
+            <li class="<?php if($controller=='Stadistic' && $action == 'companytransport' && $isSuperAdmin){ echo 'active'; } ?>"><a href="index.php?controller=Stadistic&action=companytransport"><i class="fa fa-link"></i> <span>Transporte Compañía</span> </a></li>
+            <?php endif; ?>
+            <li class="<?php if($controller=='Stadistic' && $action == 'clienttransport'){ echo 'active'; } ?>"><a href="index.php?controller=Stadistic&action=clienttransport"><i class="fa fa-link"></i> <span>Transporte Cliente</span> </a></li>
+            <!--<li class="<?php if($controller=='Stadistic' && $action == 'singulartransport' && $isSuperAdmin){ echo 'active'; } ?>"><a href="index.php?controller=Stadistic&action=singulartransport"><i class="fa fa-link"></i> <span>Transporte Singular</span> </a></li>-->
 
         </ul><!-- /.sidebar-menu -->
 

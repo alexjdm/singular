@@ -21,6 +21,17 @@ class Usuario_DAO {
         return count($resultado) > 0 ? $resultado[0] : null;
     }
 
+    public function getCorredora($idUsuario){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM corredora_usuario WHERE ID_USUARIO=:ID_USUARIO");
+        $sql->execute(array('ID_USUARIO' => $idUsuario));
+        $resultado = $sql->fetch();
+
+        return $sql->fetchAll();
+    }
+
     public function validateEmail($correo)
     {
         $pdo = Database::connect();
@@ -39,6 +50,16 @@ class Usuario_DAO {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $sql = $pdo->prepare("SELECT * FROM usuario WHERE HABILITADO='1'");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
+    public function getSuperAdmins(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM usuario WHERE ID_PERFIL = -1 AND HABILITADO='1'");
         $sql->execute();
 
         return $sql->fetchAll();

@@ -44,7 +44,7 @@ class CertificateAnnulmentController {
         $asegurados = $this->modelA->getInsuredList();
         $certificados = $this->modelC->getCertificatesList();
 
-        require_once('views/certificateannulment/index.php');
+        require_once('views/certificateannulment_deprecado/index.php');
     }
 
     public function newCertificateAnnulment() {
@@ -53,7 +53,7 @@ class CertificateAnnulmentController {
         //$asegurados = $this->modelA->getInsuredList();
         $certificados = $this->modelC->getCertificatesList();
 
-        require_once('views/certificateannulment/newCertificateAnnulment.php');
+        require_once('views/certificateannulment_deprecado/newCertificateAnnulment.php');
     }
 
     public function createNewCertificateAnnulment() {
@@ -70,7 +70,7 @@ class CertificateAnnulmentController {
         $polizas = $this->modelP->getPoliciesList();
         $certificados = $this->modelC->getCertificatesList();
 
-        require_once('views/certificateannulment/certificateAnnulmentEdit.php');
+        require_once('views/certificateannulment_deprecado/certificateAnnulmentEdit.php');
     }
 
     public function certificateAnnulmentEdit2db() {
@@ -88,7 +88,7 @@ class CertificateAnnulmentController {
         $certificadoAnulacion = $this->model->getCertificateAnnulment($idCertificadoAnulacion);
         $certificadoAnular = $this->modelC->getCertificate($certificadoAnulacion['ID_CERTIFICADO']);
 
-        require_once('views/certificateannulment/addReplaceCertificateNumber.php');
+        require_once('views/certificateannulment_deprecado/addReplaceCertificateNumber.php');
     }
 
     public function deleteCertificateAnnulment() {

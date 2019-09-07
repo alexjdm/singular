@@ -28,7 +28,17 @@ class Asegurado_DAO {
         return $sql->fetchAll()[0];
     }
 
-    public function getInsuredByState($state, $idsUsuariosCorredora){
+    public function getInsuredByState($state){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM asegurado WHERE ESTADO=:ESTADO AND HABILITADO=:HABILITADO");
+        $sql->execute(array('ESTADO' => $state, 'HABILITADO' => 1));
+
+        return $sql->fetchAll();
+    }
+
+    public function getInsuredByUsersByState($usuarios, $state){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -39,8 +49,8 @@ class Asegurado_DAO {
         $aseguradosCorredora = array();
         foreach ($asegurados as $asegurado)
         {
-            foreach ($idsUsuariosCorredora as $id)
-                if($asegurado['ID_USUARIO_CREADOR'] == $id)
+            foreach ($usuarios as $usuario)
+                if($asegurado['ID_USUARIO_CREADOR'] == $usuario['ID_USUARIO'])
                     array_push($aseguradosCorredora, $asegurado);
         }
 
@@ -59,16 +69,39 @@ class Asegurado_DAO {
         return $aseguradosCorredora;
     }
 
-    public function editInsured($idAsegurado, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion, $estado){
+    public function getInsuredByUsers($usuarios){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $aseguradosCorredora = array();
+        if($usuarios != null)
+        {
+            $ids = '';
+            $arrayIds = array();
+            foreach ($usuarios as $usuario) {
+                array_push($arrayIds, $usuario['ID_USUARIO']);
+            }
+            $ids = join("','",$arrayIds);
+
+            $sql = $pdo->prepare("SELECT * FROM asegurado WHERE ID_USUARIO_CREADOR IN ('$ids') AND HABILITADO = 1");
+            $sql->execute();
+
+            $aseguradosCorredora = $sql->fetchAll();
+        }
+
+        return $aseguradosCorredora;
+    }
+
+    public function editInsured($idAsegurado, $rut, $nombre, $giro, $idRegion, $idComuna, $direccion){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         date_default_timezone_set('America/Santiago');
         $fechaModificacion = date("Y-m-d H:i:s");
 
-        $sql = $pdo->prepare("UPDATE asegurado set IDENTIFICADOR =:IDENTIFICADOR, NOMBRE =:NOMBRE, GIRO =:GIRO, ID_REGION =:ID_REGION, ID_COMUNA =:ID_COMUNA, DIRECCION =:DIRECCION, ESTADO =:ESTADO, FECHA_MODIFICACION =:FECHA_MODIFICACION WHERE ID_ASEGURADO=:ID_ASEGURADO");
+        $sql = $pdo->prepare("UPDATE asegurado set IDENTIFICADOR =:IDENTIFICADOR, NOMBRE =:NOMBRE, GIRO =:GIRO, ID_REGION =:ID_REGION, ID_COMUNA =:ID_COMUNA, DIRECCION =:DIRECCION, FECHA_MODIFICACION =:FECHA_MODIFICACION WHERE ID_ASEGURADO=:ID_ASEGURADO");
 
-        if ($sql->execute(array('IDENTIFICADOR' => $rut, 'NOMBRE' => $nombre, 'GIRO' => $giro, 'ID_REGION' => $idRegion, 'ID_COMUNA' => $idComuna, 'DIRECCION' => $direccion, 'ESTADO' => $estado, 'FECHA_MODIFICACION' => $fechaModificacion, 'ID_ASEGURADO' => $idAsegurado))) {
+        if ($sql->execute(array('IDENTIFICADOR' => $rut, 'NOMBRE' => $nombre, 'GIRO' => $giro, 'ID_REGION' => $idRegion, 'ID_COMUNA' => $idComuna, 'DIRECCION' => $direccion, 'FECHA_MODIFICACION' => $fechaModificacion, 'ID_ASEGURADO' => $idAsegurado))) {
             $status  = "success";
             $message = "Los datos han sido actualizados.";
         }
@@ -97,6 +130,32 @@ class Asegurado_DAO {
         if ($sql->execute(array('HABILITADO' => 0, 'ID_ASEGURADO' => $idAsegurado ))) {
             $status  = "success";
             $message = "El asegurado ha sido eliminado";
+        }
+        else
+        {
+            $status  = "error";
+            $message = "Ha ocurrido un problema, por favor intenta nuevamente.";
+        }
+
+        $data = array(
+            'status'  => $status,
+            'message' => $message
+        );
+
+        echo json_encode($data);
+
+        Database::disconnect();
+    }
+
+    public function approveAllInsured(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("UPDATE asegurado set ESTADO = 1 WHERE ESTADO = 0 and HABILITADO = 1");
+
+        if ($sql->execute()) {
+            $status  = "success";
+            $message = "Los asegurados pendientes han sido marcados como Ingresado.";
         }
         else
         {

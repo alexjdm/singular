@@ -34,13 +34,14 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Poliza</th>
                     <th>Certificado</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Motivo</th>
                     <th>Nombre Contacto</th>
-                    <!--<th>Cargo</th>-->
                     <th>Teléfono</th>
                     <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Número</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -49,72 +50,51 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Poliza</th>
                     <th>Certificado</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Motivo</th>
                     <th>Nombre Contacto</th>
-                    <!--<th>Cargo</th>-->
                     <th>Teléfono</th>
                     <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Número</th>
                     <th></th>
                 </tr>
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($siniestros as $siniestro): ?>
+                <?php foreach ($siniestrosVM as $siniestro): ?>
                     <tr data-id="<?php echo $siniestro['ID_SINIESTRO'] ?>">
                         <th><?php echo $n ?></th>
-                        <?php
-                        $idCertificado = 0;
-                        $idAsegurado = 0;
-                        foreach ($certificados as $certificado):
-                            if($certificado['ID_CERTIFICADO'] == $siniestro['ID_CERTIFICADO']):
-                                echo "<td>";
-                                foreach ($polizas as $poliza):
-                                    if($certificado['ID_POLIZA'] == $poliza['ID_POLIZA']):
-                                        echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")");
-                                        break;
-                                    endif;
-                                endforeach;
-                                echo "</td>";
-                                $idCertificado = $certificado['ID_CERTIFICADO'];
-                                $idAsegurado = $certificado['ID_ASEGURADO'];
-                                break;
-                            endif;
-                        endforeach;
-
-                        foreach ($certificados as $certificado):
-                            if($certificado['ID_CERTIFICADO'] == $idCertificado):
-                                echo "<td>";
-                                echo utf8_encode($certificado['NUMERO']);
-                                echo "</td>";
-                                break;
-                            endif;
-                        endforeach;
-
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $idAsegurado):
-                                echo "<td>";
-                                echo utf8_encode($asegurado['IDENTIFICADOR']);
-                                echo "</td>";
-                                echo "<td>";
-                                echo utf8_encode($asegurado['NOMBRE']);
-                                echo "</td>";
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
+                        <td><?php echo $siniestro['POLIZA'] ?></td>
+                        <td><?php echo $siniestro['NUMERO_CERTIFICADO'] ?></td>
+                        <td><?php echo $siniestro['CLIENTE'] ?></td>
+                        <td><?php echo $siniestro['ASEGURADO'] ?></td>
                         <td><?php echo $siniestro['MOTIVO'] ?></td>
                         <td><?php echo $siniestro['NOMBRE'] ?></td>
-                        <!--<td><?php echo $siniestro['CARGO'] ?></td>-->
                         <td><?php echo $siniestro['TELEFONO'] ?></td>
                         <td><?php echo $siniestro['CORREO'] ?></td>
-                        <td style="width: 70px;">
-                            <button data-original-title="Editar" class="btn btn-xs btn-default editSinister">
+                        <td><?php echo $siniestro['ESTADO'] ?></td>
+                        <td><?php echo $siniestro['NUMERO'] ?></td>
+                        <td style="width: 100px;">
+                            <?php if ($siniestro['ESTADO'] == "Pendiente"): ?>
+                            <button title="Agregar" class="btn btn-xs btn-primary addSinister">
+                                <i class="fa fa-plus-circle"></i>
+                            </button>
+                            &nbsp
+                            <?php elseif($siniestro['ESTADO'] == "Listo"): ?>
+                                <a title="Ver" class="btn btn-xs btn-default" target="_blank" href="<?php echo $siniestro['UBICACION']; ?>">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                                &nbsp
+                            <?php else: ?>
+
+                            <?php endif; ?>
+                            <button title="Editar" class="btn btn-xs btn-default editSinister">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp
-                            <button data-original-title="Eliminar" class="btn btn-xs btn-default deleteSinister">
+                            <button title="Eliminar" class="btn btn-xs btn-default deleteSinister">
                                 <i class="fa fa-times"></i>
                             </button>
                         </td>
@@ -135,6 +115,16 @@ if (!isset($_SESSION)) {
 
         var table = $('#tablaSiniestros').DataTable({
             "scrollX": true
+        });
+
+        $(".addSinister").click(function() {
+            var id = $(this).closest('tr').data("id"); //console.debug("idCertificadoSolicitud: " + id);
+            ajax_loadModal($('#modalPrincipal'),
+                'ajax.php?controller=Sinister&action=addSinister',
+                'GET',
+                { idSiniestro: id },
+                defaultMessage);
+            return false;
         });
 
         $("#newSinister").click(function() {

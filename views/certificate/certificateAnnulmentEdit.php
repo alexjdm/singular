@@ -18,7 +18,7 @@
                 <div class="col-sm-9">
                     <select id="idPoliza" class="form-control">
                         <?php foreach ($polizas as $poliza): ?>
-                            <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoAnular['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA']); ?></option>
+                            <option value="<?php echo $poliza['ID_POLIZA']; ?>" <?php if($poliza['ID_POLIZA'] == $certificadoAnular['ID_POLIZA']) { echo "selected"; } ?>><?php echo utf8_encode($poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")"); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -2,20 +2,19 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/Compania_DAO.php");
+include_once("businesslogic/Company.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class CompanyController {
 
-    public $model;
-
     public function __construct()
     {
-        $this->model = new Compania_DAO();
     }
 
     public function index() {
-        $companias = $this->model->getCompaniesList();
+
+        $companyBusiness = new Company();
+        $companias = $companyBusiness->getCompaniesList();
         require_once('views/company/index.php');
     }
 
@@ -31,12 +30,15 @@ class CompanyController {
         $tipo_cuenta = isset($_GET['tipo_cuenta']) ? $_GET['tipo_cuenta'] : null;
         $comision = isset($_GET['comision']) ? $_GET['comision'] : null;
 
-        return $this->model->newCompany($nombre, $tasa, $prima_minima, $limite_embarque, $tipo_cuenta, $comision);
+        $companyBusiness = new Company();
+        $companyBusiness->newCompany($nombre, $tasa, $prima_minima, $limite_embarque, $tipo_cuenta, $comision);
     }
 
     public function companyEdit() {
         $idCompania = isset($_GET['idCompania']) ? $_GET['idCompania'] : null;
-        $compania = $this->model->getCompany($idCompania);
+
+        $companyBusiness = new Company();
+        $compania = $companyBusiness->getCompany($idCompania);
 
         require_once('views/company/companyEdit.php');
     }
@@ -50,13 +52,15 @@ class CompanyController {
         $tipo_cuenta = isset($_GET['tipo_cuenta']) ? $_GET['tipo_cuenta'] : null;
         $comision = isset($_GET['comision']) ? $_GET['comision'] : null;
 
-        return $this->model->editCompany($idCompania, $nombre, $tasa, $prima_minima, $limite_embarque, $tipo_cuenta, $comision);
+        $companyBusiness = new Company();
+        $companyBusiness->editCompany($idCompania, $nombre, $tasa, $prima_minima, $limite_embarque, $tipo_cuenta, $comision);
     }
 
     public function deleteCompany() {
         $idCompania = isset($_GET['idCompania']) ? $_GET['idCompania'] : null;
 
-        return $this->model->deleteCompany($idCompania);
+        $companyBusiness = new Company();
+        $companyBusiness->deleteCompany($idCompania);
     }
 
 

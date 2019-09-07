@@ -14,7 +14,7 @@ include_once("BusinessLogic/Notification.php");
 
 require "lib/phpmailer/class.phpmailer.php";
 
-class CertificateRequestController {
+class CertificateRequestControllerDeprecado {
 
     public $model;
     public $modelC;

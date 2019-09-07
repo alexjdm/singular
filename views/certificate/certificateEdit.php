@@ -171,7 +171,7 @@
                 <div class="col-sm-8">
                     <select id="idEmbalaje" class="form-control">
                         <?php foreach ($embalajes as $embalaje): ?>
-                            <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>" <?php if($embalaje['ID_EMBALAJE'] == $certificadoSolicitud['ID_EMBALAJE']) { echo "selected"; } ?>><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
+                            <option value="<?php echo $embalaje['ID_EMBALAJE']; ?>" <?php if($embalaje['ID_EMBALAJE'] == $certificadoSolicitud['ID_EMBALAJE']) { echo "selected"; } ?>><?php echo utf8_encode($embalaje['Packing']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -23,7 +23,6 @@ if (!isset($_SESSION)) {
 
     <!-- Modal content-->
     <div class="modal-content">
-
         <!-- form start -->
         <form id="newCertificateForm" class="form-horizontal" method="post" action="ajax.php?controller=Certificate&action=createNewCertificate">
             <div class="modal-header">
@@ -36,33 +35,32 @@ if (!isset($_SESSION)) {
                     <h4 class="text-center" id="infoSinData"></h4>
                 </div>
 
-                    <div class="box-body">
+                <div class="box-body" id="conData">
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="idCertificadoSolicitud">Solicitud de Certificado *</label>
-                            <div class="col-sm-8">
-                                <select id="idCertificadoSolicitud" class="form-control">
-                                    <?php foreach ($certificadoSolicitudes as $certificadoSolicitud): ?>
-                                        <option value="<?php echo $certificadoSolicitud['ID_CERTIFICADO_SOLICITUD']; ?>"><?php echo utf8_encode($certificadoSolicitud['ORIGEN'] . " a " . $certificadoSolicitud['DESTINO'])  . " el " . FormatearFechaSpa($certificadoSolicitud['FECHA_EMBARQUE']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="idCertificadoSolicitud">Solicitud de Certificado *</label>
+                        <div class="col-sm-8">
+                            <select id="idCertificadoSolicitud" class="form-control">
+                                <?php foreach ($certificadoSolicitudes as $certificadoSolicitud): ?>
+                                    <option value="<?php echo $certificadoSolicitud['ID_CERTIFICADO']; ?>"><?php echo utf8_encode($certificadoSolicitud['ORIGEN'] . " a " . $certificadoSolicitud['DESTINO'])  . " el " . FormatearFechaSpa($certificadoSolicitud['FECHA_EMBARQUE']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="certificado">Certificado *</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" id="certificado" name="certificado" type="file" placeholder="Ingresa el certificado" required>
-                            </div>
-                        </div>
-
-                        <div id="messageNewCertificate" style="margin: 20px;"></div>
-                        <!--<div id="progress-div"><div id="progress-bar"></div></div>
-                        <div id="targetLayer"></div>
-                        <div id="loader-icon" style="display:none;"><img src="dist/img/LoaderIcon.gif" /></div>-->
-
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="certificado">Certificado *</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" id="certificado" name="certificado" type="file" placeholder="Ingresa el certificado" required>
+                        </div>
+                    </div>
+
+                    <div id="messageNewCertificate" style="margin: 20px;"></div>
+                    <!--<div id="progress-div"><div id="progress-bar"></div></div>
+                    <div id="targetLayer"></div>
+                    <div id="loader-icon" style="display:none;"><img src="dist/img/LoaderIcon.gif" /></div>-->
+
+                </div>
 
             </div>
             <div class="modal-footer">
@@ -72,6 +70,7 @@ if (!isset($_SESSION)) {
                 <button id="newCertificateBtn" class="btn btn-primary" type="submit" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Cargando">Agregar</button>
             </div>
         </form>
+
     </div>
 
 </div>
@@ -80,11 +79,11 @@ if (!isset($_SESSION)) {
 <script type="application/javascript">
 
     <?php if(count($certificadoSolicitudes) == 0) { ?>
-    $('#newCertificateForm').hide();
+    $('#conData').hide();
     $('#newCertificateBtn').hide();
     $('#cleanDataCertificateBtn').hide();
 
-    $('#sinData').append("No hay solicitudes de certificados.");
+    $('#sinData').append("No hay solicitudes pendientes de certificados.");
 
     $('#sinData').show();
     <?php } ?>
@@ -96,7 +95,7 @@ if (!isset($_SESSION)) {
         var idCertificadoSolicitud = $("#idCertificadoSolicitud").val();
         var certificado = $('#certificado').val();
 
-        if(idCertificadoSolicitud == '' && certificado)
+        if(idCertificadoSolicitud === '' && certificado)
         {
             $('#messageNewCertificate').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
         }

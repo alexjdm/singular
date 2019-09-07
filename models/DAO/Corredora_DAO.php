@@ -94,9 +94,18 @@ class Corredora_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM corredora WHERE ID_USUARIO = :ID_USUARIO");
+        $sql = $pdo->prepare("SELECT * FROM corredora_usuario WHERE ID_USUARIO = :ID_USUARIO");
         $sql->execute(array('ID_USUARIO' => $idUsuario));
 
+        $idCorredora = $sql->fetchAll()[0];
+
+        $sql = $pdo->prepare("SELECT * FROM corredora WHERE ID_CORREDORA = :ID_CORREDORA AND HABILITADO=1");
+        $sql->execute(array('ID_CORREDORA' => $idCorredora['ID_CORREDORA']));
+
+        $corredora = $sql->fetchAll()[0];
+        return $corredora;
+
+        /*
         $idCorredoras = $sql->fetchAll();
         $corredoras = array();
         if($idCorredoras != null)
@@ -116,8 +125,8 @@ class Corredora_DAO {
                 }
             }
         }
-
         return $corredoras;
+        */
     }
 
     public function newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor, $idCorredoraCreadora){

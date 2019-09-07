@@ -51,14 +51,8 @@ function call($controller, $action) {
         case 'Certificate':
             $controller = new CertificateController();
             break;
-        case 'CertificateRequest':
-            $controller = new CertificateRequestController();
-            break;
         case 'CertificateModify':
             $controller = new CertificateModifyController();
-            break;
-        case 'CertificateAnnulment':
-            $controller = new CertificateAnnulmentController();
             break;
         case 'Sinister':
             $controller = new SinisterController();
@@ -66,6 +60,10 @@ function call($controller, $action) {
         case 'Export':
             $controller = new ExportController();
             break;
+        case 'Stadistic':
+            $controller = new StadisticController();
+            break;
+
     }
 
     // call the action
@@ -85,7 +83,7 @@ $controllers = array(
     'Policy' => ['index', 'newPolicy', 'createNewPolicy', 'policyEdit', 'policyEdit2db', 'deletePolicy', 'error'],
     'GuaranteePolicy' => ['index', 'newGuaranteePolicy', 'createNewGuaranteePolicy', 'guaranteePolicyEdit', 'guaranteePolicyEdit2db', 'deleteGuaranteePolicy', 'error'],
     'Insurance' => ['index', 'newInsurance', 'createNewInsurance', 'insuranceEdit', 'insuranceEdit2db', 'deleteInsurance', 'error'],
-    'Insured' => ['index', 'newInsured', 'createNewInsured', 'insuredEdit', 'insuredEdit2db', 'deleteInsured', 'validateInsured', 'invalidateInsured', 'error'],
+    'Insured' => ['index', 'newInsured', 'createNewInsured', 'insuredEdit', 'insuredEdit2db', 'deleteInsured', 'validateInsured', 'invalidateInsured', 'approveAllInsured', 'error'],
     'MerchandiseType' => ['index', 'newMerchandiseType', 'createNewMerchandiseType', 'merchandiseTypeEdit', 'merchandiseTypeEdit2db', 'deleteMerchandiseType', 'error'],
     'InsuredMatter' => ['index', 'newInsuredMatter', 'createNewInsuredMatter', 'insuredMatterEdit', 'insuredMatterEdit2db', 'deleteInsuredMatter', 'error'],
     'Packing' => ['index', 'newPacking', 'createNewPacking', 'packingEdit', 'packingEdit2db', 'deletePacking', 'error'],
@@ -93,13 +91,20 @@ $controllers = array(
         'newCertificate', 'addCertificate', 'changeCertificate', 'changeNewCertificate',
         'index', 'createNewCertificate', 'certificateEdit', 'certificateEdit2db', 'viewCertificate', 'deleteCertificate',
         'annulments', 'newCertificateAnnulment', 'createNewCertificateAnnulment', 'certificateAnnulmentEdit', 'certificateAnnulmentEdit2db', 'deleteCertificateAnnulment', 'addReplaceCertificateNumber', 'addReplaceCertificateNumber2db', 'setCertificateAnnulment',
+        'annulmentrequest',
         'searchCertificate',
         'error'],
     //'CertificateRequest' => ['index', 'newCertificateRequest', 'createNewCertificateRequest', 'certificateRequestEdit', 'certificateRequestEdit2db', 'deleteCertificateRequest', 'error'],
     'CertificateModify' => ['index', 'newCertificateModify', 'createNewCertificateModify', 'certificateModifyEdit', 'certificateModifyEdit2db', 'setCertificateModify', 'deleteCertificateModify', 'error'],
     //'CertificateAnnulment' => ['index', 'newCertificateAnnulment', 'createNewCertificateAnnulment', 'certificateAnnulmentEdit', 'certificateAnnulmentEdit2db', 'deleteCertificateAnnulment', 'addReplaceCertificateNumber', 'error'],
-    'Sinister' => ['index', 'newSinister', 'createNewSinister', 'sinisterEdit', 'sinisterEdit2db', 'deleteSinister', 'error'],
-    'Export' => ['ExportUsers', 'error']
+    'Sinister' => ['index', 'newSinister', 'createNewSinister', 'addSinister', 'addSinisterDoc', 'sinisterEdit', 'sinisterEdit2db', 'deleteSinister', 'error'],
+    'Stadistic' => ['sinister', 'sinisterContent', 'sinisterEdit', 'sinisterEdit2db',
+        'clienttransport', 'clienttransportContent', 'clienttransportEdit', 'clienttransportEdit2db',
+        'sellertransport', 'sellertransportContent', 'sellertransportEdit', 'sellertransportEdit2db',
+        'companytransport', 'companytransportContent', 'companytransportEdit', 'companytransportEdit2db',
+        'singulartransport', 'singulartransportContent', 'singulartransportEdit', 'singulartransportEdit2db',
+        'error'],
+    'Export' => ['ExportUsers', 'ExportSinisterStadistic', 'ExportClientTransport', 'ExportSellerTransport', 'ExportCompanyTransport', 'error']
 );
 
 // check that the requested controller and action are both allowed

@@ -8,7 +8,7 @@
 
 class Perfil_DAO {
 
-    public function getPerfilesList(){
+    public function getProfilesList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -18,7 +18,7 @@ class Perfil_DAO {
         return $sql->fetchAll();
     }
 
-    public function getPerfil($idUsuario){
+    public function getProfile($idUsuario){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

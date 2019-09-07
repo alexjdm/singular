@@ -38,7 +38,7 @@ if (!isset($_SESSION)) {
                     <th>Correo</th>
                     <th>Cargo</th>
                     <th>Perfil</th>
-                    <th>Cliente</th>
+                    <th>Corredora</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -51,7 +51,7 @@ if (!isset($_SESSION)) {
                     <th>Correo</th>
                     <th>Cargo</th>
                     <th>Perfil</th>
-                    <th>Cliente</th>
+                    <th>Corredora</th>
                     <th></th>
                 </tr>
                 </tfoot>

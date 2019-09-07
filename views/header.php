@@ -1,6 +1,7 @@
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
 
     <base href="http://localhost/singular/" />
     <!--<base href="http://www.singularseguros.cl/admin/" />-->
@@ -47,7 +48,14 @@
 
     <!-- DataTables -->
     <script src="dist/plugins/datatables/jquery.dataTables.min.js"></script>
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
     <script src="dist/plugins/datatables/dataTables.bootstrap.min.js"></script>
+
+    <link href="dist/plugins/datatables/dataTables.checkboxes.css" rel="stylesheet"/>
+    <script src="dist/plugins/datatables/dataTables.checkboxes.min.js"></script>
+
+    <!--<script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>-->
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css">-->
 
     <!-- Moment -->
     <script src="dist/js/moment.js"></script>

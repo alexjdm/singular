@@ -147,6 +147,9 @@ class AccountController {
             $_SESSION['idPerfil'] = $resultado['ID_PERFIL'];
             $_SESSION['idCargo'] = $resultado['ID_CARGO'];
             $_SESSION['fechaIngreso'] = $resultado['FECHA_INGRESO'];
+
+            //$resultado = $modelU->getCorredora($resultado['ID_USUARIO']);
+
             $_SESSION['idCorredora'] = $resultado['ID_CORREDORA'];
             //$_SESSION['image'] = $resultado['IMAGE'];
 
@@ -189,7 +192,7 @@ class AccountController {
         $currentUser = getCurrentUser();
 
         $modelP = new Perfil_DAO();
-        $perfiles = $modelP->getPerfilesList();
+        $perfiles = $modelP->getProfilesList();
 
         require_once('views/account/profile.php');
     }

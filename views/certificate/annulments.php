@@ -10,7 +10,7 @@ if (!isset($_SESSION)) {
 <section class="content-header">
 
     <h1>
-        Solicitud de Anulación de Certificado
+        Certificados Anulados
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> CertificateAnnulment</a></li>
@@ -23,8 +23,7 @@ if (!isset($_SESSION)) {
 
     <div class="box">
         <div class="box-header">
-            <h3 class="box-title">Lista de Solicitudes de Anulación de Certificado</h3>
-            <button id="newCertificateAnnulment" class="btn btn-primary" style="float: right;">Agregar</button>
+            <h3 class="box-title">Lista Certificados Anulados</h3>
         </div>
 
         <div class="box-body">
@@ -34,8 +33,8 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Certificado N°</th>
                     <th>Poliza</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Motivo</th>
                     <th>Cert. Reemplazo</th>
                     <th>Estado</th>
@@ -47,8 +46,8 @@ if (!isset($_SESSION)) {
                     <th>N°</th>
                     <th>Certificado N°</th>
                     <th>Poliza</th>
-                    <th>RUT</th>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
+                    <th>Asegurado</th>
                     <th>Motivo</th>
                     <th>Cert. Reemplazo</th>
                     <th>Estado</th>
@@ -57,48 +56,29 @@ if (!isset($_SESSION)) {
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($certificadoAnulaciones as $certificadoAnulacion): ?>
-                    <tr data-id="<?php echo $certificadoAnulacion['ID_CERTIFICADO'] ?>">
+                <?php foreach ($certificadosVM as $certificadoAnulado): ?>
+                    <tr data-id="<?php echo $certificadoAnulado['ID_CERTIFICADO'] ?>">
                         <th><?php echo $n ?></th>
                         <?php
-                        echo "<td title='". $certificadoAnulacion['FORMATO'] ."'>";
-                        echo utf8_encode($certificadoAnulacion['NUMERO']);
+                        echo "<td title='". $certificadoAnulado['FORMATO'] ."'>";
+                        echo utf8_encode($certificadoAnulado['NUMERO']);
                         echo "</td>";
-                        foreach ($polizas as $poliza):
-                            if($poliza['ID_POLIZA'] == $certificadoAnulacion['ID_POLIZA']):
-                                echo '<td>' . utf8_encode($poliza['TIPO_POLIZA']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $certificadoAnulacion['ID_ASEGURADO']):
-                                echo "<td>";
-                                echo utf8_encode($asegurado['IDENTIFICADOR']);
-                                echo "</td>";
-                                echo "<td>";
-                                echo utf8_encode($asegurado['NOMBRE']);
-                                echo "</td>";
-                                break;
-                            endif;
-                        endforeach;
                         ?>
-                        <td><?php echo $certificadoAnulacion['MOTIVO'] ?></td>
+                        <td><?php echo $certificadoAnulado['POLIZA'] ?></td>
+                        <td><?php echo $certificadoAnulado['CLIENTE'] ?></td>
+                        <td><?php echo $certificadoAnulado['NOMBRE_ASEGURADO'] ?></td>
+                        <td><?php echo $certificadoAnulado['MOTIVO'] ?></td>
                         <?php
-                        if($certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO'] != 0)
+                        if($certificadoAnulado['ID_CERTIFICADO_REEMPLAZO'] != 0)
                         {
-                            foreach ($certificados as $certificado):
-                                if($certificado['ID_CERTIFICADO'] == $certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO']):
-                                    echo "<td title='". $certificado['FORMATO'] ."'>";
-                                    echo utf8_encode($certificado['NUMERO']);
-                                    echo "</td>";
-                                    break;
-                                endif;
-                            endforeach;
+                            echo "<td title='". $certificadoAnulado['FORMATO'] ."'>";
+                            echo utf8_encode($certificadoAnulado['NUMERO']);
+                            echo "</td>";
                         }
                         else
                         {
-                            echo "<td> ";
-                            if($isSuperAdmin == true && $certificadoAnulacion['ESTADO_ANULACION'] == 1):
+                            echo "<td>";
+                            if($isSuperAdmin == true && $certificadoAnulado['ESTADO_ANULACION'] == "Listo"):
                                 echo '
                                     <button title="Agregar N° Certificado" class="btn btn-xs btn-default addReplaceCertificateNumber">
                                         <i class="fa fa-plus-circle"></i>
@@ -108,20 +88,11 @@ if (!isset($_SESSION)) {
                             echo "</td>";
                         }
                         ?>
-                        <?php
-                        if($certificadoAnulacion['ESTADO_ANULACION'] == 0)
-                        {
-                            echo '<td>Pendiente</td>';
-                        }
-                        else if($certificadoAnulacion['ESTADO_ANULACION'] == 1)
-                        {
-                            echo '<td>Listo</td>';
-                        }
-                        ?>
+                        <td><?php echo $certificadoAnulado['ESTADO_ANULACION'] ?></td>
                         <td style="width: 100px;">
-                            <?php if($certificadoAnulacion['ESTADO_ANULACION'] == 0 || $isSuperAdmin == true): ?>
-                                <button title="Marcar como nulo" class="btn btn-xs btn-default setCertificateAnnulment">
-                                    <i class="fa fa-check"></i>
+                            <?php if($certificadoAnulado['ESTADO_ANULACION'] == "Listo" || $isSuperAdmin == true): ?>
+                                <button title="Marcar como no nulo" class="btn btn-xs btn-default setCertificateAnnulment">
+                                    <i class="fa fa-times"></i>
                                 </button>
                                 &nbsp
                                 <button title="Editar" class="btn btn-xs btn-default editCertificateAnnulment">
@@ -129,7 +100,7 @@ if (!isset($_SESSION)) {
                                 </button>
                                 &nbsp
                                 <button title="Eliminar" class="btn btn-xs btn-default deleteCertificateAnnulment">
-                                    <i class="fa fa-times"></i>
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             <?php endif; ?>
                         </td>
@@ -165,12 +136,12 @@ if (!isset($_SESSION)) {
             $.ajax({
                 type: 'GET',
                 url: 'ajax.php?controller=Certificate&action=setCertificateAnnulment',
-                data: { idCertificadoAnulacion: id, estado: 1 },
+                data: { idCertificadoAnulacion: id, estado: 0 },
                 beforeSend: function() {
                 },
                 success: function(data) {
 
-                    if (data.status == 'error') {
+                    if (data.status === 'error') {
                         $("#messageCertificateAnnulment").fadeOut( "slow", function() {
                             $('#messageCertificateAnnulment').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                         });

@@ -1,45 +1,39 @@
 <?php
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
+require_once 'helpers/SessionHelper.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/PolizaGarantia_DAO.php");
-include_once("models/DAO/Asegurado_DAO.php");
-include_once("models/DAO/Embalaje_DAO.php");
-include_once("models/DAO/TipoMercaderia_DAO.php");
+include_once("businesslogic/Policy.php");
+include_once("businesslogic/Insured.php");
+include_once("businesslogic/Packing.php");
+include_once("businesslogic/MerchandiseType.php");
+include_once("businesslogic/Guarantee.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class GuaranteePolicyController {
 
-    public $model;
-    public $modelC;
-    public $modelTM;
-    public $modelA;
-    public $modelE;
-
     public function __construct()
     {
-        $this->model = new PolizaGarantia_DAO();
-        $this->modelTM = new TipoMercaderia_DAO();
-        $this->modelA = new Asegurado_DAO();
-        $this->modelE = new Embalaje_DAO();
     }
 
     public function index() {
 
-        $garantias = $this->model->getGuaranteePoliciesList();
-
-        $asegurados = $this->modelA->getInsuredList();
-
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $embalajes = $this->modelE->getPackingsList();
+        $garantiaBusiness = new Guarantee();
+        $garantiasVM = $garantiaBusiness -> getGuaranteePoliciesVM();
 
         require_once('views/guaranteepolicy/index.php');
     }
 
     public function newGuaranteePolicy() {
-        $asegurados = $this->modelA->getInsuredList();
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $embalajes = $this->modelE->getPackingsList();
+
+        $aseguradoBusiness = new Insured();
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $packingBusiness = new Packing();
+
+        $asegurados = $aseguradoBusiness->getAllInsured();
+        //$asegurados = $aseguradoBusiness->getInsuredList();
+        $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
+        $embalajes = $packingBusiness->getPackingsList();
 
         require_once('views/guaranteepolicy/newGuaranteePolicy.php');
     }
@@ -49,24 +43,33 @@ class GuaranteePolicyController {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
         $tipoGarantia = isset($_GET['tipoGarantia']) ? $_GET['tipoGarantia'] : null;
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
-        $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
+        $embalaje = isset($_GET['Packing']) ? $_GET['Packing'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
         $fechaInicio = isset($_GET['fechaInicio']) ? $_GET['fechaInicio'] : null;
         $fechaInicio = date("Y-m-d", strtotime($fechaInicio));
         $plazo = isset($_GET['plazo']) ? $_GET['plazo'] : null;
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
+        $currentUser = getCurrentUser();
+        $idUsuarioSolicitante = $currentUser['id'];
 
-        return $this->model->newGuaranteePolicy($idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        $garantiaBusiness = new Guarantee();
+        $garantiaBusiness->newGuaranteePolicy($idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos, $idUsuarioSolicitante);
     }
 
     public function guaranteePolicyEdit() {
         $idGarantia = isset($_GET['idGarantia']) ? $_GET['idGarantia'] : null;
-        $solicitudGarantia = $this->model->getGuaranteePolicy($idGarantia);
 
-        $asegurados = $this->modelA->getInsuredList();
-        $tipoMercaderias = $this->modelTM->getMerchandiseTypesList();
-        $embalajes = $this->modelE->getPackingsList();
+        $garantiaBusiness = new Guarantee();
+        $aseguradoBusiness = new Insured();
+        $tipoMercaderiaBusiness = new MerchandiseType();
+        $packingBusiness = new Packing();
+
+        $solicitudGarantia = $garantiaBusiness->getGuaranteePolicy($idGarantia);
+
+        $asegurados = $aseguradoBusiness->getInsuredList();
+        $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
+        $embalajes = $packingBusiness->getPackingsList();
         $aseguradoSel = array();
         foreach ($asegurados as $asegurado):
             if($asegurado['ID_ASEGURADO'] == $solicitudGarantia['ID_ASEGURADO']):
@@ -83,7 +86,7 @@ class GuaranteePolicyController {
         $idAsegurado = isset($_GET['idAsegurado']) ? $_GET['idAsegurado'] : null;
         $tipoGarantia = isset($_GET['tipoGarantia']) ? $_GET['tipoGarantia'] : null;
         $tipoMercaderia = isset($_GET['tipoMercaderia']) ? $_GET['tipoMercaderia'] : null;
-        $embalaje = isset($_GET['embalaje']) ? $_GET['embalaje'] : null;
+        $embalaje = isset($_GET['Packing']) ? $_GET['Packing'] : null;
         $direccion = isset($_GET['direccion']) ? $_GET['direccion'] : null;
         $fechaInicio = isset($_GET['fechaInicio']) ? $_GET['fechaInicio'] : null;
         $fechaInicio = date("Y-m-d", strtotime($fechaInicio));
@@ -91,13 +94,15 @@ class GuaranteePolicyController {
         $montoCIF = isset($_GET['montoCIF']) ? $_GET['montoCIF'] : null;
         $derechos = isset($_GET['derechos']) ? $_GET['derechos'] : null;
 
-        return $this->model->editGuaranteePolicy($idGarantia, $idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
+        $garantiaBusiness = new Guarantee();
+        $garantiaBusiness->editGuaranteePolicy($idGarantia, $idAsegurado, $tipoGarantia, $tipoMercaderia, $embalaje, $direccion, $fechaInicio, $plazo, $montoCIF, $derechos);
     }
 
     public function deleteGuaranteePolicy() {
         $idGarantia = isset($_GET['idGarantia']) ? $_GET['idGarantia'] : null;
 
-        return $this->model->deleteGuaranteePolicy($idGarantia);
+        $garantiaBusiness = new Guarantee();
+        $garantiaBusiness ->deleteGuaranteePolicy($idGarantia);
     }
 
     public function error() {

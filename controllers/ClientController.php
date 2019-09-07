@@ -39,7 +39,9 @@ class ClientController {
 
     public function clientEdit() {
         $idCliente = isset($_GET['idCliente']) ? $_GET['idCliente'] : null;
-        $cliente = $this->model->getClient($idCliente);
+
+        $clienteBusiness = new Cliente();
+        $cliente = $clienteBusiness->getClient($idCliente);
 
         require_once('views/client/clientEdit.php');
     }

@@ -13,7 +13,7 @@ if (!isset($_SESSION)) {
 
 ?>
 
-<div class="modal-dialog" style="width:75%">
+<div class="modal-dialog" style="width:65%">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -32,6 +32,27 @@ if (!isset($_SESSION)) {
                 <div class="box-body">
 
                     <div class="row">
+
+                        <div class="col-md-12">
+
+                            <h5>Datos de póliza</h5>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="idPoliza">Poliza *</label>
+                                <div class="col-sm-8">
+                                    <select id="idPoliza" class="form-control">
+                                        <option value="0">Seleccione...</option>
+                                        <?php foreach ($polizas as $poliza): ?>
+                                            <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA']) . " (" . $poliza['NUMERO'] . ")"; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-md-6">
 
@@ -71,21 +92,21 @@ if (!isset($_SESSION)) {
                                 </div>
                             </div>-->
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label" for="aFavorDe">A favor de *</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" id="aFavorDe" type="text" placeholder="A favor de">
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <h5>Datos de transporte</h5>
+
+                        </div>
+                        <div class="col-md-6">
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label" for="idAsegurado">Transporte *</label>
+                                <label class="col-sm-4 control-label" for="aFavorDe">A favor de</label>
                                 <div class="col-sm-8">
-                                    <select id="idPoliza" class="form-control">
-                                        <?php foreach ($polizas as $poliza): ?>
-                                            <option value="<?php echo $poliza['ID_POLIZA']; ?>"><?php echo utf8_encode($poliza['TIPO_POLIZA']) . " (" . $poliza['NUMERO'] . ")"; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <input class="form-control" id="aFavorDe" type="text" placeholder="A favor de">
                                 </div>
                             </div>
 
@@ -93,7 +114,8 @@ if (!isset($_SESSION)) {
                                 <label class="col-sm-4 control-label" for="idAsegurado">Tipo *</label>
                                 <div class="col-sm-8">
                                     <select id="tipo" class="form-control">
-                                        <option value="Importacion">Importacion</option>
+                                        <option value="0">Seleccione...</option>
+                                        <option value="Importacion">Importación</option>
                                         <option value="Exportacion">Exportacion</option>
                                     </select>
                                 </div>
@@ -119,6 +141,9 @@ if (!isset($_SESSION)) {
                                     <input class="form-control" id="via" type="text" placeholder="Via">
                                 </div>
                             </div>
+
+                        </div>
+                        <div class="col-md-6">
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="fechaEmbarque">Fecha de Embarque *</label>
@@ -148,10 +173,6 @@ if (!isset($_SESSION)) {
                                 </div>
                             </div>
 
-                        </div>
-
-                        <div class="col-md-6">
-
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="referenciaDespacho">Referencia / Despacho *</label>
                                 <div class="col-sm-8">
@@ -159,10 +180,25 @@ if (!isset($_SESSION)) {
                                 </div>
                             </div>
 
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+
+                            <h5>Carga</h5>
+
+                        </div>
+
+                        <div class="col-md-6">
+
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="idMateriaAsegurada">Materia Asegurada *</label>
                                 <div class="col-sm-8">
                                     <select id="idMateriaAsegurada" class="form-control">
+                                        <option value="0">Seleccione...</option>
                                         <?php foreach ($materiasAseguradas as $materiaAsegurada): ?>
                                             <option value="<?php echo $materiaAsegurada['ID_MATERIA_ASEGURADA']; ?>"><?php echo utf8_encode($materiaAsegurada['MATERIA_ASEGURADA']); ?></option>
                                         <?php endforeach; ?>
@@ -174,12 +210,16 @@ if (!isset($_SESSION)) {
                                 <label class="col-sm-4 control-label" for="idTipoMercaderia">Tipo de Mercadería *</label>
                                 <div class="col-sm-8">
                                     <select id="idTipoMercaderia" class="form-control">
+                                        <option value="0">Seleccione...</option>
                                         <?php foreach ($tipoMercaderias as $tipoMercaderia): ?>
                                             <option value="<?php echo $tipoMercaderia['ID_TIPO_MERCADERIA']; ?>"><?php echo utf8_encode($tipoMercaderia['TIPO_MERCADERIA']); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
+
+                        </div>
+                        <div class="col-md-6">
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="detalleMercaderia">Detalle Mercaderia *</label>
@@ -192,12 +232,24 @@ if (!isset($_SESSION)) {
                                 <label class="col-sm-4 control-label" for="idEmbalaje">Embalaje *</label>
                                 <div class="col-sm-8">
                                     <select id="idEmbalaje" class="form-control">
+                                        <option value="0">Seleccione...</option>
                                         <?php foreach ($embalajes as $embalaje): ?>
                                             <option data-idPoliza="<?php echo $embalaje['ID_POLIZA']; ?>" value="<?php echo $embalaje['ID_EMBALAJE']; ?>"><?php echo utf8_encode($embalaje['EMBALAJE']); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-12">
+
+                            <h5>Condiciones</h5>
+
+                        </div>
+                        <div class="col-md-6">
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="montoAseguradoCIF">Monto Asegurado *</label>
@@ -227,13 +279,14 @@ if (!isset($_SESSION)) {
                                 </div>
                             </div>
 
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="observaciones">Observaciones</label>
                                 <div class="col-sm-8">
                                     <textarea class="form-control" id="observaciones" type="text" placeholder="Observaciones"></textarea>
                                 </div>
                             </div>
-
                         </div>
 
                     </div>
@@ -268,17 +321,16 @@ if (!isset($_SESSION)) {
     });
     $('#idPoliza').trigger("change");
 
-
     //$('#tablaAsegurados').show();
 
     /*$('#buscadorAsegurado').keyup(function () {
 
-        var rex = new RegExp($(this).val(), 'i');
-        $('.buscar tr').hide();
-        $('.buscar tr').filter(function () {
-            return rex.test($(this).text());
-        }).show();
-    });*/
+     var rex = new RegExp($(this).val(), 'i');
+     $('.buscar tr').hide();
+     $('.buscar tr').filter(function () {
+     return rex.test($(this).text());
+     }).show();
+     });*/
 
     var idAseguradoSeleccionado = "";
 
@@ -292,9 +344,9 @@ if (!isset($_SESSION)) {
         var filtro = $('.identificadorAsegurado').filter(function () {
 
             /*if(textoAbuscar === $(this).text() )
-            {
-                nombreAsegurado = $(this).data("nombre");
-            }*/
+             {
+             nombreAsegurado = $(this).data("nombre");
+             }*/
 
             //console.log(rex.test($(this).text()));
             if(rex.test($(this).text()) === true)
@@ -332,8 +384,8 @@ if (!isset($_SESSION)) {
             var var1 = montoCIF * tasa / 100;
             var primaSeguro = 0;
             /*console.log("montoCIF * tasa / 100 = " + var1);
-            console.log("primaMin = " + primaMin);
-            console.log("primaSeg2 = " + (montoCIF * tasa / 100));*/
+             console.log("primaMin = " + primaMin);
+             console.log("primaSeg2 = " + (montoCIF * tasa / 100));*/
             if(var1 < primaMin)
             {
                 primaSeguro = primaMin;
@@ -350,6 +402,32 @@ if (!isset($_SESSION)) {
         }
     }
 
+    var tasaMinGeneral = <?php echo $corredora['TASA'] ?>;
+    var primaMinGeneral = <?php echo $corredora['PRIMA_MIN'] ?>;
+
+    function validarCondicionesGenerales()
+    {
+        var tasa = parseFloat($('#tasa').val().replace(',','.').replace(' ',''));
+        var primaMin = parseFloat($('#primaMin').val());
+
+        if(tasa < tasaMinGeneral)
+        {
+            tasa = tasaMinGeneral;
+            $('#tasa').val(tasa);
+        }
+
+        if(primaMin < primaMinGeneral)
+        {
+            primaMin = primaMinGeneral;
+            $('#primaMin').val(primaMin);
+        }
+
+        //console.log(tasa);
+        //console.log(primaMin);
+
+        calcularPrimaDeSeguro();
+    }
+
     $('#montoAseguradoCIF').keyup(function () {
         calcularPrimaDeSeguro();
     });
@@ -360,6 +438,14 @@ if (!isset($_SESSION)) {
 
     $('#primaMin').keyup(function () {
         calcularPrimaDeSeguro();
+    });
+
+    $('#tasa').focusout(function () {
+        validarCondicionesGenerales();
+    });
+
+    $('#primaMin').focusout(function () {
+        validarCondicionesGenerales();
     });
 
     <?php if(count($tipoMercaderias) == 0 || count($polizas) == 0 || count($materiasAseguradas) == 0 || count($embalajes) == 0) { ?>
@@ -429,7 +515,8 @@ if (!isset($_SESSION)) {
         var primaSeguro = $("#primaSeguro").val();
         var observaciones = $("#observaciones").val();
 
-        if(idAsegurado === '' || idTipoMercaderia === '' || aFavorDe === '' || tipo === '' || origen === ''
+        if(idPoliza === 0 || tipo === 0 || idMateriaAsegurada === 0 || idTipoMercaderia === 0 || idEmbalaje === 0
+            || idAsegurado === '' || idTipoMercaderia === '' || tipo === '' || origen === ''
             || destino === '' || via === '' || fechaEmbarque === '' || transportista === '' || naveVueloCamion === '' || blAwbCrt === ''
             || referenciaDespacho === '' || idMateriaAsegurada === '' || detalleMercaderia === '' || idEmbalaje === '' || montoAseguradoCIF === ''
             || tasa === '' || primaMin === '' || primaSeguro === '')
@@ -481,5 +568,6 @@ if (!isset($_SESSION)) {
         $("#newCertificateRequestForm").find("input[type=text], input[type=email]").val("");
         return false;
     });
+
 
 </script>

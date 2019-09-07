@@ -35,6 +35,8 @@ if (!isset($_SESSION)) {
                     <th>Compañia</th>
                     <th>Nombre</th>
                     <th>Número</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -44,6 +46,8 @@ if (!isset($_SESSION)) {
                     <th>Compañia</th>
                     <th>Nombre</th>
                     <th>Número</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
                     <th></th>
                 </tr>
                 </tfoot>
@@ -52,18 +56,11 @@ if (!isset($_SESSION)) {
                 <?php foreach ($polizas as $poliza): ?>
                     <tr data-id="<?php echo $poliza['ID_POLIZA'] ?>">
                         <th><?php echo $n ?></th>
-                        <td>
-                            <?php
-                            foreach ($companias as $compania):
-                                if($compania['ID_COMPANIA'] == $poliza['ID_COMPANIA']):
-                                    echo utf8_encode($compania['NOMBRE']);
-                                    break;
-                                endif;
-                            endforeach;
-                            ?>
-                        </td>
-                        <td><?php echo $poliza['TIPO_POLIZA'] ?></td>
+                        <td><?php echo $poliza['COMPANIA'] ?></td>
+                        <td><?php echo utf8_encode($poliza['TIPO_POLIZA']) ?></td>
                         <td><?php echo $poliza['NUMERO'] ?></td>
+                        <td><?php echo $poliza['FECHA_INICIO'] ?></td>
+                        <td><?php echo $poliza['FECHA_FIN'] ?></td>
                         <td>
                             <button data-original-title="Editar" class="btn btn-xs btn-default editPolicy">
                                 <i class="fa fa-pencil"></i>

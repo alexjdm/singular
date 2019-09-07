@@ -8,11 +8,35 @@
 
 class Poliza_DAO {
 
+    public function getAllPolicies(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM poliza");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function getPoliciesList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $sql = $pdo->prepare("SELECT * FROM poliza WHERE HABILITADO='1'");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
+    public function getValidatePoliciesList(){
+
+        $fechaActual = date("Y-m-d");
+        $fechaHace3meses = date('Y-m-d', strtotime(date('Y-m-d'). ' - 3 months'));
+
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM poliza WHERE ((FECHA_INICIO <= '$fechaHace3meses' AND '$fechaHace3meses' <= FECHA_FIN) OR (FECHA_INICIO <= '$fechaActual' AND '$fechaActual' <= FECHA_FIN)) AND HABILITADO='1'");
         $sql->execute();
 
         return $sql->fetchAll();

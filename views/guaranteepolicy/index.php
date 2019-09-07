@@ -30,79 +30,46 @@ if (!isset($_SESSION)) {
         <div class="box-body">
             <table id="tablaGuaranteePolicies" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>RUT Asegurado</th>
-                    <th>Asegurado</th>
-                    <th>Tipo Garantía</th>
-                    <th>Tipo Mercadería</th>
-                    <th>Embalaje</th>
-                    <th>Dirección</th>
-                    <th>Fecha Inicio</th>
-                    <th>Plazo</th>
-                    <th>Monto CIF</th>
-                    <th>Derechos + IVA</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Asegurado</th>
+                        <th>Cliente</th>
+                        <th>Tipo Garantía</th>
+                        <th>Fecha Inicio</th>
+                        <th>Plazo</th>
+                        <th>Monto CIF</th>
+                        <th>Derechos + IVA</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tfoot>
-                <tr>
-                    <th>N°</th>
-                    <th>RUT Asegurado</th>
-                    <th>Asegurado</th>
-                    <th>Tipo Garantía</th>
-                    <th>Tipo Mercadería</th>
-                    <th>Embalaje</th>
-                    <th>Dirección</th>
-                    <th>Fecha Inicio</th>
-                    <th>Plazo</th>
-                    <th>Monto CIF</th>
-                    <th>Derechos + IVA</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Asegurado</th>
+                        <th>Cliente</th>
+                        <th>Tipo Garantía</th>
+                        <th>Fecha Inicio</th>
+                        <th>Plazo</th>
+                        <th>Monto CIF</th>
+                        <th>Derechos + IVA</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($garantias as $garantia): ?>
+                <?php foreach ($garantiasVM as $garantia): ?>
                     <tr data-id="<?php echo $garantia['ID_GARANTIA'] ?>">
                         <th><?php echo $n ?></th>
-                        <?php
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $garantia['ID_ASEGURADO']):
-                                echo '<td>' . utf8_encode($asegurado['IDENTIFICADOR']) . '</td>';
-                                echo '<td>' . utf8_encode($asegurado['NOMBRE']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
-                        <!--<td>
-                            <?php
-                            foreach ($tipoMercaderias as $tipoMercaderia):
-                                if($tipoMercaderia['ID_TIPO_MERCADERIA'] == $garantia['ID_TIPO_MERCADERIA']):
-                                    echo utf8_encode($tipoMercaderia['TIPO_MERCADERIA']);
-                                    break;
-                                endif;
-                            endforeach;
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                            foreach ($embalajes as $embalaje):
-                                if($embalaje['ID_EMBALAJE'] == $garantia['ID_EMBALAJE']):
-                                    echo utf8_encode($embalaje['EMBALAJE']);
-                                    break;
-                                endif;
-                            endforeach;
-                            ?>
-                        </td>-->
+                        <td><?php echo $garantia['NOMBRE_ASEGURADO'] ?></td>
+                        <td><?php echo $garantia['CLIENTE'] ?></td>
                         <td><?php echo $garantia['TIPO_GARANTIA'] ?></td>
-                        <td><?php echo $garantia['TIPO_MERCADERIA'] ?></td>
-                        <td><?php echo $garantia['EMBALAJE'] ?></td>
-                        <td><?php echo $garantia['DIRECCION'] ?></td>
                         <td><?php echo $garantia['FECHA_INICIO'] ?></td>
                         <td><?php echo $garantia['PLAZO'] ?></td>
                         <td><?php echo $garantia['MONTO_CIF'] ?></td>
                         <td><?php echo $garantia['DERECHOS'] ?></td>
+                        <td><?php echo $garantia['ESTADO'] ?></td>
                         <td style="width: 70px;">
                             <button data-original-title="Editar" class="btn btn-xs btn-default editGuaranteePolicy">
                                 <i class="fa fa-pencil"></i>

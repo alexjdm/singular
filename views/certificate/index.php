@@ -35,6 +35,7 @@ if (!isset($_SESSION)) {
                     <th>Fecha Solicitud</th>
                     <th>Solicitado Por</th>
                     <th>Para Asegurado</th>
+                    <th>N° Póliza</th>
                     <th>Número</th>
                     <th>Formato</th>
                     <th></th>
@@ -46,6 +47,7 @@ if (!isset($_SESSION)) {
                     <th>Fecha Solicitud</th>
                     <th>Solicitado Por</th>
                     <th>Para Asegurado</th>
+                    <th>N° Póliza</th>
                     <th>Número</th>
                     <th>Formato</th>
                     <th></th>
@@ -53,24 +55,13 @@ if (!isset($_SESSION)) {
                 </tfoot>
                 <tbody>
                 <?php $n = 1; ?>
-                <?php foreach ($certificados as $certificado): ?>
+                <?php foreach ($certificadosVM as $certificado): ?>
                     <tr data-id="<?php echo $certificado['ID_CERTIFICADO'] ?>">
                         <th><?php echo $n ?></th>
                         <td><?php echo $certificado['FECHA_SOLICITUD'] ?></td>
-                        <?php
-                        foreach ($usuarios as $usuario):
-                            if($usuario['ID_USUARIO'] == $certificado['ID_USUARIO_SOLICITANTE']):
-                                echo '<td>' . utf8_encode($usuario['NOMBRE'] . ' ' . $usuario['APELLIDO']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $certificado['ID_ASEGURADO']):
-                                echo '<td>' . utf8_encode($asegurado['NOMBRE']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
+                        <td><?php echo $certificado['NOMBRE_USUARIO'] ?></td>
+                        <td><?php echo $certificado['NOMBRE_ASEGURADO'] ?></td>
+                        <td><?php echo $certificado['POLIZA'] ?></td>
                         <td><?php echo $certificado['NUMERO'] ?></td>
                         <td><?php echo $certificado['FORMATO'] ?></td>
                         <td style="width: 100px;">

@@ -27,7 +27,9 @@ $isSuperAdmin = isSuperAdmin();
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">Mi corredora</h3>
+            <?php if($isSuperAdmin): ?>
             <button id="newInsuranceBroker" class="btn btn-primary" style="float: right;">Agregar</button>
+            <?php endif; ?>
         </div>
 
         <div class="box-body">
@@ -83,6 +85,8 @@ $isSuperAdmin = isSuperAdmin();
                         <button data-original-title="Editar" class="btn btn-xs btn-default editInsuranceBroker">
                             <i class="fa fa-pencil"></i>
                         </button>
+                        <?php endif; ?>
+                        <?php if($isSuperAdmin): ?>
                         &nbsp
                         <button data-original-title="Eliminar" class="btn btn-xs btn-default deleteInsuranceBroker">
                             <i class="fa fa-times"></i>
@@ -125,16 +129,19 @@ $isSuperAdmin = isSuperAdmin();
             return false;
         }));
 
+        <?php if($isAdmin || $isSuperAdmin): ?>
         $("#tablaCorredoras").on("click", ".editInsuranceBroker", (function() {
             var id = $(this).closest('tr').data("id"); console.debug("idCorredora: " + id);
             ajax_loadModal($('#modalPrincipal'),
-                'ajax.php?controller=InsuranceBroker&action=clientEdit',
+                'ajax.php?controller=InsuranceBroker&action=insuranceBrokerEdit',
                 'GET',
                 { idCorredora: id },
                 defaultMessage);
             return false;
         }));
+        <?php endif; ?>
 
+        <?php if($isSuperAdmin): ?>
         $("#tablaCorredoras").on("click", ".deleteInsuranceBroker" ,(function () {
             var id = $(this).closest('tr').data("id"); console.debug(id);
             showConfirmation($('#modalConfirmacion'),
@@ -172,6 +179,7 @@ $isSuperAdmin = isSuperAdmin();
                     });
                 });
         }));
+        <?php endif; ?>
 
     } );
 </script>

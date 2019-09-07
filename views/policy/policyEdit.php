@@ -38,6 +38,20 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="fechaInicio">Fecha Inicio *</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="fechaInicio" type="text" placeholder="Fecha Inicio" value="<?php echo $poliza['FECHA_INICIO'] ?>">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="fechaFin">Fecha Fin *</label>
+                <div class="col-sm-9">
+                    <input class="form-control" id="fechaFin" type="text" placeholder="Fecha Fin" value="<?php echo $poliza['FECHA_FIN'] ?>">
+                </div>
+            </div>
+
             <br>
             <div id="messageEditPolicy"></div>
         </div>
@@ -59,46 +73,89 @@
 
 <script type="application/javascript">
 
+    $("#fechaInicio").daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        format: 'DD-MM-YYYY',
+        locale: {
+            //format: 'DD-MM-YYYY',
+            applyLabel: 'Aceptar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
+    $("#fechaFin").daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        format: 'DD-MM-YYYY',
+        locale: {
+            //format: 'DD-MM-YYYY',
+            applyLabel: 'Aceptar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
     $('#savePolicyEdit').click(function(){
         var e = 'ajax.php?controller=Policy&action=policyEdit2db';
         var idPoliza = $("#idPoliza").val();
         var idCompania = $("#compania").val();
         var tipoPoliza = $("#tipoPoliza").val();
         var numeroPoliza = $("#numeroPoliza").val();
+        var fechaInicio = $("#fechaInicio").val(); //console.debug(idCompania);
+        var fechaFin = $("#fechaFin").val(); //console.debug(idCompania);
 
-        $.ajax({
-            type: 'GET',
-            url: e,
-            data: { idPoliza: idPoliza, idCompania: idCompania, tipoPoliza: tipoPoliza, numeroPoliza: numeroPoliza },
-            dataType : "json",
-            beforeSend: function () {
-                $('#savePolicyEdit').html("Cargando...");
-            },
-            success: function (data) {
-                console.debug("success");
-                console.debug(data);
-                //var returnedData = JSON.parse(data); console.debug(returnedData);
-                if(data.status == "success"){
+        if(tipoPoliza === '' || numeroPoliza === '' || idCompania === '' || fechaInicio === '' || fechaFin === '')
+        {
+            $('#messageEditPolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong> Debes rellenar los campos requeridos </div>');
+        }
+        else {
+
+            $.ajax({
+                type: 'GET',
+                url: e,
+                data: { idPoliza: idPoliza, idCompania: idCompania, tipoPoliza: tipoPoliza, numeroPoliza: numeroPoliza, fechaInicio: fechaInicio, fechaFin: fechaFin },
+                dataType : "json",
+                beforeSend: function () {
+                    $('#savePolicyEdit').html("Cargando...");
+                },
+                success: function (data) {
                     console.debug("success");
-                    $('#messageEditPolicy').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
-                    $('#savePolicyEdit').html('<i class="fa fa-check" aria-hidden="true"></i> Listo');
-                    $('#modalPrincipal').hide();
-                    window.location.reload(true);
-                }
-                else{
-                    console.debug("fail");
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
+                    if(data.status == "success"){
+                        console.debug("success");
+                        $('#messageEditPolicy').html('<div class="alert alert-success" role="alert"><strong>Listo! </strong>' + data.message + '</div>');
+                        $('#savePolicyEdit').html('<i class="fa fa-check" aria-hidden="true"></i> Listo');
+                        $('#modalPrincipal').hide();
+                        window.location.reload(true);
+                    }
+                    else{
+                        console.debug("fail");
+                        $('#savePolicyEdit').html("Guardar");
+                        $('#messageEditPolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
+                    }
+                },
+                error: function (data) {
+                    console.debug("error");
+                    console.debug(data);
+                    //var returnedData = JSON.parse(data); console.debug(returnedData);
                     $('#savePolicyEdit').html("Guardar");
                     $('#messageEditPolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
                 }
-            },
-            error: function (data) {
-                console.debug("error");
-                console.debug(data);
-                //var returnedData = JSON.parse(data); console.debug(returnedData);
-                $('#savePolicyEdit').html("Guardar");
-                $('#messageEditPolicy').html('<div class="alert alert-danger" role="alert"><strong>Error! </strong>' + data.message + '</div>');
-            }
-        });
+            });
+
+        }
+
     });
 
 </script>

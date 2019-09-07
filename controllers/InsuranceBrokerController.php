@@ -7,6 +7,8 @@ include_once("models/DAO/Cargo_DAO.php");
 include_once("models/DAO/Usuario_DAO.php");
 require "lib/phpmailer/class.phpmailer.php";
 require_once("businesslogic/InsuranceBroker.php");
+require_once("businesslogic/JobTitle.php");
+require_once("businesslogic/Usuario.php");
 
 class InsuranceBrokerController {
 
@@ -37,8 +39,12 @@ class InsuranceBrokerController {
     }
 
     public function newInsuranceBroker() {
-        $cargos = $this->modelC->getJobTitlesList();
-        $vendedores = $this->modelU->getSellersList();
+
+        $jobTitleBusiness = new JobTitle();
+        $userBusiness = new Usuario();
+
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $vendedores = $userBusiness->getSellersList();
 
         require_once('views/insurancebroker/newInsuranceBroker.php');
     }
@@ -56,15 +62,13 @@ class InsuranceBrokerController {
         $idVendedor = isset($_GET['idVendedor']) ? $_GET['idVendedor'] : null;
 
         $insuranceBrokerBusiness = new InsuranceBroker();
-
-        return $insuranceBrokerBusiness ->save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor);
-
-        //return $this->model->newInsuranceBroker($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin);
+        $insuranceBrokerBusiness ->save($nombre, $rut, $direccion, $ciudad, $telefono, $giro, $razonSocial, $tasa, $primaMin, $idVendedor);
     }
 
     public function insuranceBrokerEdit() {
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
-        $corredora = $this->model->getInsuranceBroker($idCorredora);
+        $insuranceBrokerBusiness = new InsuranceBroker();
+        $corredora = $insuranceBrokerBusiness->getInsuranceBroker($idCorredora);
 
         require_once('views/insurancebroker/insuranceBrokerEdit.php');
     }
@@ -92,7 +96,9 @@ class InsuranceBrokerController {
 
     public function usersInsuranceBroker() {
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
-        $usuarios = $this->modelU->getUsersByIdInsuranceBroker($idCorredora);
+
+        $userBusiness = new Usuario();
+        $usuarios = $userBusiness->getUsersByIdInsuranceBroker($idCorredora);
 
         require_once('views/insurancebroker/usersInsuranceBroker.php');
     }

@@ -18,6 +18,16 @@ class Cargo_DAO {
         return $sql->fetchAll();
     }
 
+    public function getJobTitlesByInsuranceBrokerId($idCorredora){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM cargo WHERE (BASE = 1 OR ID_CORREDORA = '$idCorredora') AND HABILITADO='1'");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function newJobTitle($nombre){
 
         if (!defined("PHP_EOL")) define("PHP_EOL", "\r\n");

@@ -2,44 +2,48 @@
 /*Incluimos el fichero de la clase*/
 require_once 'connections/db.php';
 require_once 'helpers/CommonHelper.php';
-include_once("models/DAO/Usuario_DAO.php");
-include_once("models/DAO/Cargo_DAO.php");
-include_once("models/DAO/Corredora_DAO.php");
-include_once("models/DAO/Perfil_DAO.php");
 include_once("helpers/SessionHelper.php");
+include_once("businesslogic/Usuario.php");
+include_once("businesslogic/JobTitle.php");
+include_once("businesslogic/InsuranceBroker.php");
+include_once("businesslogic/Profile.php");
 require "lib/phpmailer/class.phpmailer.php";
 
 class UserController {
 
-    public $model;
-    public $modelC;
-    public $modelCo;
-    public $modelP;
-
     public function __construct()
     {
-        $this->model = new Usuario_DAO();
-        $this->modelC = new Cargo_DAO();
-        $this->modelCo = new Corredora_DAO();
-        $this->modelP = new Perfil_DAO();
     }
 
     public function index() {
-        $usuarios = $this->model->getUsersList();
-        $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
-        $perfiles = $this->modelP->getPerfilesList();
+
+        $userBusiness = new Usuario();
+        $jobTitleBusiness = new JobTitle();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+        $profilesBusiness = new Profile();
+
+        $usuarios = $userBusiness->getUsersList();
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
+        $perfiles = $profilesBusiness->getProfilesList();
 
         require_once('views/user/index.php');
     }
 
     public function insuranceUsers() {
+
         $currentUser = getCurrentUser();
         $idCorredora = $currentUser['idCorredora'];
-        $usuarios = $this->model->getUsers($idCorredora);
-        $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
-        $perfiles = $this->modelP->getPerfilesList();
+
+        $userBusiness = new Usuario();
+        $jobTitleBusiness = new JobTitle();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+        $profilesBusiness = new Profile();
+
+        $usuarios = $userBusiness->getUsers($idCorredora);
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
+        $perfiles = $profilesBusiness->getProfilesList();
 
         require_once('views/user/index.php');
     }
@@ -150,7 +154,7 @@ class UserController {
     /**
      *
      */
-    public function validation() {
+    /*public function validation() {
 
         //Recibir los datos ingresados en el formulario
         $email = $_GET['email']; //echo $email;
@@ -176,8 +180,16 @@ class UserController {
             $_SESSION['correo'] = $resultado['CORREO_ELECTRONICO'];
             $_SESSION['usuarioSkype'] = $resultado['USER_SKYPE'];
             $_SESSION['password'] = $resultado['CLAVE_USUARIO'];
-            $_SESSION['perfil'] = $resultado['PERFIL'];
             //$_SESSION['image'] = $resultado['IMAGE'];
+            $_SESSION['idPerfil'] = $resultado['ID_PERFIL'];
+            $_SESSION['fechaIngreso'] = $resultado['FECHA_INGRESO'];
+            $_SESSION['idCargo'] = $resultado['ID_CARGO'];
+
+            $sql = $pdo->prepare("SELECT * FROM corredora_usuario WHERE ID_USUARIO=:ID_USUARIO");
+            $sql->execute(array('ID_USUARIO' => $resultado['ID_USUARIO']));
+            $resultado = $sql->fetch();
+
+            $_SESSION['idCorredora'] = $resultado['ID_CORREDORA'];
 
             $status  = "success";
             $message = "Usuario registrado.";
@@ -205,7 +217,7 @@ class UserController {
         echo json_encode($data);
 
         Database::disconnect();
-    }
+    }*/
 
     public function changePassword() {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
@@ -217,7 +229,8 @@ class UserController {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
         $password = isset($_GET['password']) ? $_GET['password'] : null;
 
-        return $this->model->changePasswordUser($idUsuario, $password);
+        $userBusiness = new Usuario();
+        $userBusiness->changePasswordUser($idUsuario, $password);
     }
 
     public function error() {
@@ -236,17 +249,25 @@ class UserController {
     }
 
     public function sellers() {
-        $currentUser = getCurrentUser();
-        $vendedores = $this->model->getSellersListByInsuranceBrokerId($currentUser['idCorredora']);
-        $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
+
+        $userBusiness = new Usuario();
+        $jobTitleBusiness = new JobTitle();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+
+        $vendedores = $userBusiness->getSellersList();
+        $cargos = $this->$jobTitleBusiness->getJobTitlesList();
+        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
 
         require_once('views/user/sellers.php');
     }
 
     public function newSeller() {
-        $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
+
+        $jobTitleBusiness = new JobTitle();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
 
         require_once('views/user/newSeller.php');
     }
@@ -261,32 +282,46 @@ class UserController {
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
 
-        return $this->model->newUser($nombre, $rut, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
+        $userBusiness = new Usuario();
+        return $userBusiness->newUser($nombre, $rut, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
     }
 
     public function sellerEdit() {
+
         $idVendedor = isset($_GET['idVendedor']) ? $_GET['idVendedor'] : null;
-        $vendedor = $this->model->getUser($idVendedor);
-        $cargos = $this->modelC->getJobTitlesList();
-        $corredoras = $this->modelCo->getInsuranceBrokersList();
+        $userBusiness = new Usuario();
+        $jobTitleBusiness = new JobTitle();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+
+        $vendedor = $userBusiness->getUser($idVendedor);
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
 
         require_once('views/user/sellerEdit.php');
     }
 
     public function newUser() {
-        $cargos = $this->modelC->getJobTitlesList();
-        $perfiles = $this->modelP->getPerfilesList();
+
+        $jobTitleBusiness = new JobTitle();
+        $profilesBusiness = new Profile();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+
+        $cargos = $jobTitleBusiness ->getJobTitlesList();
+        $perfiles = $profilesBusiness->getProfilesList();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)
         {
-            $corredoras = $this->modelCo->getInsuranceBrokersList();
+            $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
         }
         else
         {
             $currentUser = getCurrentUser();
             $idCorredora = $currentUser['idCorredora'];
-            $corredoras = $this->modelCo->getInsuranceBroker($idCorredora);
+            $corredora = $insuranceBrokerBusiness->getInsuranceBroker($idCorredora);
+            $corredoras = Array();
+            array_push($corredoras, $corredora);
+
         }
 
         require_once('views/user/newUser.php');
@@ -302,25 +337,31 @@ class UserController {
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
 
-        return $this->model->newUser($identificador, $nombre, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
+        $userBusiness = new Usuario();
+        return $userBusiness ->newUserByIdentifier($identificador, $nombre, $apellido, $correo, $idCargo, $idCorredora, $idPerfil);
     }
 
     public function userEdit() {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
-        $usuario = $this->model->getUser($idUsuario);
-        $cargos = $this->modelC->getJobTitlesList();
-        $perfiles = $this->modelP->getPerfilesList();
+        $jobTitleBusiness = new JobTitle();
+        $profilesBusiness = new Profile();
+        $userBusiness = new Usuario();
+        $insuranceBrokerBusiness = new InsuranceBroker();
+
+        $usuario = $userBusiness->getUser($idUsuario);
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $perfiles = $profilesBusiness->getProfilesList();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)
         {
-            $corredoras = $this->modelCo->getInsuranceBrokersList();
+            $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
         }
         else
         {
             $currentUser = getCurrentUser();
             $idCorredora = $currentUser['idCorredora'];
-            $corredoras = $this->modelCo->getInsuranceBroker($idCorredora);
+            $corredoras = $insuranceBrokerBusiness->getInsuranceBroker($idCorredora);
         }
 
         require_once('views/user/userEdit.php');
@@ -328,8 +369,8 @@ class UserController {
 
     public function userEdit2db() {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
-        $rut = isset($_GET['rut']) ? $_GET['rut'] : null;
-        $rut = FormatearRut($rut);
+        $identificador = isset($_GET['identificador']) ? $_GET['identificador'] : null;
+        $identificador = FormatearRut($identificador);
         $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : null;
         $apellido = isset($_GET['apellido']) ? $_GET['apellido'] : null;
         $correo = isset($_GET['correo']) ? $_GET['correo'] : null;
@@ -337,23 +378,29 @@ class UserController {
         $idPerfil = isset($_GET['idPerfil']) ? $_GET['idPerfil'] : null;
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
 
-        return $this->model->editUser($idUsuario, $rut, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora);
+        $userBusiness = new Usuario();
+        return $userBusiness->editUser($idUsuario, $identificador, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora);
     }
 
     public function deleteUser() {
         $idUsuario = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : null;
 
-        return $this->model->deleteUser($idUsuario);
+        $userBusiness = new Usuario();
+        return $userBusiness->deleteUser($idUsuario);
     }
 
     public function usersInsuranceBroker() {
 
+        $jobTitleBusiness = new JobTitle();
+        $profilesBusiness = new Profile();
+        $userBusiness = new Usuario();
+
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
         $nombreCorredora = isset($_GET['corredora']) ? $_GET['corredora'] : null;
 
-        $usuarios = $this->model->getUsersByIdInsuranceBroker($idCorredora);
-        $cargos = $this->modelC->getJobTitlesList();
-        $perfiles = $this->modelP->getPerfilesList();
+        $usuarios = $userBusiness->getUsersByIdInsuranceBroker($idCorredora);
+        $cargos = $jobTitleBusiness->getJobTitlesList();
+        $perfiles = $profilesBusiness->getProfilesList();
 
         require_once('views/user/usersInsuranceBroker.php');
     }
