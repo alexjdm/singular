@@ -76,6 +76,12 @@
         var table = $('#tablaSiniestros').DataTable({
             "scrollX": true
         });
+
+        $('#numeroCertificados').text('<?php echo $numeroCertificados; ?>');
+        $('#montoAsegurado').text('<?php echo $montoAsegurado; ?>');
+        $('#primaSeguro').text('<?php echo $primaSeguro; ?>');
+        $('#montoProvision').text('<?php echo $montoProvision; ?>');
+        $('#indemnizacion').text('<?php echo $indemnizacion; ?>');
     });
 
 </script>

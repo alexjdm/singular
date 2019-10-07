@@ -80,6 +80,12 @@
         var table = $('#tablaTransporteCliente').DataTable({
             "scrollX": true
         });
+
+        $('#numeroCertificados').text('<?php echo $numeroCertificados; ?>');
+        $('#montoAsegurado').text('<?php echo $montoAsegurado; ?>');
+        $('#primaSeguro').text('<?php echo $primaSeguro; ?>');
+        $('#primaCliente').text('<?php echo $primaCliente; ?>');
+        $('#difCliente').text('<?php echo $difCliente; ?>');
     });
 
 </script>

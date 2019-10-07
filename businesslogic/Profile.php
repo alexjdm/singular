@@ -12,4 +12,10 @@ class Profile
         return $model->getProfilesList();
     }
 
+    public function getAllProfiles()
+    {
+        $model = new Perfil_DAO();
+        return $model->getAllProfiles();
+    }
+
 }

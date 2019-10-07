@@ -95,7 +95,7 @@ class Certificate
     public function getAllCertificates()
     {
         $model = new Certificado_DAO();
-        $certificados = $model->getCertificatesList();
+        $certificados = $model->getAllCertificates();
 
         return $certificados;
     }
@@ -131,10 +131,10 @@ class Certificate
         return $certificado;
     }
 
-    public function getCertificatesByUsers($usuarios)
+    public function getCertificatesByUsersAndDates($usuarios, $fechaInicio, $fechaFin)
     {
         $model = new Certificado_DAO();
-        $certificado = $model->getCertificatesByUsers($usuarios);
+        $certificado = $model->getCertificatesByUsersAndDates($usuarios, $fechaInicio, $fechaFin);
 
         return $certificado;
     }
@@ -156,7 +156,7 @@ class Certificate
         $tipoMercaderiaBusiness = new MerchandiseType();
         $insuranceBrokerBusiness = new InsuranceBroker();
 
-        $polizas = $polizaBusiness->getPoliciesList();
+        $polizas = $polizaBusiness->getAllPolicies();
         $asegurados = $aseguradoBusiness->getAllInsured();
         $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
 
@@ -174,7 +174,7 @@ class Certificate
                 $usuarios = $usuarioBusiness->getUser($currentUser['idUsuario']);
             }
 
-            $certificados = $this->getCertificatesByUsers($usuarios);
+            $certificados = $this->getCertificatesByUsersAndDates($usuarios, $fechaInicio, $fechaFin);
         }
 
         $montoAsegurado = 0;
@@ -220,7 +220,7 @@ class Certificate
             $transporteVM['TRANSBORDO'] = "Sin Info.";
 
             $tipoMercaderia = getTipoMercaderia($tipoMercaderias, $certificado['ID_TIPO_MERCADERIA']);
-            if (isset($poliza)) {
+            if (isset($tipoMercaderia)) {
                 $transporteVM['TIPO_MERCADERIA'] = $tipoMercaderia['TIPO_MERCADERIA'];
             }
 
@@ -260,7 +260,7 @@ class Certificate
         $companyBusiness = new Company();
         $insuranceBrokerBusiness = new InsuranceBroker();
 
-        $polizas = $polizaBusiness->getPoliciesList();
+        $polizas = $polizaBusiness->getAllPolicies();
         $asegurados = $aseguradoBusiness->getInsuredList();
         $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
         $companias = $companyBusiness->getCompaniesList();
@@ -272,7 +272,7 @@ class Certificate
             $currentUser = getCurrentUser();
             $idCorredora = $currentUser['idCorredora'];
             $usuarios = $usuarioBusiness->getUsers($idCorredora);
-            $certificados = $certificadoBusiness->getCertificates($usuarios);
+            $certificados = $certificadoBusiness->getCertificatesByUsersAndDates($usuarios, $fechaInicio, $fechaFin);
         }
 
         $montoAsegurado = 0;
@@ -350,7 +350,7 @@ class Certificate
             $transporteVM['TRANSBORDO'] = "Sin Info.";
 
             $tipoMercaderia = getTipoMercaderia($tipoMercaderias, $certificado['ID_TIPO_MERCADERIA']);
-            if (isset($poliza)) {
+            if (isset($tipoMercaderia)) {
                 $transporteVM['TIPO_MERCADERIA'] = $tipoMercaderia['TIPO_MERCADERIA'];
             }
 
@@ -396,7 +396,7 @@ class Certificate
         $tipoMercaderiaBusiness = new MerchandiseType();
 
         $companias = $companyBusiness->getCompaniesList();
-        $polizas = $polizaBusiness->getPoliciesList();
+        $polizas = $polizaBusiness->getAllPolicies();
         $asegurados = $aseguradoBusiness->getInsuredList();
         $tipoMercaderias = $tipoMercaderiaBusiness->getMerchandiseTypesList();
 
@@ -719,7 +719,7 @@ class Certificate
 
             $poliza = getPoliza($polizas, $certificado['ID_POLIZA']);
             if (isset($poliza))
-                $certificadoVM['POLIZA'] = $poliza['TIPO_POLIZA'] . " (" . $poliza['NUMERO'] . ")";
+                $certificadoVM['POLIZA'] = utf8_encode($poliza['TIPO_POLIZA']) . " (" . $poliza['NUMERO'] . ")";
             else
                 $certificadoVM['POLIZA'] = "--";
 
@@ -759,6 +759,67 @@ class Certificate
         }
 
         return $certificadosVM;
+    }
+
+    public function getAnnulmentRequestVM()
+    {
+        $aseguradosBusiness = new Insured();
+        $polizaBusiness = new Policy();
+
+        $polizas = $polizaBusiness->getAllPolicies();
+        $asegurados = $aseguradosBusiness->getInsuredList();
+        $certificados = $this->getCertificatesList();
+        $certificadoAnulaciones = $this->getCertificateAnnulmentsList();
+
+        $certificadoAnulacionesVM = Array();
+        foreach ($certificadoAnulaciones as $certificadoAnulacion) {
+
+            $certificadoAnulacionVM = Array();
+            $certificadoAnulacionVM['ID_CERTIFICADO'] = $certificadoAnulacion['ID_CERTIFICADO'];
+            $certificadoAnulacionVM['FORMATO'] = $certificadoAnulacion['FORMATO'];
+            $certificadoAnulacionVM['NUMERO'] = $certificadoAnulacion['NUMERO'];
+
+            $poliza = getPoliza($polizas, $certificadoAnulacion['ID_POLIZA']);
+            if (isset($poliza))
+                $certificadoAnulacionVM['POLIZA'] = utf8_encode($poliza['TIPO_POLIZA']) . " (" . $poliza['NUMERO'] . ")";
+            else
+                $certificadoAnulacionVM['POLIZA'] = "--";
+
+            $asegurado = getAsegurado($asegurados, $certificadoAnulacion['ID_ASEGURADO']);
+            if (isset($asegurado))
+            {
+                $certificadoAnulacionVM['NOMBRE_ASEGURADO'] = $asegurado['NOMBRE'];
+                $certificadoAnulacionVM['IDENTIFICADOR_ASEGURADO'] = $asegurado['IDENTIFICADOR'];
+            }
+            else
+            {
+                $certificadoAnulacionVM['NOMBRE_ASEGURADO'] = "--";
+                $certificadoAnulacionVM['IDENTIFICADOR_ASEGURADO'] = "--";
+            }
+
+            $certificadoAnulacionVM['MOTIVO'] = $certificadoAnulacion['MOTIVO'];
+            $certificadoAnulacionVM['ID_CERTIFICADO_REEMPLAZO'] = $certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO'];
+
+            $certificadoReemplazo = getCertificado($certificados, $certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO']);
+            if(isset($certificadoReemplazo))
+            {
+                $certificadoAnulacionVM['FORMATO_REEMPLAZO'] = $certificadoReemplazo['FORMATO'];
+                $certificadoAnulacionVM['NUMERO_REEMPLAZO'] = $certificadoReemplazo['NUMERO'];
+            }
+            else
+            {
+                $certificadoAnulacionVM['FORMATO_REEMPLAZO'] = "--";
+                $certificadoAnulacionVM['NUMERO_REEMPLAZO'] = "--";
+            }
+
+            $certificadoAnulacionVM['ESTADO_ANULACION'] = $certificadoAnulacion['ESTADO_ANULACION'];
+
+
+            array_push($certificadoAnulacionesVM, $certificadoAnulacionVM);
+
+        }
+
+        return $certificadoAnulacionesVM;
     }
 
 

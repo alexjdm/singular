@@ -8,6 +8,16 @@
 
 class Certificado_DAO {
 
+    public function getAllCertificates(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM certificado");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function getCertificatesList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -22,7 +32,7 @@ class Certificado_DAO {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO='1' AND  '$fechaInicio' <= FECHA_SOLICITUD AND FECHA_SOLICITUD <= '$fechaFin'");
+        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO='1' AND '$fechaInicio' <= FECHA_SOLICITUD AND FECHA_SOLICITUD <= '$fechaFin'");
         $sql->execute();
 
         return $sql->fetchAll();
@@ -38,7 +48,7 @@ class Certificado_DAO {
         return $sql->fetchAll();
     }
 
-    public function getCertificatesByUsers($usuarios){
+    public function getCertificatesByUsersAndDates($usuarios, $fechaInicio, $fechaFin){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -52,7 +62,7 @@ class Certificado_DAO {
             }
             $ids = join("','",$arrayIds);
 
-            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO=1");
+            $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_USUARIO_SOLICITANTE in ('$ids') AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO=1 AND '$fechaInicio' <= FECHA_SOLICITUD AND FECHA_SOLICITUD <= '$fechaFin'");
             $sql->execute();
 
             $certificados = $sql->fetchAll();

@@ -71,6 +71,12 @@
         var table = $('#tablaCompanyTransport').DataTable({
             "scrollX": true
         });
+
+        $('#numeroCertificados').text('<?php echo $numeroCertificados; ?>');
+        $('#montoAsegurado').text('<?php echo $montoAsegurado; ?>');
+        $('#primaSeguro').text('<?php echo $primaSeguro; ?>');
+        $('#primaCia').text('<?php echo $primaCia; ?>');
+        $('#comisionCorredor').text('<?php echo $comisionCorredor; ?>');
     });
 
 </script>

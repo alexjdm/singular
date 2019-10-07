@@ -58,4 +58,10 @@ class InsuranceBroker
         return $corredoras;
     }
 
+    public function getAllInsuranceBrokers()
+    {
+        $corredoras = $this->model->getAllInsuranceBrokers();
+        return $corredoras;
+    }
+
 }

@@ -61,6 +61,49 @@ class Siniestro_DAO {
         return $siniestroFinal;
     }
 
+    public function getSinistersByUsersAndDates($usuarios, $fechaInicio, $fechaFin){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM siniestro WHERE HABILITADO='1'");
+        $sql->execute();
+        $siniestros = $sql->fetchAll();
+        $ids = array();
+        foreach($siniestros as $siniestro)
+        {
+            array_push($ids, $siniestro['ID_CERTIFICADO']);
+        }
+
+        $idsCertificados = implode(",", $ids);
+
+        $sql = $pdo->prepare("SELECT * FROM certificado WHERE ID_CERTIFICADO in ($idsCertificados) AND ESTADO_SOLICITUD = 1 AND ESTADO_ANULACION != 1 AND HABILITADO='1' AND '$fechaInicio' <= FECHA_SOLICITUD AND FECHA_SOLICITUD <= '$fechaFin'");
+        $sql->execute();
+        $certificados = $sql->fetchAll();
+        $certificadosFinal = array();
+        foreach ($usuarios as $usuario) {
+            foreach ($certificados as $certificado)
+            {
+                if($certificado['ID_USUARIO_SOLICITANTE'] == $usuario['ID_USUARIO'])
+                    array_push($certificadosFinal, $certificado);
+            }
+        }
+
+        $siniestroFinal = array();
+        if(isset($certificadosFinal) && count($certificadosFinal) > 0)
+        {
+            foreach ($siniestros as $siniestro)
+            {
+                foreach ($certificadosFinal as $certificado)
+                {
+                    if($certificado['ID_CERTIFICADO'] == $siniestro['ID_CERTIFICADO'])
+                        array_push($siniestroFinal, $siniestro);
+                }
+            }
+        }
+
+        return $siniestroFinal;
+    }
+
     public function getSinistersByUsersByState($usuarios, $state){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

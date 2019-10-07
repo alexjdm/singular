@@ -8,6 +8,16 @@
 
 class Perfil_DAO {
 
+    public function getAllProfiles(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM perfil ORDER BY NOMBRE_PERFIL ASC");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function getProfilesList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

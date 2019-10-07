@@ -59,41 +59,20 @@ if (!isset($_SESSION)) {
                 <?php $n = 1; ?>
                 <?php foreach ($certificadoAnulaciones as $certificadoAnulacion): ?>
                     <tr data-id="<?php echo $certificadoAnulacion['ID_CERTIFICADO'] ?>">
-                        <th><?php echo $n ?></th>
-                        <?php
-                        echo "<td title='". $certificadoAnulacion['FORMATO'] ."'>";
-                        echo utf8_encode($certificadoAnulacion['NUMERO']);
-                        echo "</td>";
-                        foreach ($polizas as $poliza):
-                            if($poliza['ID_POLIZA'] == $certificadoAnulacion['ID_POLIZA']):
-                                echo '<td>' . utf8_encode($poliza['TIPO_POLIZA']) . '</td>';
-                                break;
-                            endif;
-                        endforeach;
-                        foreach ($asegurados as $asegurado):
-                            if($asegurado['ID_ASEGURADO'] == $certificadoAnulacion['ID_ASEGURADO']):
-                                echo "<td>";
-                                echo utf8_encode($asegurado['IDENTIFICADOR']);
-                                echo "</td>";
-                                echo "<td>";
-                                echo utf8_encode($asegurado['NOMBRE']);
-                                echo "</td>";
-                                break;
-                            endif;
-                        endforeach;
-                        ?>
+                        <td><?php echo $n ?></td>
+                        <td title='<?php echo $certificadoAnulacion['FORMATO'] ?>'>
+                            <?php echo $certificadoAnulacion['NUMERO'] ?>
+                        </td>
+                        <td><?php echo $certificadoAnulacion['POLIZA'] ?></td>
+                        <td><?php echo $certificadoAnulacion['IDENTIFICADOR_ASEGURADO'] ?></td>
+                        <td><?php echo $certificadoAnulacion['NOMBRE_ASEGURADO'] ?></td>
                         <td><?php echo $certificadoAnulacion['MOTIVO'] ?></td>
                         <?php
                         if($certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO'] != 0)
                         {
-                            foreach ($certificados as $certificado):
-                                if($certificado['ID_CERTIFICADO'] == $certificadoAnulacion['ID_CERTIFICADO_REEMPLAZO']):
-                                    echo "<td title='". $certificado['FORMATO'] ."'>";
-                                    echo utf8_encode($certificado['NUMERO']);
-                                    echo "</td>";
-                                    break;
-                                endif;
-                            endforeach;
+                            echo "<td title='". $certificadoAnulacion['FORMATO'] ."'>";
+                            echo utf8_encode($certificadoAnulacion['NUMERO']);
+                            echo "</td>";
                         }
                         else
                         {
@@ -170,7 +149,7 @@ if (!isset($_SESSION)) {
                 },
                 success: function(data) {
 
-                    if (data.status == 'error') {
+                    if (data.status === 'error') {
                         $("#messageCertificateAnnulment").fadeOut( "slow", function() {
                             $('#messageCertificateAnnulment').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>');
                         });

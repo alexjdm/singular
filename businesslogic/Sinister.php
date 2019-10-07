@@ -59,6 +59,15 @@ class Sinister
         return $siniestros;
     }
 
+    public function getSinistersByUsersAndDates($usuarios, $fechaInicio, $fechaFin)
+    {
+        $model = new Siniestro_DAO();
+
+        $siniestros = $model->getSinistersByUsersAndDates($usuarios, $fechaInicio, $fechaFin);
+
+        return $siniestros;
+    }
+
     public function getSinisters($idCorredora)
     {
         $model = new Siniestro_DAO();
@@ -97,7 +106,7 @@ class Sinister
 
         $polizas = $polizaBusiness->getAllPolicies();
         $asegurados = $aseguradoBusiness->getInsuredList();
-        $certificados = $certificadoBusiness->getCertificatesList();
+        $certificados = $certificadoBusiness->getAllCertificates();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)
@@ -107,8 +116,15 @@ class Sinister
         else
         {
             $currentUser = getCurrentUser();
-            $idCorredora = $currentUser['idCorredora'];
-            $siniestros = $this->getSinisters($idCorredora);
+            $usuarioBusiness = new Usuario();
+            if ($currentUser['idPerfil'] == 3) // Es administrador
+            {
+                $idCorredora = $currentUser['idCorredora'];
+                $usuarios = $usuarioBusiness->getUsers($idCorredora);
+            } else {
+                $usuarios = $usuarioBusiness->getUser($currentUser['idUsuario']);
+            }
+            $siniestros = $this->getSinistersByUsersAndDates($usuarios, $fechaInicio, $fechaFin);
         }
 
         $montoAsegurado = 0;
@@ -232,7 +248,7 @@ class Sinister
 
         $polizas = $polizaBusiness->getAllPolicies();
         $asegurados = $aseguradoBusiness->getInsuredList();
-        $certificados = $certificadoBusiness->getCertificatesList();
+        $certificados = $certificadoBusiness->getAllCertificates();
 
         $isSuperAdmin = isSuperAdmin();
         if($isSuperAdmin)

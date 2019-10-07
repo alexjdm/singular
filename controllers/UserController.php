@@ -24,8 +24,8 @@ class UserController {
 
         $usuarios = $userBusiness->getUsersList();
         $cargos = $jobTitleBusiness->getJobTitlesList();
-        $corredoras = $insuranceBrokerBusiness->getInsuranceBrokersList();
-        $perfiles = $profilesBusiness->getProfilesList();
+        $corredoras = $insuranceBrokerBusiness->getAllInsuranceBrokers();
+        $perfiles = $profilesBusiness->getAllProfiles();
 
         require_once('views/user/index.php');
     }
@@ -379,7 +379,7 @@ class UserController {
         $idCorredora = isset($_GET['idCorredora']) ? $_GET['idCorredora'] : null;
 
         $userBusiness = new Usuario();
-        return $userBusiness->editUser($idUsuario, $identificador, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora);
+        $userBusiness->editUser($idUsuario, $identificador, $nombre, $apellido, $correo, $idCargo, $idPerfil, $idCorredora);
     }
 
     public function deleteUser() {

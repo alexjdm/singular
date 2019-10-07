@@ -87,7 +87,7 @@ class StadisticController {
         require_once('views/stadistic/sinisterContent.php');
     }
 
-    public function sinisterEdit() {
+    /*public function sinisterEdit() {
         $idSiniestro = isset($_GET['idSiniestro']) ? $_GET['idSiniestro'] : null;
 
         $siniestroBusiness = new Sinister();
@@ -112,7 +112,7 @@ class StadisticController {
         $siniestroBusiness = new Sinister();
 
         $siniestroBusiness->editSinisterFromStadistic($idSiniestro, $siniestro, $montoProvision, $indemnizacion);
-    }
+    }*/
 
 
 

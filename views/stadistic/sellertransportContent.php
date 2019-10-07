@@ -98,6 +98,17 @@
         var table = $('#tablaSellerTransport').DataTable({
             "scrollX": true
         });
+
+        $('#numeroCertificados').text('<?php echo $numeroCertificados; ?>');
+        $('#montoAsegurado').text('<?php echo $montoAsegurado; ?>');
+        $('#primaSeguro').text('<?php echo $primaSeguro; ?>');
+        $('#primaCliente').text('<?php echo $primaCliente; ?>');
+        $('#primaCia').text('<?php echo $primaCia; ?>');
+        $('#difCliente').text('<?php echo $difCliente; ?>');
+        $('#comisionCorredor').text('<?php echo $comisionCorredor; ?>');
+        $('#difEqual').text('<?php echo $difEqual; ?>');
+        $('#ingresoEqual').text('<?php echo $ingresoEqual; ?>');
+        $('#comisionVendedor').text('<?php echo $comisionVendedor; ?>');
     });
 
 </script>

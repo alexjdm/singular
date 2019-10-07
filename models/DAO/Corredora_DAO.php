@@ -8,6 +8,16 @@
 
 class Corredora_DAO {
 
+    public function getAllInsuranceBrokers(){
+        $pdo = Database::connect();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = $pdo->prepare("SELECT * FROM corredora ORDER BY NOMBRE ASC");
+        $sql->execute();
+
+        return $sql->fetchAll();
+    }
+
     public function getInsuranceBrokersList(){
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

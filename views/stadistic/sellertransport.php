@@ -51,7 +51,7 @@ $hoy = date('d-m-Y');
                 <div class="col-sm-1 col-xs-6"></div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block border-right">
-                        <h5 class="description-header"><?php echo $numeroCertificados; ?></h5>
+                        <h5 class="description-header" id="numeroCertificados"><?php echo $numeroCertificados; ?></h5>
                         <span class="description-text">CERTIFICADOS</span>
                     </div>
                     <!-- /.description-block -->
@@ -59,7 +59,7 @@ $hoy = date('d-m-Y');
                 <!-- /.col -->
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block border-right">
-                        <h5 class="description-header"><?php echo $montoAsegurado; ?></h5>
+                        <h5 class="description-header" id="montoAsegurado"><?php echo $montoAsegurado; ?></h5>
                         <span class="description-text">MONTO ASEGURADO</span>
                     </div>
                     <!-- /.description-block -->
@@ -67,7 +67,7 @@ $hoy = date('d-m-Y');
                 <!-- /.col -->
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block border-right">
-                        <h5 class="description-header"><?php echo $primaSeguro; ?></h5>
+                        <h5 class="description-header" id="primaSeguro"><?php echo $primaSeguro; ?></h5>
                         <span class="description-text">PRIMA DE SEGURO</span>
                     </div>
                     <!-- /.description-block -->
@@ -75,49 +75,49 @@ $hoy = date('d-m-Y');
                 <!-- /.col -->
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $primaCliente; ?></h5>
+                        <h5 class="description-header" id="primaCliente"><?php echo $primaCliente; ?></h5>
                         <span class="description-text">PRIMA CLIENTE</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $primaCia; ?></h5>
+                        <h5 class="description-header" id="primaCia"><?php echo $primaCia; ?></h5>
                         <span class="description-text">PRIMA COMPAÑÍA</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $difCliente; ?></h5>
+                        <h5 class="description-header" id="difCliente"><?php echo $difCliente; ?></h5>
                         <span class="description-text">DIFERENCIA CLIENTE</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $comisionCorredor; ?></h5>
+                        <h5 class="description-header" id="comisionCorredor"><?php echo $comisionCorredor; ?></h5>
                         <span class="description-text">COMISIÓN CORREDOR</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $difEqual; ?></h5>
+                        <h5 class="description-header" id="difEqual"><?php echo $difEqual; ?></h5>
                         <span class="description-text">DIFERENCIA EQUAL</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $ingresoEqual; ?></h5>
+                        <h5 class="description-header" id="ingresoEqual"><?php echo $ingresoEqual; ?></h5>
                         <span class="description-text">INGRESO EQUAL</span>
                     </div>
                     <!-- /.description-block -->
                 </div>
                 <div class="col-sm-1 col-xs-6">
                     <div class="description-block">
-                        <h5 class="description-header"><?php echo $comisionVendedor; ?></h5>
+                        <h5 class="description-header" id="comisionVendedor"><?php echo $comisionVendedor; ?></h5>
                         <span class="description-text">COMISIÓN VENDEDOR</span>
                     </div>
                     <!-- /.description-block -->

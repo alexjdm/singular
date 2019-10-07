@@ -94,7 +94,7 @@ if (!isset($_SESSION)) {
                         endforeach;
                         ?>
                         </td>
-                        <td>
+                        <td width="100px">
                             <button data-original-title="Editar" class="btn btn-xs btn-default editUser">
                                 <i class="fa fa-pencil"></i>
                             </button>

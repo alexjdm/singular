@@ -378,13 +378,7 @@ class CertificateController {
     public function annulmentrequest() {
 
         $certificadoBusiness = new Certificate();
-        $aseguradosBusiness = new Insured();
-        $polizaBusiness = new Policy();
-
-        $polizas = $polizaBusiness->getPoliciesList();
-        $asegurados = $aseguradosBusiness->getInsuredList();
-        $certificados = $certificadoBusiness->getCertificatesList();
-        $certificadoAnulaciones = $certificadoBusiness->getCertificateAnnulmentsList();
+        $certificadoAnulaciones = $certificadoBusiness -> getAnnulmentRequestVM();
 
         require_once('views/certificate/annulmentrequest.php');
     }
